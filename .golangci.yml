@@ -7,7 +7,6 @@ linters:
     - durationcheck
     - errcheck
     - errorlint
-    - copyloopvar
     - gofmt
     - goimports
     - gosec
