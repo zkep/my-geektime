@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Geek Time</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link
+            rel="stylesheet"
+            title="default"
+            href="https://unpkg.com/amis@3.2.0/sdk/sdk.css"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/amis@3.2.0/sdk/helper.css" />
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/amis@3.2.0/sdk/iconfont.css"
+    />
+    <script src="https://unpkg.com/amis@3.2.0/sdk/sdk.js"></script>
+    <script src="https://unpkg.com/vue@2"></script>
+    <script src="https://unpkg.com/history@4.10.1/umd/history.js"></script>
+    <style>
+        html,
+        body,
+        .app-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="root" class="app-wrapper"></div>
+<script>
+    (function () {
+        // window.enableAMISDebug = true
+
+        let amis = amisRequire('amis/embed');
+        const match = amisRequire('path-to-regexp').match;
+
+        // const history = History.createBrowserHistory();
+        const history = History.createHashHistory();
+
+        const login = {
+            type: "page",
+            body: {
+                type: "wrapper",
+                body:  {
+                    type: "flex",
+                    alignItems: "center",
+                    style: {
+                        height: "100%",
+                        backgroundColor: "#fff"
+                    },
+                    items: [
+                        {
+                            style: {
+                                width: 500,
+                                height: 500,
+                                margin: 50,
+                            },
+                            type: "panel",
+                            title: "",
+                            body: [
+                                {
+                                    type: "flex",
+                                    alignItems: "center",
+                                    style: {
+                                        height: "100%",
+                                    },
+                                    items: [
+                                        {
+                                            type: "html",
+                                            style: {
+                                                margin: 20
+                                            },
+                                            tpl: "<h2>您好，欢迎登录</h2><p>Hello, welcome to log in.</p>"
+                                        },
+                                    ]
+                                },
+                                {
+                                    type: "form",
+                                    title: "",
+                                    actions: [],
+                                    wrapWithPanel: false,
+                                    api: {
+                                        url: "/v2/base/login?waitSeconds=3",
+                                        method: "post",
+                                        data: {
+                                            username: "${username}",
+                                            password: "${password}"
+                                        },
+                                        adaptor: function (payload, response, api, context) {
+                                            if (payload.status === 0) {
+                                                localStorage.setItem("token", payload.token);
+                                                localStorage.setItem("uname", payload.user.nick);
+                                                localStorage.setItem("uid", payload.user.uid);
+                                                localStorage.setItem("avatar", payload.user.avatar);
+                                                location.href="/";
+                                            }
+                                            return payload;
+                                        }
+                                    },
+                                    body: [
+                                        {
+                                            label: "账 号｜Account",
+                                            type: "input-text",
+                                            required: true,
+                                            placeholder: "请输入账号",
+                                            name: "username",
+                                            value: "admin",
+                                            validations: {
+                                                minLength: 5
+                                            },
+                                            validationErrors: {
+                                                minLength: "账号不少于$1个字符"
+                                            },
+                                            borderMode: "half",
+                                            style: {
+                                                margin: 20
+                                            },
+                                        },
+                                        {
+                                            label: "密 码｜Password",
+                                            type: "input-password",
+                                            required: true,
+                                            placeholder: "请输入密码",
+                                            name: "password",
+                                            value: "123456",
+                                            validations: {
+                                                minLength: 6
+                                            },
+                                            validationErrors: {
+                                                minLength: "密码不少于$1个字符"
+                                            },
+                                            borderMode: "half",
+                                            style: {
+                                                margin: 20
+                                            },
+                                        },
+                                        {
+                                            type: "flex",
+                                            alignItems: "center",
+                                            style: {
+                                                height: "100%",
+                                                backgroundColor: "#fff"
+                                            },
+                                            items: [
+                                                {
+                                                    label: "登 录｜Login",
+                                                    level: "light",
+                                                    size: "lg",
+                                                    type: "submit",
+                                                    style: {
+                                                        margin: 20,
+                                                    },
+                                                }
+                                            ]
+                                        },
+                                    ]
+                                }
+                            ]
+                        },
+                    ]
+                }
+            }
+        }
+
+        const app = {
+            type: 'app',
+            brandName: 'GeekTime',
+            logo: '/public/logo.png',
+            header: {
+                type: "grid",
+                columns: [
+                    {
+                        md: 9,
+                    },
+                    {
+                        md: 0,
+                        body: {
+                            type: "flex",
+                            justify: "flex-end",
+                            items: [
+                                {
+                                    type: "avatar",
+                                    src: "${ls:avatar}",
+                                    text: "${ls:uname}",
+                                    onError: "return true;",
+                                },
+                                {
+                                    type: "dropdown-button",
+                                    level: "link",
+                                    label: "${ls:uname}",
+                                    buttons: [
+                                        {
+                                            type: "button",
+                                            level: "secondary",
+                                            label: "退出",
+                                            size: "sm",
+                                            onClick: "localStorage.clear();location.href='/';"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            footer: '<div class="p-2 text-center bg-light">Geek Time</div>',
+            api: '/pages/site.json'
+        };
+
+        function normalizeLink(to, location = history.location) {
+            to = to || '';
+
+            if (to && to[0] === '#') {
+                to = location.pathname + location.search + to;
+            } else if (to && to[0] === '?') {
+                to = location.pathname + to;
+            }
+
+            const idx = to.indexOf('?');
+            const idx2 = to.indexOf('#');
+            let pathname = ~idx
+                ? to.substring(0, idx)
+                : ~idx2
+                    ? to.substring(0, idx2)
+                    : to;
+            let search = ~idx ? to.substring(idx, ~idx2 ? idx2 : undefined) : '';
+            let hash = ~idx2 ? to.substring(idx2) : location.hash;
+
+            if (!pathname) {
+                pathname = location.pathname;
+            } else if (pathname[0] != '/' && !/^https?\:\/\//.test(pathname)) {
+                let relativeBase = location.pathname;
+                const paths = relativeBase.split('/');
+                paths.pop();
+                let m;
+                while ((m = /^\.\.?\//.exec(pathname))) {
+                    if (m[0] === '../') {
+                        paths.pop();
+                    }
+                    pathname = pathname.substring(m[0].length);
+                }
+                pathname = paths.concat(pathname).join('/');
+            }
+
+            return pathname + search + hash;
+        }
+
+        function isCurrentUrl(to, ctx) {
+            if (!to) {
+                return false;
+            }
+            const pathname = history.location.pathname;
+            const link = normalizeLink(to, {
+                ...location,
+                pathname,
+                hash: ''
+            });
+
+            if (!~link.indexOf('http') && ~link.indexOf(':')) {
+                let strict = ctx && ctx.strict;
+                return match(link, {
+                    decode: decodeURIComponent,
+                    strict: typeof strict !== 'undefined' ? strict : true
+                })(pathname);
+            }
+
+            return decodeURI(pathname) === link;
+        }
+
+        const token =  localStorage.getItem("token")
+
+        let amisInstance = amis.embed(
+            '#root',
+            token === null ? login : app,
+            {
+                location: history.location,
+                data: {},
+                context: {
+                    // API_HOST: ''
+                }
+            },
+            {
+                // watchRouteChange: fn => {
+                //   return history.listen(fn);
+                // },
+                requestAdaptor: function (api) {
+                    // if(api.url.indexOf("/v1/api/") > -1) {
+                    //   api.url = "http://localhost:9226" + api.url;
+                    // }
+                    return {
+                        ...api,
+                        headers: {
+                            ...api.headers,
+                            Authorization: "Bearer "+localStorage.getItem("token")
+                        }
+                    };
+                },
+                responseAdaptor(api, payload, query, request, response) {
+                    // console.log('responseAdaptor',payload)
+                    if(payload.status === 401 || payload.status === 400 || payload.status === 403) {
+                        localStorage.clear();
+                        location.href="/";
+                    }
+                    return {
+                        ...payload,
+                    };
+                },
+                updateLocation: (location, replace) => {
+                    location = normalizeLink(location);
+                    if (location === 'goBack') {
+                        return history.goBack();
+                    } else if (
+                        (!/^https?\:\/\//.test(location) &&
+                            location ===
+                            history.location.pathname + history.location.search) ||
+                        location === history.location.href
+                    ) {
+                        // 目标地址和当前地址一样，不处理，免得重复刷新
+                        return;
+                    } else if (/^https?\:\/\//.test(location) || !history) {
+                        return (window.location.href = location);
+                    }
+
+                    history[replace ? 'replace' : 'push'](location);
+                },
+                jumpTo: (to, action) => {
+                    if (to === 'goBack') {
+                        return history.goBack();
+                    }
+
+                    to = normalizeLink(to);
+
+                    if (isCurrentUrl(to)) {
+                        return;
+                    }
+
+                    if (action && action.actionType === 'url') {
+                        action.blank === false
+                            ? (window.location.href = to)
+                            : window.open(to, '_blank');
+                        return;
+                    } else if (action && action.blank) {
+                        window.open(to, '_blank');
+                        return;
+                    }
+
+                    if (/^https?:\/\//.test(to)) {
+                        window.location.href = to;
+                    } else if (
+                        (!/^https?\:\/\//.test(to) &&
+                            to === history.pathname + history.location.search) ||
+                        to === history.location.href
+                    ) {
+                        // do nothing
+                    } else {
+                        history.push(to);
+                    }
+                },
+                isCurrentUrl: isCurrentUrl,
+                theme: 'cxd'
+            }
+        );
+
+        history.listen(state => {
+            amisInstance.updateProps({
+                location: state.location || state
+            });
+        });
+    })();
+</script>
+</body>
+</html>

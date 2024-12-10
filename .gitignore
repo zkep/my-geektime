@@ -23,3 +23,10 @@ go.work.sum
 
 # env file
 .env
+
+# idea
+.idea
+.DS_Store
+geektime.db
+cookie.txt
+chromedriver

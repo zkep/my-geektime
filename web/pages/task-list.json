@@ -1,0 +1,275 @@
+{
+  "status": 0,
+  "code": 200,
+  "msg": "",
+  "data": {
+      "type": "page",
+      "title": "任务列表",
+      "toolbar": [
+      ],
+      "body": [
+        {
+          "type": "crud",
+          "name": "task-list",
+          "parsePrimitiveQuery": {
+            "enable": true,
+            "types": [
+              "boolean",
+              "number"
+            ]
+          },
+          "syncLocation": true,
+          "filter": {
+            "title": "条件搜索",
+            "body": [
+              {
+                "type": "group",
+                "body": [
+                  {
+                    "type": "select",
+                    "name": "status",
+                    "value": 0,
+                    "options": [
+                      {
+                        "label": "全部状态",
+                        "value": 0
+                      },
+                      {
+                        "label": "排队中",
+                        "value": 1
+                      },
+                      {
+                        "label": "处理中",
+                        "value": 2
+                      },
+                      {
+                        "label": "已完成",
+                        "value": 3
+                      },
+                      {
+                        "label": "异常",
+                        "value": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "actions": [
+              {
+                "type": "reset",
+                "label": "重置"
+              },
+              {
+                "type": "submit",
+                "level": "primary",
+                "label": "搜索"
+              }
+            ]
+          },
+          "api": {
+            "method": "get",
+            "url": "/v2/task/list"
+          },
+          "perPage": 10,
+          "keepItemSelectionOnPageChange": true,
+          "bulkActions": [],
+          "footerToolbar": [
+            "statistics",
+            "switch-per-page",
+            "pagination"
+          ],
+          "columns": [
+            {
+              "name": "task_id",
+              "type": "static",
+              "label": "任务ID"
+            },
+            {
+              "name": "task_name",
+              "type": "static",
+              "label": "任务名称"
+            },
+            {
+              "name": "statistics.count",
+              "type": "static",
+              "label": "子任务个数"
+            },
+            {
+              "name": "status",
+              "type": "static-mapping",
+              "label": "状态",
+              "map": {
+                "1": "排队中",
+                "2": "处理中",
+                "3": "已完成",
+                "4": "异常"
+              }
+            },
+            {
+              "name": "created_at",
+              "type": "date",
+              "format": "YYYY-MM-DD HH:mm:ss",
+              "label": "创建时间"
+            },
+            {
+              "name": "updated_at",
+              "type": "date",
+              "format": "YYYY-MM-DD HH:mm:ss",
+              "label": "更新时间"
+            },
+            {
+              "type": "operation",
+              "label": "操作",
+              "width": "",
+              "buttons": [
+                {
+                  "type": "button",
+                  "icon": "fa fa-eye",
+                  "actionType": "drawer",
+                  "drawer": {
+                    "size": "xl",
+                    "title": "任务详情",
+                    "body": [
+                      {
+                        "type": "crud",
+                        "name": "product-list-items",
+                        "parsePrimitiveQuery": {
+                          "enable": true,
+                          "types": [
+                            "boolean",
+                            "number"
+                          ]
+                        },
+                        "syncLocation": true,
+                        "filter": {
+                          "title": "条件搜索",
+                          "body": [
+                            {
+                              "type": "group",
+                              "body": [
+                                {
+                                  "type": "hidden",
+                                  "name": "task_pid",
+                                  "value": "${task_id}"
+                                },
+                                {
+                                  "type": "select",
+                                  "name": "status",
+                                  "value": 0,
+                                  "options": [
+                                    {
+                                      "label": "全部状态",
+                                      "value": 0
+                                    },
+                                    {
+                                      "label": "排队中",
+                                      "value": 1
+                                    },
+                                    {
+                                      "label": "处理中",
+                                      "value": 2
+                                    },
+                                    {
+                                      "label": "已完成",
+                                      "value": 3
+                                    },
+                                    {
+                                      "label": "异常",
+                                      "value": 4
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "actions": [
+                            {
+                              "type": "reset",
+                              "label": "重置"
+                            },
+                            {
+                              "type": "submit",
+                              "level": "primary",
+                              "label": "搜索"
+                            }
+                          ]
+                        },
+                        "api": {
+                          "method": "get",
+                          "url": "/v2/task/list"
+                        },
+                        "perPage": 10,
+                        "keepItemSelectionOnPageChange": true,
+                        "bulkActions": [],
+                        "footerToolbar": [
+                          "statistics",
+                          "switch-per-page",
+                          "pagination"
+                        ],
+                        "columns": [
+                          {
+                            "name": "task_id",
+                            "type": "static",
+                            "label": "任务ID"
+                          },
+                          {
+                            "name": "task_name",
+                            "type": "static",
+                            "label": "任务名称"
+                          },
+                          {
+                            "name": "status",
+                            "type": "static-mapping",
+                            "label": "状态",
+                            "map": {
+                              "1": "排队中",
+                              "2": "处理中",
+                              "3": "已完成",
+                              "4": "异常"
+                            }
+                          },
+                          {
+                            "name": "created_at",
+                            "type": "date",
+                            "format": "YYYY-MM-DD HH:mm:ss",
+                            "label": "创建时间"
+                          },
+                          {
+                            "name": "updated_at",
+                            "type": "date",
+                            "format": "YYYY-MM-DD HH:mm:ss",
+                            "label": "更新时间"
+                          }
+                        ],
+                        "affixHeader": true,
+                        "columnsTogglable": "auto",
+                        "placeholder": "暂无数据",
+                        "tableClassName": "table-db table-striped",
+                        "headerClassName": "crud-table-header",
+                        "footerClassName": "crud-table-footer",
+                        "toolbarClassName": "crud-table-toolbar",
+                        "combineNum": 0,
+                        "bodyClassName": "panel-default"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "placeholder": "-",
+              "fixed": "right"
+            }
+          ],
+          "affixHeader": true,
+          "columnsTogglable": "auto",
+          "placeholder": "暂无数据",
+          "tableClassName": "table-db table-striped",
+          "headerClassName": "crud-table-header",
+          "footerClassName": "crud-table-footer",
+          "toolbarClassName": "crud-table-toolbar",
+          "combineNum": 0,
+          "bodyClassName": "panel-default"
+        }
+      ]
+    }
+  }

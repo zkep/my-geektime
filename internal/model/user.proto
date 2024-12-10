@@ -1,0 +1,30 @@
+syntax="proto3";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.populate_all) = true;
+option go_package = "model";
+
+// User
+message User {
+  // id
+  int64 id = 1 [(gogoproto.moretags) = "gorm:\"primaryKey;autoIncrement;comment:id\""];
+  // uid
+  string uid = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:uid\""];
+  // user_name
+  string user_name = 3 [(gogoproto.moretags) = "gorm:\"index;size:255;comment:user name\""];
+  // nike_name
+  string nike_name = 4 [(gogoproto.moretags) = "gorm:\"size:255;comment:nike name\""];
+  // password
+  string password = 5 [(gogoproto.moretags) = "gorm:\"size:128;comment:password\""];
+  // avatar
+  string avatar = 6 [(gogoproto.moretags) = "gorm:\"size:255;comment:avatar\""];
+  // status
+  int32 status = 19 [(gogoproto.moretags) = "gorm:\"default:1;size:2;comment:status 1 normal\""];
+  // created_at
+  int64 created_at = 20 [(gogoproto.moretags) = "gorm:\"comment:created at\""];
+  // updated_at
+  int64 updated_at = 21 [(gogoproto.moretags) = "gorm:\"comment:updated at\""];
+  // deleted_at
+  int64 deleted_at = 22 [(gogoproto.moretags) = "gorm:\"comment:deleted at\""];
+}

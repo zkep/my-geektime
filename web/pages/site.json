@@ -1,0 +1,37 @@
+{
+  "status": 0,
+  "msg": "",
+  "data": {
+    "pages": [
+      {
+        "label": "Home",
+        "url": "/",
+        "redirect": "/product/list"
+      },
+      {
+        "label": "课程管理",
+        "rewrite": "/product/list",
+        "icon": "fa fa-magic",
+        "children": [
+          {
+            "label": "我的课程",
+            "url": "/product/list",
+            "schemaApi": "get:/pages/product-list.json"
+          }
+        ]
+      },
+      {
+        "label": "任务管理",
+        "rewrite": "/task/list",
+        "icon": "fa fa-magic",
+        "children": [
+          {
+            "label": "任务列表",
+            "url": "/task/list",
+            "schemaApi": "get:/pages/task-list.json"
+          }
+        ]
+      }
+    ]
+  }
+}

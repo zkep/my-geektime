@@ -1,0 +1,22 @@
+server:
+  app_name: Geek Time
+  run_mode: debug
+  http_addr: 0.0.0.0
+  http_port: 8090
+jwt:
+  secret: geektime-secret
+  expires: 7200
+database:
+  driver: sqlite
+  source:  geektime.db
+  max_idle_conns: 10
+  max_open_conns: 10
+storage:
+  driver: local
+  source: repo
+browser:
+  # https://chromedriver.storage.googleapis.com/index.html
+  # https://mirrors.huaweicloud.com/chromedriver/
+  driver_path: ./chromedriver
+  cookie_path: ./cookie.txt
+  open_browser: true

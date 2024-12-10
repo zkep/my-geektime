@@ -1,0 +1,433 @@
+{
+  "status": 0,
+  "msg": "",
+  "data": {
+    "type": "page",
+    "title": "我的课程",
+    "name": "product",
+    "toolbar": [],
+    "body": [
+      {
+        "type": "crud",
+        "name": "product-list",
+        "parsePrimitiveQuery": {
+          "enable": true,
+          "types": [
+            "boolean",
+            "number"
+          ]
+        },
+        "syncLocation": true,
+        "filter": {
+          "title": "条件搜索",
+          "body": [
+            {
+              "type": "group",
+              "body": [
+                {
+                  "type": "select",
+                  "name": "sort",
+                  "value": 1,
+                  "options": [
+                    {
+                      "label": "最近学习",
+                      "value": 1
+                    },
+                    {
+                      "label": "最近加入",
+                      "value": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "select",
+                  "name": "type",
+                  "value": "",
+                  "options": [
+                    {
+                      "label": "所有类型",
+                      "value": ""
+                    },
+                    {
+                      "label": "专栏",
+                      "value": "c1"
+                    },
+                    {
+                      "label": "视频课",
+                      "value": "c3"
+                    },
+                    {
+                      "label": "每日一课",
+                      "value": "d"
+                    },
+                    {
+                      "label": "公开课",
+                      "value": "p"
+                    },
+                    {
+                      "label": "大厂案例",
+                      "value": "q"
+                    },
+                    {
+                      "label": "训练营",
+                      "value": "u21"
+                    },
+                    {
+                      "label": "体验课",
+                      "value": "u27"
+                    },
+                    {
+                      "label": "严选课",
+                      "value": "zx"
+                    },
+                    {
+                      "label": "其他",
+                      "value": "x"
+                    }
+                  ]
+                },
+                {
+                  "type": "select",
+                  "name": "learn_status",
+                  "value": 0,
+                  "options": [
+                    {
+                      "label": "全部进度",
+                      "value": 0
+                    },
+                    {
+                      "label": "未学完",
+                      "value": 1
+                    },
+                    {
+                      "label": "已学完",
+                      "value": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "select",
+                  "name": "expire",
+                  "value": 1,
+                  "options": [
+                    {
+                      "label": "有效课程",
+                      "value": 1
+                    },
+                    {
+                      "label": "过期课程",
+                      "value": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "hidden",
+                  "name": "desc",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": "reset",
+              "label": "重置"
+            },
+            {
+              "type": "submit",
+              "level": "primary",
+              "label": "搜索"
+            }
+          ]
+        },
+        "api": {
+          "method": "get",
+          "url": "/v2/product/list"
+        },
+        "perPage": 5,
+        "keepItemSelectionOnPageChange": true,
+        "bulkActions": [],
+        "footerToolbar": [
+          "switch-per-page",
+          "pagination"
+        ],
+        "columns": [
+          {
+            "name": "id",
+            "type": "static",
+            "label": "ID"
+          },
+          {
+            "name": "share.title",
+            "type": "static",
+            "label": "标题"
+          },
+          {
+            "name": "author.avatar",
+            "type": "image",
+            "enlargeAble": true,
+            "thumbMode": "cover",
+            "label": "作者头像"
+          },
+          {
+            "name": "author.name",
+            "type": "static",
+            "label": "作者"
+          },
+          {
+            "name": "is_video",
+            "type": "static-mapping",
+            "label": "视频",
+            "map": {
+              "true": "是",
+              "*": "否"
+            }
+          },
+          {
+            "name": "is_finish",
+            "type": "static-mapping",
+            "label": "完结",
+            "map": {
+              "true": "是",
+              "*": "否"
+            }
+          },
+          {
+            "type": "operation",
+            "label": "操作",
+            "width": "",
+            "buttons": [
+              {
+                "type": "button",
+                "icon": "fa fa-eye",
+                "actionType": "drawer",
+                "drawer": {
+                  "size": "xl",
+                  "title": "课程详情",
+                  "body": [
+                    {
+                      "type": "card",
+                      "header": {
+                        "title": "${share.title}",
+                        "subTitle": "${title}",
+                        "description": "${subtitle}",
+                        "avatarClassName": "pull-left thumb-md avatar b-3x m-r",
+                        "avatar":"${author.avatar}"
+                      },
+                      "body": [
+                        {
+                          "type": "divider"
+                        },
+                        {
+                          "name": "intro_html",
+                          "type": "html",
+                          "label": "课程介绍"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "crud",
+                      "name": "articles-list",
+                      "parsePrimitiveQuery": {
+                        "enable": true,
+                        "types": [
+                          "boolean",
+                          "number"
+                        ]
+                      },
+                      "syncLocation": true,
+                      "filter": {
+                        "title": "",
+                        "body": [
+                          {
+                            "type": "group",
+                            "body": [
+                              {
+                                "type": "hidden",
+                                "name": "cid",
+                                "value": "${id}"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "api": {
+                        "method": "get",
+                        "url": "/v2/product/articles"
+                      },
+                      "perPage": 200,
+                      "keepItemSelectionOnPageChange": true,
+                      "bulkActions": [
+                        {
+                          "label": "批量下载",
+                          "actionType": "ajax",
+                          "api": {
+                            "url": "/v2/product/download",
+                            "method":"post",
+                            "data": {
+                              "pid": "${cid}",
+                              "ids": "${ids|raw}"
+                            }
+                          },
+                          "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在任务列表查看下载情况"
+                        }
+                      ],
+                      "footerToolbar": [
+                        "statistics",
+                        "switch-per-page",
+                        "pagination"
+                      ],
+                      "columns": [
+                        {
+                          "name": "id",
+                          "type": "static",
+                          "label": "ID"
+                        },
+                        {
+                          "name": "article_title",
+                          "type": "static",
+                          "label": "标题"
+                        },
+                        {
+                          "name": "article_cover",
+                          "type": "static-image",
+                          "label": "封面图",
+                          "thumbMode": "cover"
+                        },
+                        {
+                          "type": "operation",
+                          "label": "操作",
+                          "width": "",
+                          "buttons": [
+                            {
+                              "type": "button",
+                              "icon": "fa fa-eye",
+                              "actionType": "drawer",
+                              "drawer": {
+                                "size": "xl",
+                                "title": "课程详情",
+                                "body": [
+                                  {
+                                    "type": "service",
+                                    "api": {
+                                      "method": "get",
+                                      "url": "/v2/product/article/info?id=${id}"
+                                    },
+                                    "body": [
+                                      {
+                                        "name": "pid",
+                                        "type": "static",
+                                        "label": "PID"
+                                      },
+                                      {
+                                        "type": "divider"
+                                      },
+                                      {
+                                        "name": "id",
+                                        "type": "static",
+                                        "label": "ID"
+                                      },
+                                      {
+                                        "type": "divider"
+                                      },
+                                      {
+                                        "name": "title",
+                                        "type": "static",
+                                        "label": "标题"
+                                      },
+                                      {
+                                        "type": "divider"
+                                      },
+                                      {
+                                        "type": "video",
+                                        "muted": true,
+                                        "autoPlay": false,
+                                        "rates": [1.0, 1.5, 2.0],
+                                        "src": "${video.hls_medias|last|pick:url}",
+                                        "poster": "${video.cover}",
+                                        "visibleOn": "${ video.cover !== undefined }"
+                                      },
+                                      {
+                                        "type": "audio",
+                                        "autoPlay": false,
+                                        "rates": [1.0, 1.5, 2.0],
+                                        "src": "${audio.download_url}",
+                                        "visibleOn": "${ audio.download_url !== undefined }"
+                                      },
+                                      {
+                                        "type": "divider"
+                                      },
+                                      {
+                                        "type": "html",
+                                        "name": "content",
+                                        "label": "附件"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "type": "button",
+                              "icon": "fa fa-download",
+                              "actionType": "ajax",
+                              "api": {
+                                "url": "/v2/product/download",
+                                "method":"post",
+                                "data": {
+                                  "pid": "${cid}",
+                                  "ids": "${id | trim}"
+                                }
+                              },
+                              "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在任务列表查看下载情况"
+                            }
+
+                          ],
+                          "placeholder": "-",
+                          "fixed": "right"
+                        }
+                      ],
+                      "affixHeader": true,
+                      "columnsTogglable": "auto",
+                      "placeholder": "暂无数据",
+                      "tableClassName": "table-db table-striped",
+                      "headerClassName": "crud-table-header",
+                      "footerClassName": "crud-table-footer",
+                      "toolbarClassName": "crud-table-toolbar",
+                      "combineNum": 0,
+                      "bodyClassName": "panel-default"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "button",
+                "icon": "fa fa-download",
+                "actionType": "ajax",
+                "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在任务列表查看下载情况",
+                "api": {
+                  "url": "/v2/product/download",
+                  "method":"post",
+                  "data": {
+                    "pid": "${id}"
+                  }
+                }
+              }
+            ],
+            "placeholder": "-",
+            "fixed": "right"
+          }
+        ],
+        "affixHeader": true,
+        "columnsTogglable": "auto",
+        "placeholder": "暂无数据",
+        "tableClassName": "table-db table-striped",
+        "headerClassName": "crud-table-header",
+        "footerClassName": "crud-table-footer",
+        "toolbarClassName": "crud-table-toolbar",
+        "combineNum": 0,
+        "bodyClassName": "panel-default"
+      }
+    ]
+  }
+}
