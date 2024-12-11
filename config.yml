@@ -15,7 +15,7 @@ database:
   max_open_conns: 10
 storage: # mp4 or mp3 save folder
   driver: local
-  source: repo
+  source: /tmp
 browser:
   # https://mirrors.huaweicloud.com/chromedriver/
   # https://chromedriver.storage.googleapis.com/index.html

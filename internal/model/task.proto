@@ -13,6 +13,8 @@ message Task {
   string task_id = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:task id\""];
   // task pid
   string task_pid = 3 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:task pid\""];
+  // other id
+  string other_id = 4 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:other id\""];
   // task name
   string task_name = 5 [(gogoproto.moretags) = "gorm:\"size:128;comment:task name\""];
   // task type

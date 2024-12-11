@@ -172,6 +172,7 @@ func (p *Product) Download(c *gin.Context) {
 		item := model.Task{
 			TaskPid:  jobId,
 			TaskId:   service.TaskID(),
+			OtherId:  fmt.Sprintf("%d", info.Data.Info.Id),
 			TaskName: info.Data.Info.Title,
 			TaskType: service.TASK_TYPE_ARTICLE,
 			Raw:      raw,

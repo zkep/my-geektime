@@ -2,7 +2,11 @@ package v2
 
 import (
 	"encoding/json"
+	"github.com/zkep/mygeektime/internal/service"
+	"github.com/zkep/mygeektime/internal/types/geek"
+	"gorm.io/gorm"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -76,14 +80,40 @@ func (t *Task) Retry(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
 	}
-	ids := make([]any, 0, 5)
-	for _, val := range strings.Split(req.Ids, ",") {
-		ids = append(ids, val)
-	}
-	if err := global.DB.Model(&model.Task{}).
-		Where("task_id IN ?", ids).
-		Update("status", 1).Error; err != nil {
+	err := global.DB.Transaction(func(tx *gorm.DB) error {
+		for _, idx := range strings.Split(req.Ids, ",") {
+			var item model.Task
+			if err := tx.Model(&model.Task{}).
+				Where("task_id = ?", idx).
+				First(&item).Error; err != nil {
+				return err
+			}
+			switch item.TaskType {
+			case service.TASK_TYPE_ARTICLE:
+				otherId, err := strconv.ParseInt(item.OtherId, 10, 64)
+				if err != nil {
+					return err
+				}
+				info, err := service.GetArticleInfo(c, geek.ArticlesInfoRequest{Id: otherId})
+				if err != nil {
+					return err
+				}
+				raw, _ := json.Marshal(info.Data)
+				item.Raw = raw
+				item.Status = service.TASK_STATUS_PENDING
+				err = tx.Model(&model.Task{}).
+					Where("task_id", item.TaskId).
+					Updates(&item).Error
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	})
+	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK"})
 }
