@@ -25,13 +25,5 @@ func (app *App) Run(f *Flags) error {
 	if len(f.Id) == 0 && f.Pid == 0 {
 		return fmt.Errorf("no ids or no pid")
 	}
-	if len(f.Id) == 0 && f.Pid > 0 {
-
-	}
-	for _, id := range f.Id {
-		if id > 0 {
-
-		}
-	}
 	return nil
 }
