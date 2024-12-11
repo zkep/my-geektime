@@ -3,7 +3,7 @@
   "msg": "",
   "data": {
     "type": "page",
-    "title": "我的课程",
+    "title": " ",
     "name": "product",
     "toolbar": [],
     "body": [
@@ -18,6 +18,15 @@
           ]
         },
         "syncLocation": true,
+        "filterTogglable": {
+          "label": "更多搜索",
+          "activeLabel": "收起搜索",
+          "icon": "fa fa-arrow-down mr-1",
+          "activeIcon": "fa fa-arrow-up mr-1"
+        },
+        "headerToolbar": [
+          "filter-toggler"
+        ],
         "filter": {
           "title": "条件搜索",
           "body": [
@@ -145,6 +154,8 @@
           "url": "/v2/product/list"
         },
         "perPage": 5,
+        "autoFillHeight": false,
+        "maxKeepItemSelectionLength": 11,
         "keepItemSelectionOnPageChange": true,
         "bulkActions": [],
         "footerToolbar": [
@@ -246,16 +257,28 @@
                                 "type": "hidden",
                                 "name": "cid",
                                 "value": "${id}"
+                              },
+                              {
+                                "type": "hidden",
+                                "name": "order",
+                                "value": "earliest"
+                              },
+                              {
+                                "type": "hidden",
+                                "name": "sample",
+                                "value": false
                               }
                             ]
                           }
-                        ]
+                        ],
+                        "actions": []
                       },
                       "api": {
                         "method": "get",
                         "url": "/v2/product/articles"
                       },
                       "perPage": 200,
+                      "maxKeepItemSelectionLength": 11,
                       "keepItemSelectionOnPageChange": true,
                       "bulkActions": [
                         {
@@ -271,6 +294,17 @@
                           },
                           "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在任务列表查看下载情况"
                         }
+                      ],
+                      "headerToolbar": [
+                        "filter-toggler",
+                        "bulkActions",
+                        {
+                          "type": "tpl",
+                          "tpl": "当前有 ${count} 条数据。",
+                          "className": "v-middle"
+                        },
+                        "pagination",
+                        "switch-per-page"
                       ],
                       "footerToolbar": [
                         "statistics",
@@ -297,7 +331,7 @@
                         {
                           "type": "operation",
                           "label": "操作",
-                          "width": "",
+                          "width": "100",
                           "buttons": [
                             {
                               "type": "button",

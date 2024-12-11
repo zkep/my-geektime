@@ -2,7 +2,7 @@ package task
 
 type TaskListRequest struct {
 	TaskPid string `json:"task_pid"  form:"task_pid"`
-	Status  int    `json:"status" form:"status"`
+	Xstatus int    `json:"xstatus" form:"xstatus"`
 	Page    int    `json:"page" form:"page"`
 	PerPage int    `json:"perPage"  form:"perPage"`
 }
@@ -23,6 +23,8 @@ type Task struct {
 	TaskType string `json:"task_type,omitempty"`
 	// status
 	Status int32 `json:"status,omitempty"`
+	// Message
+	Message []byte `json:"message,omitempty"`
 	// statistics
 	Statistics TaskStatistics `json:"statistics,omitempty"`
 	// created_at
@@ -34,6 +36,13 @@ type Task struct {
 }
 
 type TaskStatistics struct {
-	Count int           `json:"count"`
-	Items map[int32]int `json:"items"`
+	Count int         `json:"count"`
+	Items map[int]int `json:"items"`
+}
+
+type RetryRequest struct {
+	// task pid
+	Pid string `json:"pid,omitempty" form:"pid"`
+	// task ids
+	Ids string `json:"ids,omitempty" form:"ids"`
 }

@@ -5,24 +5,18 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 option (gogoproto.populate_all) = true;
 option go_package = "model";
 
-// Task
-message Task {
+// Product
+message Product {
   // id
   int64 id = 1 [(gogoproto.moretags) = "gorm:\"primaryKey;autoIncrement;comment:id\""];
-  // task id
-  string task_id = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:task id\""];
-  // task pid
-  string task_pid = 3 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:task pid\""];
-  // task name
-  string task_name = 5 [(gogoproto.moretags) = "gorm:\"size:128;comment:task name\""];
-  // task type
-  string task_type = 6 [(gogoproto.moretags) = "gorm:\"index;size:50;comment:task type\""];
+  // pid
+  string pid = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:product id\""];
+  // title
+  string title = 5 [(gogoproto.moretags) = "gorm:\"comment:title\""];
+  // cover
+  string cover = 6 [(gogoproto.moretags) = "gorm:\"comment:cover\""];
   // raw
   bytes raw = 7 [(gogoproto.moretags) = "gorm:\"comment:raw\""];
-  // message
-  bytes message = 8 [(gogoproto.moretags) = "gorm:\"comment:message\""];
-  // message
-  bytes statistics = 9 [(gogoproto.moretags) = "gorm:\"comment:statistics\""];
   // status
   int32 status = 19 [(gogoproto.moretags) = "gorm:\"default:1;size:2;comment:status 1 normal\""];
   // created_at

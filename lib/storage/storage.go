@@ -3,18 +3,17 @@ package storage
 import (
 	"fmt"
 	"io"
-	"io/fs"
 	"os"
 	"path"
 	"strings"
 )
 
 type Storage interface {
-	Put(string, io.ReadCloser) (string, error)
-	Get(string) (io.ReadCloser, error)
+	Put(string, io.ReadCloser) (os.FileInfo, string, error)
+	Get(string) (io.ReadCloser, os.FileInfo, string, error)
+	Stat(string) (os.FileInfo, string, error)
 	Delete(string) error
-	Stat(string) (fs.FileInfo, error)
-	GetKey(string) string
+	GetKey(key string) string
 }
 
 var _ Storage = (*LocalStorage)(nil)
@@ -47,33 +46,41 @@ func (ls *LocalStorage) mkdir(key string) (string, error) {
 	return objectPath, err
 }
 
-func (ls *LocalStorage) Put(key string, value io.ReadCloser) (string, error) {
+func (ls *LocalStorage) Put(key string, r io.ReadCloser) (os.FileInfo, string, error) {
 	dest, err := ls.mkdir(key)
 	if err != nil {
-		return dest, err
+		return nil, dest, err
 	}
 	fi, err := os.Create(dest)
 	if err != nil {
-		return dest, err
+		return nil, dest, err
 	}
 	defer func() { _ = fi.Close() }()
-	_, err = io.Copy(fi, value)
+	_, err = io.Copy(fi, r)
 	if err != nil {
-		return dest, err
+		return nil, dest, err
 	}
-	return dest, nil
+	stat, err := fi.Stat()
+	if err != nil {
+		return nil, dest, err
+	}
+	return stat, dest, nil
 }
 
-func (ls *LocalStorage) Get(key string) (io.ReadCloser, error) {
+func (ls *LocalStorage) Get(key string) (io.ReadCloser, os.FileInfo, string, error) {
 	dest, err := ls.mkdir(key)
 	if err != nil {
-		return nil, err
+		return nil, nil, dest, err
 	}
 	fi, err := os.Open(dest)
 	if err != nil {
-		return nil, err
+		return nil, nil, dest, err
 	}
-	return fi, nil
+	stat, err := fi.Stat()
+	if err != nil {
+		return nil, nil, dest, err
+	}
+	return fi, stat, dest, nil
 }
 
 func (ls *LocalStorage) Delete(key string) error {
@@ -88,12 +95,16 @@ func (ls *LocalStorage) Delete(key string) error {
 	return err
 }
 
-func (ls *LocalStorage) Stat(key string) (fs.FileInfo, error) {
+func (ls *LocalStorage) Stat(key string) (os.FileInfo, string, error) {
 	dest, err := ls.mkdir(key)
 	if err != nil {
-		return nil, err
+		return nil, dest, err
 	}
-	return os.Stat(dest)
+	stat, err := os.Stat(dest)
+	if err != nil {
+		return nil, dest, err
+	}
+	return stat, dest, nil
 }
 
 func (ls *LocalStorage) GetKey(key string) string {

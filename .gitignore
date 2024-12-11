@@ -27,6 +27,6 @@ go.work.sum
 # idea
 .idea
 .DS_Store
-geektime.db
+*.db
 cookie.txt
 chromedriver

@@ -112,15 +112,26 @@ func NewRetryTimer(ctx context.Context, opts ...Retry) <-chan int {
 }
 
 var RetryableHTTPStatusCodes = map[int]struct{}{
-	http.StatusTooManyRequests:     {},
-	http.StatusInternalServerError: {},
-	http.StatusBadGateway:          {},
-	http.StatusServiceUnavailable:  {},
-	http.StatusGatewayTimeout:      {},
+	http.StatusInternalServerError:        {},
+	http.StatusBadGateway:                 {},
+	http.StatusServiceUnavailable:         {},
+	http.StatusGatewayTimeout:             {},
+	http.StatusTooManyRequests:            {},
+	http.StatusUnavailableForLegalReasons: {},
 }
 
 func IsHTTPStatusRetryable(httpStatusCode int) (ok bool) {
 	_, ok = RetryableHTTPStatusCodes[httpStatusCode]
+	return ok
+}
+
+var SleepHTTPStatusCodes = map[int]struct{}{
+	http.StatusTooManyRequests:            {},
+	http.StatusUnavailableForLegalReasons: {},
+}
+
+func IsHTTPStatusSleep(httpStatusCode int) (ok bool) {
+	_, ok = SleepHTTPStatusCodes[httpStatusCode]
 	return ok
 }
 

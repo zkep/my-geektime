@@ -1,7 +1,6 @@
 package v2
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,18 +16,10 @@ import (
 	"gorm.io/gorm"
 )
 
-type Product struct {
-	LearnProductURL string
-	ArticlesURL     string
-	ArticleInfoURL  string
-}
+type Product struct{}
 
 func NewProduct() *Product {
-	return &Product{
-		LearnProductURL: "https://time.geekbang.org/serv/v3/learn/product",
-		ArticlesURL:     "https://time.geekbang.com/serv/v1/column/articles",
-		ArticleInfoURL:  "https://time.geekbang.org/serv/v3/article/info",
-	}
+	return &Product{}
 }
 
 func (p *Product) List(c *gin.Context) {
@@ -40,7 +31,7 @@ func (p *Product) List(c *gin.Context) {
 	req.WithLearnCount = 1
 	req.Size = req.PerPage
 	req.Prev = req.Page
-	resp, err := p.getLearnProduct(c, req)
+	resp, err := service.GetLearnProduct(c, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
@@ -68,18 +59,7 @@ func (p *Product) List(c *gin.Context) {
 			Article:       v.Article,
 		})
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "data": ret})
-}
-
-func (p *Product) getLearnProduct(c *gin.Context,
-	req geek.ProductListRequest) (*geek.LearnProductResponse, error) {
-	raw, _ := json.Marshal(req)
-	var resp geek.LearnProductResponse
-	err := service.Request(c, http.MethodPost, p.LearnProductURL, bytes.NewBuffer(raw), &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": ret})
 }
 
 func (p *Product) Articles(c *gin.Context) {
@@ -90,7 +70,7 @@ func (p *Product) Articles(c *gin.Context) {
 	}
 	req.Size = req.PerPage
 	req.Prev = req.Page
-	resp, err := p.getArticles(c, req)
+	resp, err := service.GetArticles(c, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
@@ -118,39 +98,18 @@ func (p *Product) Articles(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": 0, "data": ret})
 }
 
-func (p *Product) getArticles(c *gin.Context, req geek.ArticlesListRequest) (*geek.ArticlesResponse, error) {
-	raw, _ := json.Marshal(req)
-	var resp geek.ArticlesResponse
-	err := service.Request(c, http.MethodPost, p.ArticlesURL, bytes.NewBuffer(raw), &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
 func (p *Product) ArticleInfo(c *gin.Context) {
 	var req geek.ArticlesInfoRequest
 	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
 	}
-	resp, err := p.getArticleInfo(c, req)
+	resp, err := service.GetArticleInfo(c, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "data": resp.Data.Info})
-}
-
-func (p *Product) getArticleInfo(
-	ctx *gin.Context, req geek.ArticlesInfoRequest) (*geek.ArticleInfoResponse, error) {
-	raw, _ := json.Marshal(req)
-	var resp geek.ArticleInfoResponse
-	err := service.Request(ctx, http.MethodPost, p.ArticleInfoURL, bytes.NewBuffer(raw), &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": resp.Data.Info})
 }
 
 func (p *Product) Download(c *gin.Context) {
@@ -177,11 +136,12 @@ func (p *Product) Download(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": "not valid ids"})
 			return
 		}
-		resp, err := p.getArticles(c,
+		resp, err := service.GetArticles(c,
 			geek.ArticlesListRequest{
-				Cid:  fmt.Sprintf("%d", req.Pid),
-				Prev: 1,
-				Size: 500,
+				Cid:   fmt.Sprintf("%d", req.Pid),
+				Order: "earliest",
+				Prev:  1,
+				Size:  500,
 			})
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
@@ -200,7 +160,7 @@ func (p *Product) Download(c *gin.Context) {
 	}
 	tasks := make([]*model.Task, 0, len(ids))
 	for _, id := range ids {
-		info, err := p.getArticleInfo(c, geek.ArticlesInfoRequest{Id: id})
+		info, err := service.GetArticleInfo(c, geek.ArticlesInfoRequest{Id: id})
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 			return
@@ -218,9 +178,15 @@ func (p *Product) Download(c *gin.Context) {
 		}
 		tasks = append(tasks, &item)
 	}
+	count := len(tasks)
 	statistics := task.TaskStatistics{
-		Count: len(tasks),
-		Items: make(map[int32]int),
+		Count: count,
+		Items: map[int]int{
+			service.TASK_STATUS_PENDING:  count,
+			service.TASK_STATUS_RUNNING:  0,
+			service.TASK_STATUS_FINISHED: 0,
+			service.TASK_STATUS_ERROR:    0,
+		},
 	}
 	job.Statistics, _ = json.Marshal(statistics)
 	err := global.DB.Transaction(func(tx *gorm.DB) error {
@@ -239,5 +205,5 @@ func (p *Product) Download(c *gin.Context) {
 		return
 	}
 	resp := geek.DowloadResponse{JobID: jobId}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "data": resp})
+	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": resp})
 }

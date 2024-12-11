@@ -22,6 +22,9 @@ func Gorm(_ context.Context) error {
 	if err = g.AutoMigrate(
 		&model.User{},
 		&model.Task{},
+		&model.Article{},
+		&model.ArticleSimple{},
+		&model.Product{},
 	); err != nil {
 		return err
 	}

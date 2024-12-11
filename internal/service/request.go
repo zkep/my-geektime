@@ -7,13 +7,15 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/lib/zhttp"
 	"go.uber.org/zap"
 )
 
-func Request(ctx context.Context, method, url string, body io.Reader, obj any) error {
+func Request(ctx context.Context, method, url string,
+	body io.Reader, obj any, after func(raw []byte, obj any) error) error {
 	return zhttp.R.
 		Client(global.HttpClient).
 		Before(func(r *http.Request) {
@@ -41,8 +43,14 @@ func Request(ctx context.Context, method, url string, body io.Reader, obj any) e
 							zap.Error(err))
 						return err
 					}
+					if after != nil {
+						return after(raw, obj)
+					}
 					return nil
 				}
+			}
+			if zhttp.IsHTTPStatusSleep(r.StatusCode) {
+				time.Sleep(time.Second * 10)
 			}
 			if zhttp.IsHTTPStatusRetryable(r.StatusCode) {
 				return errors.New("http status: " + r.Status)

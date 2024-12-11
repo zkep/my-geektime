@@ -27,7 +27,7 @@ import (
 )
 
 type Flags struct {
-	Config string `name:"config" default:"config.yml" help:"Path to config file"`
+	Config string `name:"config" default:"config.yml" description:"Path to config file"`
 }
 
 type App struct {
@@ -69,6 +69,7 @@ func (app *App) Run(f *Flags) error {
 	if err = initialize.Storage(app.ctx); err != nil {
 		return err
 	}
+
 	options := []fx.Option{
 		fx.Provide(func() context.Context { return app.ctx }),
 		fx.Provide(func() *config.Config { return global.CONF }),
@@ -104,7 +105,7 @@ func (app *App) newHttpServer(f *config.Config) error {
 			global.LOG.Error("listen: ", zap.Error(err))
 		}
 	}()
-	if global.CONF.Browser.OpenBrowser {
+	if f.Browser.OpenBrowser {
 		openURL := fmt.Sprintf("http://%s", addr)
 		if err := browser.Open(openURL); err != nil {
 			return err

@@ -16,6 +16,13 @@ const (
 	TASK_TYPE_ARTICLE = "article"
 )
 
+var ALLStatus = []int{
+	TASK_STATUS_PENDING,
+	TASK_STATUS_RUNNING,
+	TASK_STATUS_FINISHED,
+	TASK_STATUS_ERROR,
+}
+
 func TaskID() string {
 	return uuid.New().String()
 }

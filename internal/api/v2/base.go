@@ -41,6 +41,7 @@ func (b *Base) Login(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"status": 0,
+		"msg":    "OK",
 		"token":  token,
 		"user":   global.GeekUser,
 		"expire": expire.Format(time.RFC3339),

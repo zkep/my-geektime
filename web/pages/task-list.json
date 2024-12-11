@@ -19,6 +19,15 @@
             ]
           },
           "syncLocation": true,
+          "filterTogglable": {
+            "label": "更多搜索",
+            "activeLabel": "收起搜索",
+            "icon": "fa fa-arrow-down mr-1",
+            "activeIcon": "fa fa-arrow-up mr-1"
+          },
+          "headerToolbar": [
+            "filter-toggler"
+          ],
           "filter": {
             "title": "条件搜索",
             "body": [
@@ -91,9 +100,14 @@
               "label": "任务名称"
             },
             {
-              "name": "statistics.count",
               "type": "static",
-              "label": "子任务个数"
+              "name": "statistics.count",
+              "label": "任务数"
+            },
+            {
+              "type": "tpl",
+              "label": "任务统计",
+              "tpl": "<div>排队中: ${statistics.items.1}<br/>处理中: ${statistics.items.2}<br/>已完成: ${statistics.items.3}<br/>异常: ${statistics.items.4}<div>"
             },
             {
               "name": "status",
@@ -142,7 +156,17 @@
                           ]
                         },
                         "syncLocation": true,
+                        "filterTogglable": {
+                          "label": "更多搜索",
+                          "activeLabel": "收起搜索",
+                          "icon": "fa fa-arrow-down mr-1",
+                          "activeIcon": "fa fa-arrow-up mr-1"
+                        },
+                        "headerToolbar": [
+                          "filter-toggler"
+                        ],
                         "filter": {
+                          "debug": false,
                           "title": "条件搜索",
                           "body": [
                             {
@@ -155,7 +179,7 @@
                                 },
                                 {
                                   "type": "select",
-                                  "name": "status",
+                                  "name": "xstatus",
                                   "value": 0,
                                   "options": [
                                     {
@@ -199,9 +223,25 @@
                           "method": "get",
                           "url": "/v2/task/list"
                         },
-                        "perPage": 10,
+                        "defaultParams": {
+                          "perPage": 10
+                        },
                         "keepItemSelectionOnPageChange": true,
-                        "bulkActions": [],
+                        "bulkActions": [
+                          {
+                            "label": "批量下载",
+                            "actionType": "ajax",
+                            "api": {
+                              "url": "/v2/task/retry",
+                              "method":"post",
+                              "data": {
+                                "pid": "${task_pid}",
+                                "ids": "${task_id | trim}"
+                              }
+                            },
+                            "confirmText": "确定要重新下载吗？"
+                          }
+                        ],
                         "footerToolbar": [
                           "statistics",
                           "switch-per-page",
@@ -222,12 +262,18 @@
                             "name": "status",
                             "type": "static-mapping",
                             "label": "状态",
+                            "canAccessSuperData": false,
                             "map": {
                               "1": "排队中",
                               "2": "处理中",
                               "3": "已完成",
                               "4": "异常"
                             }
+                          },
+                          {
+                            "type": "tpl",
+                            "label": "详情",
+                            "tpl": "${message|base64Decode}"
                           },
                           {
                             "name": "created_at",
@@ -240,6 +286,29 @@
                             "type": "date",
                             "format": "YYYY-MM-DD HH:mm:ss",
                             "label": "更新时间"
+                          },
+                          {
+                            "type": "operation",
+                            "label": "操作",
+                            "width": "100",
+                            "buttons": [
+                              {
+                                "type": "button",
+                                "icon": "fa-solid fa-repeat",
+                                "actionType": "ajax",
+                                "api": {
+                                  "url": "/v2/task/retry",
+                                  "method":"post",
+                                  "data": {
+                                    "pid": "${task_pid}",
+                                    "ids": "${task_id | trim}"
+                                  }
+                                },
+                                "confirmText": "确定要重新下载么？"
+                              }
+                            ],
+                            "placeholder": "-",
+                            "fixed": "right"
                           }
                         ],
                         "affixHeader": true,

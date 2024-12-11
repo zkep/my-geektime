@@ -9,10 +9,11 @@ import (
 	"github.com/zkep/mygeektime/lib/schedule"
 )
 
-func Tw(_ context.Context) error {
+func Tw(ctx context.Context) error {
+
 	global.TW = schedule.NewTimerWheel(200*time.Millisecond, 1000)
 
-	global.TW.RepeatedTimer(time.Second*30, func(t time.Time) { _ = task.TaskHandler(t) }, nil)
+	global.TW.RepeatedTimer(time.Second*30, func(t time.Time) { _ = task.TaskHandler(ctx, t) }, nil)
 
 	return nil
 }
