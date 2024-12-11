@@ -2,9 +2,6 @@ package v2
 
 import (
 	"encoding/json"
-	"github.com/zkep/mygeektime/internal/service"
-	"github.com/zkep/mygeektime/internal/types/geek"
-	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,7 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
+	"github.com/zkep/mygeektime/internal/service"
+	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/internal/types/task"
+	"gorm.io/gorm"
 )
 
 type Task struct{}
