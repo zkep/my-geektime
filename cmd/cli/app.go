@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"fmt"
 	"os"
 )
 
@@ -21,9 +20,4 @@ func NewApp(ctx context.Context, quit <-chan os.Signal) *App {
 	return &App{ctx: ctx, quit: quit}
 }
 
-func (app *App) Run(f *Flags) error {
-	if len(f.Id) == 0 && f.Pid == 0 {
-		return fmt.Errorf("no ids or no pid")
-	}
-	return nil
-}
+func (app *App) Browser(f *BrowserFlags) error { return browser(f) }

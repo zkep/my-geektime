@@ -17,6 +17,8 @@ type Task struct {
 	TaskId string `json:"task_id,omitempty"`
 	// task pid
 	TaskPid string `json:"task_pid,omitempty"`
+	// otherId
+	OtherId string `json:"other_id,omitempty"`
 	// task name
 	TaskName string `json:"task_name,omitempty"`
 	// task type
@@ -42,7 +44,7 @@ type TaskStatistics struct {
 
 type RetryRequest struct {
 	// task pid
-	Pid string `json:"pid,omitempty" form:"pid"`
+	Pid string `json:"pid,omitempty" form:"pid" binding:"required"`
 	// task ids
-	Ids string `json:"ids,omitempty" form:"ids"`
+	Ids string `json:"ids,omitempty" form:"ids" binding:"required"`
 }

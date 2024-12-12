@@ -63,10 +63,13 @@ func (app *App) Run(f *Flags) error {
 	if err = initialize.Logger(app.ctx); err != nil {
 		return err
 	}
-	if err = initialize.Tw(app.ctx); err != nil {
+	if err = initialize.Storage(app.ctx); err != nil {
 		return err
 	}
-	if err = initialize.Storage(app.ctx); err != nil {
+	if err = initialize.GPool(app.ctx); err != nil {
+		return err
+	}
+	if err = initialize.Tw(app.ctx); err != nil {
 		return err
 	}
 

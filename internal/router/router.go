@@ -6,13 +6,13 @@ import (
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/zkep/mygeektime/internal/middleware"
+	mw "github.com/zkep/mygeektime/internal/middleware"
 )
 
 func NewRouter(assets embed.FS) *gin.Engine {
 	e := gin.Default()
 
-	e.Use(middleware.Cors())
+	e.Use(mw.Cors())
 
 	e.Use(static.Serve("/", static.EmbedFolder(assets, "web")))
 
@@ -20,8 +20,8 @@ func NewRouter(assets embed.FS) *gin.Engine {
 		c.Redirect(http.StatusMovedPermanently, "/")
 	})
 
-	public := e.Group("v2")
-	private := e.Group("v2", middleware.JWTMiddleware())
+	public := e.Group("v2", mw.Timeout())
+	private := e.Group("v2", mw.JWTMiddleware(), mw.Timeout())
 
 	base(public, private)
 

@@ -156,6 +156,7 @@ func (p *Product) Download(c *gin.Context) {
 	job := &model.Task{
 		TaskId:   jobId,
 		TaskType: service.TASK_TYPE_PRODUCT,
+		OtherId:  fmt.Sprintf("%d", req.Pid),
 		Raw:      raw,
 	}
 	tasks := make([]*model.Task, 0, len(ids))

@@ -378,7 +378,7 @@ type LearnProductResponse struct {
 }
 
 type DowloadRequest struct {
-	Pid int64 `json:"pid,omitempty"`
+	Pid int64 `json:"pid,omitempty" binding:"required"`
 	Ids any   `json:"ids,omitempty"`
 }
 
@@ -387,7 +387,7 @@ type DowloadResponse struct {
 }
 
 type ArticlesListRequest struct {
-	Cid     string `json:"cid" form:"cid"`
+	Cid     string `json:"cid" form:"cid" binding:"required"`
 	Size    int    `json:"size" form:"size"`
 	Prev    int    `json:"prev" form:"prev"`
 	Order   string `json:"order" form:"order"`

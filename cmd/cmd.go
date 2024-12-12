@@ -55,10 +55,11 @@ func (app *App) Run() {
 	c.NewSubCommandFunction("server", "This is http server",
 		api.NewApp(app.ctx, app.quit, app.assets).Run)
 
-	c.NewSubCommandFunction("cli", "This is Command",
-		cli.NewApp(app.ctx, app.quit).Run)
+	cliApp := cli.NewApp(app.ctx, app.quit)
+	c.NewSubCommand("cli", "This is Command").
+		NewSubCommandFunction("browser", "install browser dependencies", cliApp.Browser)
 
 	if err := c.Run(); err != nil {
-		fmt.Println(err)
+		fmt.Println(color.Red(err.Error()))
 	}
 }

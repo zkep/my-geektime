@@ -12,7 +12,7 @@ message Article {
   // aid
   string aid = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:article id\""];
   //  pid
-  string pid = 3 [(gogoproto.moretags) = "gorm:\"index;size:128;not null;default:null;comment:product pid\""];
+  string pid = 3 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:product pid\""];
   // title
   string title = 5 [(gogoproto.moretags) = "gorm:\"comment:title\""];
   // cover

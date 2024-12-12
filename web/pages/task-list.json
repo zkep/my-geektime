@@ -5,8 +5,7 @@
   "data": {
       "type": "page",
       "title": "任务列表",
-      "toolbar": [
-      ],
+      "toolbar": [],
       "body": [
         {
           "type": "crud",
@@ -80,7 +79,9 @@
             "method": "get",
             "url": "/v2/task/list"
           },
-          "perPage": 10,
+          "defaultParams": {
+            "perPage": 10
+          },
           "keepItemSelectionOnPageChange": true,
           "bulkActions": [],
           "footerToolbar": [
@@ -88,11 +89,19 @@
             "switch-per-page",
             "pagination"
           ],
+          "tableLayout": "fixed",
           "columns": [
             {
               "name": "task_id",
               "type": "static",
-              "label": "任务ID"
+              "label": "任务ID",
+              "copyable": true
+            },
+            {
+              "name": "other_id",
+              "type": "static",
+              "label": "业务ID",
+              "copyable": true
             },
             {
               "name": "task_name",
@@ -135,13 +144,15 @@
             {
               "type": "operation",
               "label": "操作",
-              "width": "",
               "buttons": [
                 {
                   "type": "button",
                   "icon": "fa fa-eye",
                   "actionType": "drawer",
                   "drawer": {
+                    "resizable": true,
+                    "closeOnOutside": true,
+                    "actions": [],
                     "size": "xl",
                     "title": "任务详情",
                     "body": [
@@ -163,10 +174,10 @@
                           "activeIcon": "fa fa-arrow-up mr-1"
                         },
                         "headerToolbar": [
-                          "filter-toggler"
+                          "filter-toggler",
+                          "bulkActions"
                         ],
                         "filter": {
-                          "debug": false,
                           "title": "条件搜索",
                           "body": [
                             {
@@ -236,7 +247,7 @@
                               "method":"post",
                               "data": {
                                 "pid": "${task_pid}",
-                                "ids": "${task_id | trim}"
+                                "ids": "${ids | raw}"
                               }
                             },
                             "confirmText": "确定要重新下载吗？"
@@ -247,11 +258,19 @@
                           "switch-per-page",
                           "pagination"
                         ],
+                        "primaryField": "task_id",
                         "columns": [
                           {
                             "name": "task_id",
                             "type": "static",
-                            "label": "任务ID"
+                            "label": "任务ID",
+                            "copyable": true
+                          },
+                          {
+                            "name": "other_id",
+                            "type": "static",
+                            "label": "业务ID",
+                            "copyable": true
                           },
                           {
                             "name": "task_name",
@@ -263,6 +282,7 @@
                             "type": "static-mapping",
                             "label": "状态",
                             "canAccessSuperData": false,
+                            "classNameExpr": "${ status =='4' ? 'text-danger' : '' }",
                             "map": {
                               "1": "排队中",
                               "2": "处理中",
@@ -271,9 +291,26 @@
                             }
                           },
                           {
-                            "type": "tpl",
+                            "type": "container",
                             "label": "详情",
-                            "tpl": "${message|base64Decode}"
+                            "style": {
+                              "display": "inline-block"
+                            },
+                            "body": {
+                              "type": "tpl",
+                              "tpl": "${message|base64Decode}",
+                              "copyable": true,
+                              "className": "text-ellipsis",
+                              "style": {
+                                "max-width": "200px"
+                              }
+                            },
+                            "popOver": {
+                              "body": {
+                                "type": "tpl",
+                                "tpl": "${message|base64Decode}"
+                              }
+                            }
                           },
                           {
                             "name": "created_at",
@@ -301,7 +338,7 @@
                                   "method":"post",
                                   "data": {
                                     "pid": "${task_pid}",
-                                    "ids": "${task_id | trim}"
+                                    "ids": "${task_id}"
                                   }
                                 },
                                 "confirmText": "确定要重新下载么？"

@@ -166,7 +166,8 @@
           {
             "name": "id",
             "type": "static",
-            "label": "ID"
+            "label": "ID",
+            "copyable": true
           },
           {
             "name": "share.title",
@@ -198,6 +199,7 @@
             "name": "is_finish",
             "type": "static-mapping",
             "label": "完结",
+            "classNameExpr": "${ is_finish == true ? 'text-success' : 'text-muted' }",
             "map": {
               "true": "是",
               "*": "否"
@@ -206,15 +208,17 @@
           {
             "type": "operation",
             "label": "操作",
-            "width": "",
             "buttons": [
               {
                 "type": "button",
                 "icon": "fa fa-eye",
                 "actionType": "drawer",
                 "drawer": {
+                  "resizable": true,
+                  "closeOnOutside": true,
                   "size": "xl",
                   "title": "课程详情",
+                  "actions": [],
                   "body": [
                     {
                       "type": "card",
@@ -315,7 +319,8 @@
                         {
                           "name": "id",
                           "type": "static",
-                          "label": "ID"
+                          "label": "ID",
+                          "copyable": true
                         },
                         {
                           "name": "article_title",
@@ -338,7 +343,10 @@
                               "icon": "fa fa-eye",
                               "actionType": "drawer",
                               "drawer": {
-                                "size": "xl",
+                                "resizable": true,
+                                "closeOnOutside": true,
+                                "actions": [],
+                                "size": "lg",
                                 "title": "课程详情",
                                 "body": [
                                   {
@@ -351,7 +359,8 @@
                                       {
                                         "name": "pid",
                                         "type": "static",
-                                        "label": "PID"
+                                        "label": "PID",
+                                        "copyable": true
                                       },
                                       {
                                         "type": "divider"
@@ -359,7 +368,8 @@
                                       {
                                         "name": "id",
                                         "type": "static",
-                                        "label": "ID"
+                                        "label": "ID",
+                                        "copyable": true
                                       },
                                       {
                                         "type": "divider"

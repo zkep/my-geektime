@@ -3,14 +3,12 @@ package v2
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/service"
-	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/internal/types/task"
 	"gorm.io/gorm"
 )
@@ -62,6 +60,7 @@ func (t *Task) List(c *gin.Context) {
 		ret.Rows = append(ret.Rows, task.Task{
 			TaskId:     l.TaskId,
 			TaskPid:    l.TaskPid,
+			OtherId:    l.OtherId,
 			TaskName:   l.TaskName,
 			Status:     l.Status,
 			Message:    l.Message,
@@ -82,31 +81,10 @@ func (t *Task) Retry(c *gin.Context) {
 	}
 	err := global.DB.Transaction(func(tx *gorm.DB) error {
 		for _, idx := range strings.Split(req.Ids, ",") {
-			var item model.Task
 			if err := tx.Model(&model.Task{}).
-				Where("task_id = ?", idx).
-				First(&item).Error; err != nil {
+				Where("task_id", idx).
+				UpdateColumn("status", service.TASK_STATUS_PENDING).Error; err != nil {
 				return err
-			}
-			switch item.TaskType {
-			case service.TASK_TYPE_ARTICLE:
-				otherId, err := strconv.ParseInt(item.OtherId, 10, 64)
-				if err != nil {
-					return err
-				}
-				info, err := service.GetArticleInfo(c, geek.ArticlesInfoRequest{Id: otherId})
-				if err != nil {
-					return err
-				}
-				raw, _ := json.Marshal(info.Data)
-				item.Raw = raw
-				item.Status = service.TASK_STATUS_PENDING
-				err = tx.Model(&model.Task{}).
-					Where("task_id", item.TaskId).
-					Updates(&item).Error
-				if err != nil {
-					return err
-				}
 			}
 		}
 		return nil

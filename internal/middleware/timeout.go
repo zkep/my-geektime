@@ -14,7 +14,7 @@ func testResponse(c *gin.Context) {
 
 func Timeout() gin.HandlerFunc {
 	return timeout.New(
-		timeout.WithTimeout(5*time.Second),
+		timeout.WithTimeout(30*time.Second),
 		timeout.WithHandler(func(c *gin.Context) { c.Next() }),
 		timeout.WithResponse(testResponse),
 	)

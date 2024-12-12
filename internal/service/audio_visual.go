@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -47,11 +48,31 @@ type Part struct {
 }
 
 func Download(ctx context.Context, x *model.Task) error {
+	t0 := time.Now()
 	var data geek.ArticleData
 	if err := json.Unmarshal(x.Raw, &data); err != nil {
 		return err
 	}
 	if data.Info.IsVideo {
+		global.LOG.Info("download video start",
+			zap.String("taskId", x.TaskId),
+			zap.String("otherId", x.OtherId))
+		aid, err := strconv.ParseInt(x.OtherId, 10, 64)
+		if err != nil {
+			return err
+		}
+		article, err := GetArticleInfo(ctx, geek.ArticlesInfoRequest{Id: aid})
+		if err != nil {
+			return err
+		}
+		if len(article.Data.Info.Title) == 0 {
+			global.LOG.Error("article info not found",
+				zap.String("taskId", x.TaskId),
+				zap.Int64("otherId", aid),
+			)
+			return fmt.Errorf("article info not found %d", aid)
+		}
+		data = article.Data
 		sort.Slice(data.Info.Video.HlsMedias, func(i, j int) bool {
 			return data.Info.Video.HlsMedias[i].Size > data.Info.Video.HlsMedias[j].Size
 		})
@@ -64,7 +85,15 @@ func Download(ctx context.Context, x *model.Task) error {
 			return err
 		}
 		x.Message = []byte(source)
+		global.LOG.Info("download video end",
+			zap.String("taskId", x.TaskId),
+			zap.String("url", hlsURL),
+			zap.Duration("cost", time.Since(t0)),
+		)
 	} else if data.Info.Audio.DownloadURL != "" {
+		global.LOG.Info("download audio start",
+			zap.String("taskId", x.TaskId),
+			zap.String("url", data.Info.Audio.DownloadURL))
 		source, err := Audio(ctx, data.Info.Audio.DownloadURL,
 			VerifyFileName(data.Product.Title), VerifyFileName(data.Info.Title))
 		if err != nil {
@@ -72,6 +101,11 @@ func Download(ctx context.Context, x *model.Task) error {
 			return err
 		}
 		x.Message = []byte(source)
+		global.LOG.Info("download audio end",
+			zap.String("taskId", x.TaskId),
+			zap.String("url", data.Info.Audio.DownloadURL),
+			zap.Duration("cost", time.Since(t0)),
+		)
 	}
 	return nil
 }
@@ -82,12 +116,8 @@ func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
 
 	var hlsRaw []byte
 	err := zhttp.R.
-		Client(global.HttpClient).
 		Before(func(r *http.Request) {
 			r.Header.Set("Accept", "application/json, text/plain, */*")
-			r.Header.Set("Content-Type", "application/json")
-			r.Header.Set("Sec-Ch-Ua", `"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"`)
-			r.Header.Set("Cookie", global.GeekCookies)
 			r.Header.Set("User-Agent", zhttp.RandomUserAgent())
 			r.Header.Set("Referer", r.URL.String())
 			r.Header.Set("Origin", "https://time.geekbang.org")
@@ -107,13 +137,15 @@ func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
 			if zhttp.IsHTTPStatusRetryable(r.StatusCode) {
 				return fmt.Errorf("http status: %s", r.Status)
 			}
-			return zhttp.BreakRetryError(fmt.Errorf("http status: %s", r.Status))
+			return zhttp.BreakRetryError(fmt.Errorf("break http status: %s", r.Status))
 		}).
 		DoWithRetry(retryCtx, http.MethodGet, hlsURL, nil)
 	if err != nil {
 		return "", err
 	}
-
+	if len(hlsRaw) == 0 {
+		return "", fmt.Errorf("[%s] hls file is zero", hlsURL)
+	}
 	var buff bytes.Buffer
 	bio := bufio.NewReader(bytes.NewReader(hlsRaw))
 	ts := make([]Part, 0, 10)
@@ -128,7 +160,7 @@ func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
 			sps := strings.Split(l, `"`)
 			srcURL = sps[1]
 			destName = path.Join(dir, "key.key")
-			l = fmt.Sprintf(`%s"file:///%s/key.key"`, sps[0], global.Storage.GetKey(dir))
+			l = fmt.Sprintf(`%s"file:///%s"`, sps[0], global.Storage.GetKey(destName))
 		} else if strings.HasSuffix(l, ".ts") {
 			srcURL = hlsURL[:strings.LastIndex(hlsURL, "/")+1] + l
 			destName = path.Join(dir, l)
@@ -140,15 +172,15 @@ func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
 		ts = append(ts, Part{srcURL, destName})
 	}
 
+	if len(ts) == 0 {
+		return "", fmt.Errorf("[%s] part is zero", hlsURL)
+	}
 	for _, t := range ts {
 		dowloadURL, destName := t.Src, t.Dest
 		err = zhttp.R.
 			Before(func(r *http.Request) {
 				r.Header.Set("Accept", "application/json, text/plain, */*")
-				r.Header.Set("Sec-Ch-Ua", `"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"`)
 				r.Header.Set("User-Agent", zhttp.RandomUserAgent())
-				r.Header.Set("Referer", r.URL.String())
-				r.Header.Set("Origin", "https://time.geekbang.org")
 			}).
 			After(func(r *http.Response) error {
 				if zhttp.IsHTTPSuccessStatus(r.StatusCode) {
@@ -165,14 +197,13 @@ func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
 				if zhttp.IsHTTPStatusRetryable(r.StatusCode) {
 					return fmt.Errorf("http status: %s", r.Status)
 				}
-				return zhttp.BreakRetryError(fmt.Errorf("http status: %s", r.Status))
+				return zhttp.BreakRetryError(fmt.Errorf("break http status: %s", r.Status))
 			}).
 			DoWithRetry(retryCtx, http.MethodGet, dowloadURL, nil)
 		if err != nil {
 			return "", err
 		}
 	}
-
 	m3u8Path := path.Join(dir, "index.m3u8")
 	stat, destKey, err := global.Storage.Put(m3u8Path, io.NopCloser(&buff))
 	if err != nil {
@@ -195,6 +226,7 @@ func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
 		"copy",
 		concatPath,
 	}
+	global.LOG.Info("video", zap.String("concatPath", concatPath))
 	output, err := exec.CommandContext(retryCtx, "ffmpeg", ffmpeg_command...).CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("%s,%s", err.Error(), string(output))
@@ -206,7 +238,7 @@ func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
 }
 
 func Audio(ctx context.Context, dowloadURL, dir, fileName string) (string, error) {
-	retryCtx, retryCancel := context.WithTimeout(ctx, time.Minute*30)
+	retryCtx, retryCancel := context.WithTimeout(ctx, time.Minute*5)
 	defer retryCancel()
 	destName := path.Join(dir, fmt.Sprintf("%s.mp3", fileName))
 	err := zhttp.R.
@@ -219,11 +251,13 @@ func Audio(ctx context.Context, dowloadURL, dir, fileName string) (string, error
 		}).
 		After(func(r *http.Response) error {
 			if zhttp.IsHTTPSuccessStatus(r.StatusCode) {
-				if stat, key, err := global.Storage.Put(destName, r.Body); err != nil {
+				stat, key, err := global.Storage.Put(destName, r.Body)
+				if err != nil {
 					return err
 				} else if stat.Size() <= 0 {
 					return fmt.Errorf("audio empty: [%s]", key)
 				}
+				destName = key
 				return nil
 			}
 			if zhttp.IsHTTPStatusSleep(r.StatusCode) {

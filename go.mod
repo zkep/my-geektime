@@ -9,6 +9,7 @@ require (
 	github.com/glebarez/sqlite v1.11.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang-jwt/jwt/v4 v4.5.1
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/gomodule/redigo v1.9.2
 	github.com/google/uuid v1.6.0
 	github.com/tebeka/selenium v0.9.9

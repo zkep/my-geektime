@@ -27,12 +27,13 @@ func TaskHandler(ctx context.Context, t time.Time) error {
 		return nil
 	}
 	defer lock.Delete(keyLock)
-	timeCtx, timeCancel := context.WithTimeout(ctx, time.Minute*15)
+	timeCtx, timeCancel := context.WithTimeout(ctx, time.Hour)
 	defer timeCancel()
 	hasMore, page, psize := true, 1, 5
+	batch := global.GPool.NewBatch()
 	for hasMore {
 		var ls []*model.Task
-		t1 := time.Now().AddDate(0, 0, -1).Unix()
+		t1 := time.Now().AddDate(0, 0, -7).Unix()
 		if err := global.DB.Model(&model.Task{}).
 			Where("created_at >= ?", t1).
 			Where("status = ?", service.TASK_STATUS_PENDING).
@@ -49,12 +50,20 @@ func TaskHandler(ctx context.Context, t time.Time) error {
 			ls = ls[:psize]
 		}
 		page++
-		for idx := range ls {
-			x := ls[idx]
-			if err := worker(timeCtx, x); err != nil {
-				global.LOG.Error("task handler worker", zap.Error(err), zap.String("taskid", x.TaskId))
-			}
+		for _, value := range ls {
+			x := value
+			batch.Queue(func(pctx context.Context) (any, error) {
+				if err := worker(pctx, x); err != nil {
+					global.LOG.Error("task handler worker", zap.Error(err), zap.String("taskid", x.TaskId))
+					return nil, err
+				}
+				return nil, nil
+			})
 		}
+	}
+	if _, err := batch.Wait(timeCtx); err != nil {
+		global.LOG.Error("task handler wait", zap.Error(err))
+		return err
 	}
 	global.LOG.Debug("task handler End", zap.Time("time", time.Now()))
 	return nil
@@ -68,7 +77,7 @@ func worker(ctx context.Context, x *model.Task) error {
 			Where("task_pid = ?", x.TaskId).
 			Where("status <= ?", service.TASK_STATUS_RUNNING).
 			Count(&count).Error; err != nil {
-			global.LOG.Error("task handler Count",
+			global.LOG.Error("worker",
 				zap.Error(err),
 				zap.String("taskId", x.TaskId),
 			)
@@ -76,7 +85,7 @@ func worker(ctx context.Context, x *model.Task) error {
 		}
 		status := service.TASK_STATUS_FINISHED
 		if count > 0 {
-			global.LOG.Info("task worker sub task",
+			global.LOG.Info("worker sub task",
 				zap.Int64("pending", count),
 				zap.String("taskId", x.TaskId),
 			)
@@ -84,7 +93,7 @@ func worker(ctx context.Context, x *model.Task) error {
 		}
 		var statistics task.TaskStatistics
 		if err := json.Unmarshal(x.Statistics, &statistics); err != nil {
-			global.LOG.Error("task worker Unmarshal",
+			global.LOG.Error("worker Unmarshal",
 				zap.Error(err),
 				zap.String("taskId", x.TaskId),
 			)
@@ -98,7 +107,7 @@ func worker(ctx context.Context, x *model.Task) error {
 				Where("task_pid = ?", x.TaskId).
 				Where("status = ?", item).
 				Count(&itemCount).Error; err != nil {
-				global.LOG.Error("task handler Count",
+				global.LOG.Error("worker count",
 					zap.Error(err),
 					zap.String("taskId", x.TaskId),
 				)
@@ -112,7 +121,7 @@ func worker(ctx context.Context, x *model.Task) error {
 			"updated_at": time.Now().Unix(),
 		}
 		if err := global.DB.Model(&model.Task{Id: x.Id}).UpdateColumns(m).Error; err != nil {
-			global.LOG.Error("task worker UpdateColumns",
+			global.LOG.Error("worker UpdateColumns",
 				zap.Error(err),
 				zap.String("taskId", x.TaskId),
 			)
@@ -124,7 +133,7 @@ func worker(ctx context.Context, x *model.Task) error {
 			"updated_at": time.Now().Unix(),
 		}
 		if err := global.DB.Model(&model.Task{Id: x.Id}).UpdateColumns(m).Error; err != nil {
-			global.LOG.Error("task worker UpdateColumns",
+			global.LOG.Error("worker UpdateColumns",
 				zap.Error(err),
 				zap.String("taskId", x.TaskId),
 			)
@@ -134,7 +143,7 @@ func worker(ctx context.Context, x *model.Task) error {
 		status := service.TASK_STATUS_FINISHED
 		err := service.Download(ctx, x)
 		if err != nil {
-			global.LOG.Error("task worker download",
+			global.LOG.Error("worker download",
 				zap.Error(err), zap.String("taskId", x.TaskId))
 			status = service.TASK_STATUS_ERROR
 			message.WriteString(err.Error())
@@ -148,7 +157,7 @@ func worker(ctx context.Context, x *model.Task) error {
 		}
 		err = global.DB.Model(&model.Task{Id: x.Id}).UpdateColumns(m).Error
 		if err != nil {
-			global.LOG.Error("task worker UpdateColumns",
+			global.LOG.Error("worker UpdateColumns",
 				zap.Error(err), zap.String("taskId", x.TaskId),
 			)
 			return err
