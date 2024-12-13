@@ -21,7 +21,7 @@
 
 echo 'local pre-push golang ci-lint check code style'
 
-exec golangci-lint run -c .githooks/.golangci.yml
+exec golangci-lint run -c .golangci.yml
 
 remote="$1"
 url="$2"
