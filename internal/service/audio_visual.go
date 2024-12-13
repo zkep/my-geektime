@@ -6,7 +6,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/zkep/mygeektime/internal/types/task"
 	"io"
 	"net/http"
 	"os"
@@ -20,6 +19,7 @@ import (
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/types/geek"
+	"github.com/zkep/mygeektime/internal/types/task"
 	"github.com/zkep/mygeektime/lib/zhttp"
 	"go.uber.org/zap"
 )

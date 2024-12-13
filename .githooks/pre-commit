@@ -9,7 +9,7 @@
 
 echo 'local pre-commit golang ci-lint check code style'
 
-exec golangci-lint run -c .golangci.yml
+exec golangci-lint run -c ../golangci.yml
 if git rev-parse --verify HEAD >/dev/null 2>&1
 then
 	against=HEAD

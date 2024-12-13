@@ -2,12 +2,12 @@ package router
 
 import (
 	"embed"
-	"github.com/zkep/mygeektime/internal/global"
 	"net/http"
 	"path"
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/zkep/mygeektime/internal/global"
 	mw "github.com/zkep/mygeektime/internal/middleware"
 )
 
