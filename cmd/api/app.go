@@ -4,7 +4,6 @@ import (
 	"context"
 	"embed"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/http/cookiejar"
@@ -27,7 +26,7 @@ import (
 )
 
 type Flags struct {
-	Config string `name:"config" default:"config.yml" description:"Path to config file"`
+	Config string `name:"config" description:"Path to config file"`
 }
 
 type App struct {
@@ -41,35 +40,43 @@ func NewApp(ctx context.Context, quit <-chan os.Signal, assets embed.FS) *App {
 }
 
 func (app *App) Run(f *Flags) error {
-	if f.Config == "" {
-		return errors.New("config file is required")
-	}
-	fi, err := os.Open(f.Config)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = fi.Close() }()
 	var cfg config.Config
-	if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
-		return err
+	if f.Config == "" {
+		fi, err := app.assets.Open("config.yml")
+		if err != nil {
+			return err
+		}
+		defer func() { _ = fi.Close() }()
+		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
+			return err
+		}
+	} else {
+		fi, err := os.Open(f.Config)
+		if err != nil {
+			return err
+		}
+		defer func() { _ = fi.Close() }()
+		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
+			return err
+		}
 	}
 	global.CONF = &cfg
-	if err = initialize.Gorm(app.ctx); err != nil {
+	if err := initialize.Gorm(app.ctx); err != nil {
 		return err
 	}
-	if err = initialize.Jwt(app.ctx); err != nil {
+	if err := initialize.Jwt(app.ctx); err != nil {
 		return err
 	}
-	if err = initialize.Logger(app.ctx); err != nil {
+	if err := initialize.Logger(app.ctx); err != nil {
 		return err
 	}
-	if err = initialize.Storage(app.ctx); err != nil {
+	if err := initialize.Storage(app.ctx); err != nil {
 		return err
 	}
-	if err = initialize.GPool(app.ctx); err != nil {
+	if err := initialize.GPool(app.ctx); err != nil {
 		return err
 	}
-	if err = initialize.Tw(app.ctx); err != nil {
+	if err := initialize.Tw(app.ctx); err != nil {
 		return err
 	}
 
@@ -84,7 +91,7 @@ func (app *App) Run(f *Flags) error {
 	)
 
 	depInj := fx.New(options...)
-	if err = depInj.Start(app.ctx); err != nil {
+	if err := depInj.Start(app.ctx); err != nil {
 		return err
 	}
 
