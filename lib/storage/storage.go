@@ -46,7 +46,7 @@ func NewLocalStorage(host, bucket, directory string) (Storage, error) {
 	return &s, nil
 }
 
-func (s *LocalStorage) Name() string { return "local" }
+func (ls *LocalStorage) Name() string { return "local" }
 
 func (ls *LocalStorage) mkdir(key string) (string, error) {
 	key = strings.TrimPrefix(key, ls.directory)
