@@ -3,12 +3,15 @@ package v2
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"strings"
 
+	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/service"
+	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/internal/types/task"
 	"gorm.io/gorm"
 )
@@ -63,7 +66,6 @@ func (t *Task) List(c *gin.Context) {
 			OtherId:    l.OtherId,
 			TaskName:   l.TaskName,
 			Status:     l.Status,
-			Message:    l.Message,
 			Statistics: statistics,
 			TaskType:   l.TaskType,
 			CreatedAt:  l.CreatedAt,
@@ -73,6 +75,54 @@ func (t *Task) List(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": ret})
 }
 
+func (t *Task) Info(c *gin.Context) {
+	var req task.TaskInfoRequest
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	var l model.Task
+	if err := global.DB.Model(&model.Task{}).
+		Where("task_id=?", req.Id).First(&l).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	var statistics task.TaskStatistics
+	if len(l.Statistics) > 0 {
+		_ = json.Unmarshal(l.Statistics, &statistics)
+	}
+
+	var articleData geek.ArticleInfoResponse
+	if len(l.Raw) > 0 {
+		_ = json.Unmarshal(l.Raw, &articleData)
+	}
+
+	var taskMessage task.TaskMessage
+	if len(l.Message) > 0 {
+		_ = json.Unmarshal(l.Message, &taskMessage)
+		if len(taskMessage.Object) > 0 {
+			taskMessage.Object = global.Storage.GetUrl(taskMessage.Object)
+		}
+	}
+
+	resp := task.TaskInfoResponse{
+		Task: task.Task{
+			TaskId:     l.TaskId,
+			TaskPid:    l.TaskPid,
+			OtherId:    l.OtherId,
+			TaskName:   l.TaskName,
+			Status:     l.Status,
+			Statistics: statistics,
+			TaskType:   l.TaskType,
+			CreatedAt:  l.CreatedAt,
+			UpdatedAt:  l.UpdatedAt,
+		},
+		ArticleInfo: articleData.Data.Info,
+		Message:     taskMessage,
+	}
+	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": resp})
+}
+
 func (t *Task) Retry(c *gin.Context) {
 	var req task.RetryRequest
 	if err := c.ShouldBind(&req); err != nil {
@@ -80,6 +130,11 @@ func (t *Task) Retry(c *gin.Context) {
 		return
 	}
 	err := global.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&model.Task{}).
+			Where("task_id", req.Pid).
+			UpdateColumn("status", service.TASK_STATUS_PENDING).Error; err != nil {
+			return err
+		}
 		for _, idx := range strings.Split(req.Ids, ",") {
 			if err := tx.Model(&model.Task{}).
 				Where("task_id", idx).
@@ -94,4 +149,53 @@ func (t *Task) Retry(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK"})
+}
+
+func (t *Task) Download(c *gin.Context) {
+	var req task.TaskDownloadRequest
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	var l model.Task
+	if err := global.DB.Model(&model.Task{}).
+		Where("task_id=?", req.Id).First(&l).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	var articleData geek.ArticleInfoResponse
+	if err := json.Unmarshal(l.Raw, &articleData); err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	var taskMessage task.TaskMessage
+	if err := json.Unmarshal(l.Message, &taskMessage); err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	baseName := service.VerifyFileName(articleData.Data.Info.Title)
+	switch req.Type {
+	case "markdown":
+		converter := md.NewConverter("", true, nil)
+		markdown, err := converter.ConvertString(articleData.Data.Info.Content)
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+			return
+		}
+		fileName := baseName + ".md"
+		c.Header("Content-Type", "application/octet-stream")
+		c.Header("Content-Disposition", "attachment; filename="+url.QueryEscape(fileName))
+		c.Header("Content-Transfer-Encoding", "binary")
+		c.Data(200, "application/octet-stream", []byte(markdown))
+	case "audio", "video":
+		fileName := baseName + ".mp4"
+		if req.Type == "audio" {
+			fileName = baseName + ".mp3"
+		}
+		c.Header("Content-Type", "application/octet-stream")
+		c.Header("Content-Disposition", "attachment; filename="+url.QueryEscape(fileName))
+		c.Header("Content-Transfer-Encoding", "binary")
+		object := global.Storage.GetKey(taskMessage.Object, true)
+		c.File(object)
+	}
 }

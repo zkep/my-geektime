@@ -1,5 +1,7 @@
 package task
 
+import "github.com/zkep/mygeektime/internal/types/geek"
+
 type TaskListRequest struct {
 	TaskPid string `json:"task_pid"  form:"task_pid"`
 	Xstatus int    `json:"xstatus" form:"xstatus"`
@@ -25,8 +27,6 @@ type Task struct {
 	TaskType string `json:"task_type,omitempty"`
 	// status
 	Status int32 `json:"status,omitempty"`
-	// Message
-	Message []byte `json:"message,omitempty"`
 	// statistics
 	Statistics TaskStatistics `json:"statistics,omitempty"`
 	// created_at
@@ -42,9 +42,37 @@ type TaskStatistics struct {
 	Items map[int]int `json:"items"`
 }
 
+type TaskMessage struct {
+	Object string `json:"object"`
+	Text   string `json:"text"`
+}
+
 type RetryRequest struct {
 	// task pid
 	Pid string `json:"pid,omitempty" form:"pid" binding:"required"`
 	// task ids
 	Ids string `json:"ids,omitempty" form:"ids" binding:"required"`
+}
+
+type TaskInfoRequest struct {
+	// task id
+	Id string `json:"id,omitempty" form:"id" binding:"required"`
+}
+
+type TaskInfoResponse struct {
+	// Task
+	Task
+	// ArticleInfo
+	geek.ArticleInfo
+	// message
+	Message TaskMessage `json:"message,omitempty"`
+}
+
+type TaskDownloadRequest struct {
+	// task id
+	Id string `json:"id,omitempty" form:"id" binding:"required"`
+	// type
+	Type string `json:"type,omitempty" form:"type" binding:"required"`
+	// url
+	Url string `json:"url,omitempty" form:"url"`
 }

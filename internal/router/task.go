@@ -9,6 +9,8 @@ func task(_, private *gin.RouterGroup) {
 	api := v2.NewTask()
 	{
 		private.GET("/task/list", api.List)
+		private.GET("/task/info", api.Info)
+		private.GET("/task/download", api.Download)
 		private.POST("/task/retry", api.Retry)
 	}
 }

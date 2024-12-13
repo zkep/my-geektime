@@ -9,20 +9,31 @@ import (
 )
 
 type Storage interface {
-	Put(string, io.ReadCloser) (os.FileInfo, string, error)
-	Get(string) (io.ReadCloser, os.FileInfo, string, error)
-	Stat(string) (os.FileInfo, string, error)
+	Name() string
+	Put(string, io.ReadCloser) (os.FileInfo, error)
+	Get(string) (io.ReadCloser, os.FileInfo, error)
+	Stat(string) (os.FileInfo, error)
 	Delete(string) error
-	GetKey(key string) string
+	GetKey(key string, isReal bool) string
+	GetUrl(key string) string
 }
 
 var _ Storage = (*LocalStorage)(nil)
 
 type LocalStorage struct {
+	host      string
+	bucket    string
 	directory string
+	prefix    string
 }
 
-func NewLocalStorage(directory string) (Storage, error) {
+func NewLocalStorage(host, bucket, directory string) (Storage, error) {
+	s := LocalStorage{
+		host:      strings.TrimSuffix(host, "/"),
+		bucket:    strings.TrimSuffix(bucket, "/"),
+		directory: strings.TrimSuffix(directory, "/"),
+		prefix:    "local://",
+	}
 	if stat, err := os.Stat(directory); err != nil {
 		if os.IsNotExist(err) {
 			if err = os.MkdirAll(directory, os.ModePerm); err != nil {
@@ -32,8 +43,10 @@ func NewLocalStorage(directory string) (Storage, error) {
 			return nil, fmt.Errorf("%s is not a directory", directory)
 		}
 	}
-	return &LocalStorage{directory: directory}, nil
+	return &s, nil
 }
+
+func (s *LocalStorage) Name() string { return "local" }
 
 func (ls *LocalStorage) mkdir(key string) (string, error) {
 	key = strings.TrimPrefix(key, ls.directory)
@@ -46,41 +59,41 @@ func (ls *LocalStorage) mkdir(key string) (string, error) {
 	return objectPath, err
 }
 
-func (ls *LocalStorage) Put(key string, r io.ReadCloser) (os.FileInfo, string, error) {
+func (ls *LocalStorage) Put(key string, r io.ReadCloser) (os.FileInfo, error) {
 	dest, err := ls.mkdir(key)
 	if err != nil {
-		return nil, dest, err
+		return nil, err
 	}
 	fi, err := os.Create(dest)
 	if err != nil {
-		return nil, dest, err
+		return nil, err
 	}
 	defer func() { _ = fi.Close() }()
 	_, err = io.Copy(fi, r)
 	if err != nil {
-		return nil, dest, err
+		return nil, err
 	}
 	stat, err := fi.Stat()
 	if err != nil {
-		return nil, dest, err
+		return nil, err
 	}
-	return stat, dest, nil
+	return stat, nil
 }
 
-func (ls *LocalStorage) Get(key string) (io.ReadCloser, os.FileInfo, string, error) {
+func (ls *LocalStorage) Get(key string) (io.ReadCloser, os.FileInfo, error) {
 	dest, err := ls.mkdir(key)
 	if err != nil {
-		return nil, nil, dest, err
+		return nil, nil, err
 	}
 	fi, err := os.Open(dest)
 	if err != nil {
-		return nil, nil, dest, err
+		return nil, nil, err
 	}
 	stat, err := fi.Stat()
 	if err != nil {
-		return nil, nil, dest, err
+		return nil, nil, err
 	}
-	return fi, stat, dest, nil
+	return fi, stat, nil
 }
 
 func (ls *LocalStorage) Delete(key string) error {
@@ -95,19 +108,37 @@ func (ls *LocalStorage) Delete(key string) error {
 	return err
 }
 
-func (ls *LocalStorage) Stat(key string) (os.FileInfo, string, error) {
+func (ls *LocalStorage) Stat(key string) (os.FileInfo, error) {
 	dest, err := ls.mkdir(key)
 	if err != nil {
-		return nil, dest, err
+		return nil, err
 	}
 	stat, err := os.Stat(dest)
 	if err != nil {
-		return nil, dest, err
+		return nil, err
 	}
-	return stat, dest, nil
+	return stat, nil
 }
 
-func (ls *LocalStorage) GetKey(key string) string {
+func (ls *LocalStorage) GetKey(key string, isReal bool) string {
+	if strings.HasPrefix(key, ls.prefix) {
+		key = strings.TrimPrefix(key, ls.prefix)
+		key = strings.TrimPrefix(key, ls.bucket)
+	} else {
+		key = strings.TrimPrefix(key, ls.directory)
+	}
+	key = strings.TrimPrefix(key, "/")
+	if isReal {
+		return path.Join(ls.directory, key)
+	}
+	return fmt.Sprintf("%s%s/%s", ls.prefix, ls.bucket, key)
+}
+
+func (ls *LocalStorage) GetUrl(key string) string {
+	if strings.HasPrefix(key, ls.prefix) {
+		return fmt.Sprintf("%s/%s", ls.host, strings.TrimPrefix(key, ls.prefix))
+	}
 	key = strings.TrimPrefix(key, ls.directory)
-	return path.Join(ls.directory, key)
+	key = strings.TrimPrefix(key, "/")
+	return fmt.Sprintf("%s/%s/%s", ls.host, ls.bucket, key)
 }

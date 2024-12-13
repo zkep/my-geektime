@@ -291,28 +291,6 @@
                             }
                           },
                           {
-                            "type": "container",
-                            "label": "详情",
-                            "style": {
-                              "display": "inline-block"
-                            },
-                            "body": {
-                              "type": "tpl",
-                              "tpl": "${message|base64Decode}",
-                              "copyable": true,
-                              "className": "text-ellipsis",
-                              "style": {
-                                "max-width": "200px"
-                              }
-                            },
-                            "popOver": {
-                              "body": {
-                                "type": "tpl",
-                                "tpl": "${message|base64Decode}"
-                              }
-                            }
-                          },
-                          {
                             "name": "created_at",
                             "type": "date",
                             "format": "YYYY-MM-DD HH:mm:ss",
@@ -329,6 +307,138 @@
                             "label": "操作",
                             "width": "100",
                             "buttons": [
+                              {
+                                "type": "button",
+                                "icon": "fa fa-eye",
+                                "actionType": "drawer",
+                                "drawer": {
+                                  "resizable": true,
+                                  "closeOnOutside": true,
+                                  "actions": [],
+                                  "size": "lg",
+                                  "title": "任务详情",
+                                  "body": [
+                                    {
+                                      "type": "service",
+                                      "api": {
+                                        "method": "get",
+                                        "url": "/v2/task/info?id=${task_id}"
+                                      },
+                                      "body": [
+                                        {
+                                          "name": "pid",
+                                          "type": "static",
+                                          "label": "PID",
+                                          "copyable": true
+                                        },
+                                        {
+                                          "type": "divider"
+                                        },
+                                        {
+                                          "name": "id",
+                                          "type": "static",
+                                          "label": "ID",
+                                          "copyable": true
+                                        },
+                                        {
+                                          "type": "divider"
+                                        },
+                                        {
+                                          "name": "title",
+                                          "type": "static",
+                                          "label": "标题"
+                                        },
+                                        {
+                                          "type": "divider"
+                                        },
+                                        {
+                                          "type": "static",
+                                          "name": "message.text",
+                                          "label": "下载信息",
+                                          "visibleOn": "${ message.text !== '' }"
+                                        },
+                                        {
+                                          "type": "divider"
+                                        },
+                                        {
+                                          "type": "button-group",
+                                          "tiled": true,
+                                          "btnLevel": "default",
+                                          "btnActiveLevel": "light",
+                                          "buttons": [
+                                            {
+                                              "label": "下载音频",
+                                              "type": "action",
+                                              "actionType": "download",
+                                              "size": "sm",
+                                              "api": "/v2/task/download?id=${task_id}&type=audio",
+                                              "visibleOn": "${ audio.download_url !== undefined && message.object !==''}"
+                                            },
+                                            {
+                                              "label": "下载视频",
+                                              "type": "action",
+                                              "actionType": "download",
+                                              "size": "sm",
+                                              "api": "/v2/task/download?id=${task_id}&type=video",
+                                              "visibleOn": "${ video.cover !== undefined && message.object !=='' }"
+                                            },
+                                            {
+                                              "label": "导出Markdown文本",
+                                              "type": "action",
+                                              "size": "sm",
+                                              "actionType": "download",
+                                              "api": "/v2/task/download?id=${task_id}&type=markdown"
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "divider"
+                                        },
+                                        {
+                                          "type": "video",
+                                          "muted": true,
+                                          "autoPlay": false,
+                                          "rates": [1.0, 1.5, 2.0],
+                                          "src": "${message.object}",
+                                          "poster": "${video.cover}",
+                                          "visibleOn": "${ video.cover !== undefined && message.object!=='' }"
+                                        },
+                                        {
+                                          "type": "video",
+                                          "muted": true,
+                                          "autoPlay": false,
+                                          "rates": [1.0, 1.5, 2.0],
+                                          "src": "${video.hls_medias|last|pick:url}",
+                                          "poster": "${video.cover}",
+                                          "visibleOn": "${ video.cover !== undefined && message.object==='' }"
+                                        },
+                                        {
+                                          "type": "audio",
+                                          "autoPlay": false,
+                                          "rates": [1.0, 1.5, 2.0],
+                                          "src": "${message.object}",
+                                          "visibleOn": "${ audio.download_url !== undefined && message.object!==''}"
+                                        },
+                                        {
+                                          "type": "audio",
+                                          "autoPlay": false,
+                                          "rates": [1.0, 1.5, 2.0],
+                                          "src": "${audio.download_url}",
+                                          "visibleOn": "${ audio.download_url !== undefined && message.object===''}"
+                                        },
+                                        {
+                                          "type": "divider"
+                                        },
+                                        {
+                                          "type": "html",
+                                          "name": "content",
+                                          "label": "附件"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              },
                               {
                                 "type": "button",
                                 "icon": "fa-solid fa-repeat",

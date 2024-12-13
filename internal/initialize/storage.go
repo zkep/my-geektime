@@ -8,7 +8,11 @@ import (
 )
 
 func Storage(_ context.Context) error {
-	s, err := storage.NewLocalStorage(global.CONF.Storage.Source)
+	s, err := storage.NewLocalStorage(
+		global.CONF.Storage.Host,
+		global.CONF.Storage.Bucket,
+		global.CONF.Storage.Directory,
+	)
 	if err != nil {
 		return err
 	}

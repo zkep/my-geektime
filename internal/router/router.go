@@ -2,7 +2,9 @@ package router
 
 import (
 	"embed"
+	"github.com/zkep/mygeektime/internal/global"
 	"net/http"
+	"path"
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -19,6 +21,11 @@ func NewRouter(assets embed.FS) *gin.Engine {
 	e.NoRoute(func(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, "/")
 	})
+
+	if global.CONF.Storage.Driver == "local" {
+		e.StaticFS(path.Join("/", global.CONF.Storage.Bucket),
+			gin.Dir(global.CONF.Storage.Directory, false))
+	}
 
 	public := e.Group("v2", mw.Timeout())
 	private := e.Group("v2", mw.JWTMiddleware(), mw.Timeout())

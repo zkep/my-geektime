@@ -151,30 +151,60 @@ func (p *Product) Download(c *gin.Context) {
 			ids = append(ids, v.ID)
 		}
 	}
+	var product model.Product
+	if err := global.DB.Model(&model.Product{}).
+		Where("pid = ?", req.Pid).Find(&product).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
 	raw, _ := json.Marshal(req)
 	jobId := service.TaskID()
 	job := &model.Task{
 		TaskId:   jobId,
+		TaskName: product.Title,
 		TaskType: service.TASK_TYPE_PRODUCT,
 		OtherId:  fmt.Sprintf("%d", req.Pid),
 		Raw:      raw,
 	}
 	tasks := make([]*model.Task, 0, len(ids))
+	var articles []*model.Article
+	if err := global.DB.Model(&model.Article{}).
+		Where("aid IN ?", ids).Find(&articles).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	articlesMap := make(map[int64]*model.Article, len(articles))
+	for _, v := range articles {
+		aid, err := strconv.ParseInt(v.Aid, 10, 64)
+		if err == nil {
+			articlesMap[aid] = v
+		}
+	}
 	for _, id := range ids {
-		info, err := service.GetArticleInfo(c, geek.ArticlesInfoRequest{Id: id})
-		if err != nil {
-			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
-			return
+		var (
+			raw      []byte
+			otherId  string
+			taskName string
+		)
+		if article, ok := articlesMap[id]; !ok {
+			info, err := service.GetArticleInfo(c, geek.ArticlesInfoRequest{Id: id})
+			if err != nil {
+				c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+				return
+			}
+			raw, _ = json.Marshal(info.Data)
+			otherId = fmt.Sprintf("%d", info.Data.Info.Id)
+			taskName = info.Data.Info.Title
+		} else {
+			raw = article.Raw
+			otherId = article.Aid
+			taskName = article.Title
 		}
-		if job.TaskName == "" {
-			job.TaskName = info.Data.Product.Title
-		}
-		raw, _ = json.Marshal(info.Data)
 		item := model.Task{
 			TaskPid:  jobId,
 			TaskId:   service.TaskID(),
-			OtherId:  fmt.Sprintf("%d", info.Data.Info.Id),
-			TaskName: info.Data.Info.Title,
+			OtherId:  otherId,
+			TaskName: taskName,
 			TaskType: service.TASK_TYPE_ARTICLE,
 			Raw:      raw,
 		}

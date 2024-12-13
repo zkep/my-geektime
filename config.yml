@@ -7,15 +7,19 @@ jwt:
   secret: mygeektime-secret
   expires: 7200
 database:
-  driver: mysql
-  source: root:123456@tcp(127.0.0.1:3306)/mygeektime?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
-  # driver: sqlite   # mysql|postgres|sqlite
-  # source:  mygeektime.db
+# driver: mysql
+# source: root:123456@tcp(127.0.0.1:3306)/mygeektime?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
+# driver: postgres
+# source: host=127.0.0.1 user=postgres password=123456 dbname=mygeektime port=5432 sslmode=disable TimeZone=Asia/Shanghai
+  driver:  sqlite   # mysql|postgres|sqlite
+  source:  mygeektime.db
   max_idle_conns: 10
   max_open_conns: 10
 storage: # mp4 or mp3 save folder
   driver: local
-  source: /tmp/repo
+  directory: repo
+  bucket: object
+  host: http://127.0.0.1:8090
 browser:
   driver_path: ./chromedriver
   cookie_path: ./cookie.txt

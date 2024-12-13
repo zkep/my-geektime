@@ -1,7 +1,6 @@
 package task
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"sync"
@@ -33,9 +32,7 @@ func TaskHandler(ctx context.Context, t time.Time) error {
 	batch := global.GPool.NewBatch()
 	for hasMore {
 		var ls []*model.Task
-		t1 := time.Now().AddDate(0, 0, -7).Unix()
 		if err := global.DB.Model(&model.Task{}).
-			Where("created_at >= ?", t1).
 			Where("status = ?", service.TASK_STATUS_PENDING).
 			Order("id ASC").
 			Offset((page - 1) * psize).
@@ -139,27 +136,22 @@ func worker(ctx context.Context, x *model.Task) error {
 			)
 			return err
 		}
-		message := bytes.NewBuffer(nil)
 		status := service.TASK_STATUS_FINISHED
 		err := service.Download(ctx, x)
 		if err != nil {
-			global.LOG.Error("worker download",
-				zap.Error(err), zap.String("taskId", x.TaskId))
+			global.LOG.Error("worker download", zap.Error(err), zap.String("taskId", x.TaskId))
 			status = service.TASK_STATUS_ERROR
-			message.WriteString(err.Error())
-		} else {
-			message.Write(x.Message)
+			message := task.TaskMessage{Text: err.Error()}
+			x.Message, _ = json.Marshal(message)
 		}
 		m = map[string]any{
 			"status":     status,
 			"updated_at": time.Now().Unix(),
-			"message":    message.Bytes(),
+			"message":    x.Message,
 		}
 		err = global.DB.Model(&model.Task{Id: x.Id}).UpdateColumns(m).Error
 		if err != nil {
-			global.LOG.Error("worker UpdateColumns",
-				zap.Error(err), zap.String("taskId", x.TaskId),
-			)
+			global.LOG.Error("worker UpdateColumns", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
 	}

@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/zkep/mygeektime/internal/types/task"
 	"io"
 	"net/http"
 	"os"
@@ -49,10 +50,11 @@ type Part struct {
 
 func Download(ctx context.Context, x *model.Task) error {
 	t0 := time.Now()
-	var data geek.ArticleData
-	if err := json.Unmarshal(x.Raw, &data); err != nil {
+	var articleInfo geek.ArticleInfoResponse
+	if err := json.Unmarshal(x.Raw, &articleInfo); err != nil {
 		return err
 	}
+	data := articleInfo.Data
 	if data.Info.IsVideo {
 		global.LOG.Info("download video start",
 			zap.String("taskId", x.TaskId),
@@ -65,17 +67,15 @@ func Download(ctx context.Context, x *model.Task) error {
 		if err != nil {
 			return err
 		}
-		if len(article.Data.Info.Title) == 0 {
-			global.LOG.Error("article info not found",
-				zap.String("taskId", x.TaskId),
-				zap.Int64("otherId", aid),
-			)
+		if len(article.Data.Info.Video.HlsMedias) == 0 {
 			return fmt.Errorf("article info not found %d", aid)
 		}
 		data = article.Data
+
 		sort.Slice(data.Info.Video.HlsMedias, func(i, j int) bool {
 			return data.Info.Video.HlsMedias[i].Size > data.Info.Video.HlsMedias[j].Size
 		})
+
 		hlsURL := data.Info.Video.HlsMedias[0].URL
 		fileName := VerifyFileName(data.Info.Title)
 		dir := path.Join(VerifyFileName(data.Product.Title), fileName)
@@ -84,7 +84,10 @@ func Download(ctx context.Context, x *model.Task) error {
 			global.LOG.Error("download video", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
-		x.Message = []byte(source)
+		message := task.TaskMessage{
+			Object: global.Storage.GetKey(source, false),
+		}
+		x.Message, _ = json.Marshal(message)
 		global.LOG.Info("download video end",
 			zap.String("taskId", x.TaskId),
 			zap.String("url", hlsURL),
@@ -100,7 +103,10 @@ func Download(ctx context.Context, x *model.Task) error {
 			global.LOG.Error("download audio", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
-		x.Message = []byte(source)
+		message := task.TaskMessage{
+			Object: global.Storage.GetKey(source, false),
+		}
+		x.Message, _ = json.Marshal(message)
 		global.LOG.Info("download audio end",
 			zap.String("taskId", x.TaskId),
 			zap.String("url", data.Info.Audio.DownloadURL),
@@ -160,7 +166,7 @@ func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
 			sps := strings.Split(l, `"`)
 			srcURL = sps[1]
 			destName = path.Join(dir, "key.key")
-			l = fmt.Sprintf(`%s"file:///%s"`, sps[0], global.Storage.GetKey(destName))
+			l = fmt.Sprintf(`%s"file:///%s"`, sps[0], global.Storage.GetKey(destName, true))
 		} else if strings.HasSuffix(l, ".ts") {
 			srcURL = hlsURL[:strings.LastIndex(hlsURL, "/")+1] + l
 			destName = path.Join(dir, l)
@@ -184,10 +190,10 @@ func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
 			}).
 			After(func(r *http.Response) error {
 				if zhttp.IsHTTPSuccessStatus(r.StatusCode) {
-					if stat, key, err := global.Storage.Put(destName, r.Body); err != nil {
+					if stat, err := global.Storage.Put(destName, r.Body); err != nil {
 						return err
 					} else if stat.Size() <= 0 {
-						return fmt.Errorf("[%s] is empty", key)
+						return fmt.Errorf("[%s] is empty", destName)
 					}
 					return nil
 				}
@@ -205,12 +211,13 @@ func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
 		}
 	}
 	m3u8Path := path.Join(dir, "index.m3u8")
-	stat, destKey, err := global.Storage.Put(m3u8Path, io.NopCloser(&buff))
+	stat, err := global.Storage.Put(m3u8Path, io.NopCloser(&buff))
 	if err != nil {
 		return "", err
 	} else if stat.Size() <= 0 {
-		return "", fmt.Errorf("[%s] size is zero", destKey)
+		return "", fmt.Errorf("[%s] size is zero", m3u8Path)
 	}
+	destKey := global.Storage.GetKey(m3u8Path, true)
 	destDir := path.Dir(destKey)
 	concatPath := path.Join(path.Dir(destDir), fmt.Sprintf("%s.mp4", fileName))
 	ffmpeg_command := []string{
@@ -251,13 +258,13 @@ func Audio(ctx context.Context, dowloadURL, dir, fileName string) (string, error
 		}).
 		After(func(r *http.Response) error {
 			if zhttp.IsHTTPSuccessStatus(r.StatusCode) {
-				stat, key, err := global.Storage.Put(destName, r.Body)
+				stat, err := global.Storage.Put(destName, r.Body)
 				if err != nil {
 					return err
 				} else if stat.Size() <= 0 {
-					return fmt.Errorf("audio empty: [%s]", key)
+					return fmt.Errorf("audio empty: [%s]", destName)
 				}
-				destName = key
+				destName = global.Storage.GetKey(destName, true)
 				return nil
 			}
 			if zhttp.IsHTTPStatusSleep(r.StatusCode) {
