@@ -96,15 +96,26 @@ storage: # mp4 或 mp3 存储目录
   bucket: object
   host: http://127.0.0.1:8090 # 端口与server中的 http_port 保持一致
 browser:  # 
-  driver_path: ./chromedriver
-  cookie_path: ./cookie.txt
-  open_browser: true
+  driver_path: ./chromedriver # 如果没有cookie文件，默认使用chromedriver模拟登录获取cookie
+  cookie_path: ./cookie.txt # geektime的cookie文件存放位置
+  open_browser: true # 服务启动后自动打开浏览器
 geektime:
   auto_sync: true # 建议开启，默认将geektime的接口数据缓存
 ```
-##### 启动http服务
+
+##### 默认配置启动http服务
 ```shell
-mygeektime server --config=config.yml
+# 使用默认配置启动
+mygeektime server
+```
+
+##### 自定义配置启动http服务
+```shell
+# 生成配置模版，后可以自定义模版内容
+mygeektime cli config --config=config_templete.yml
+
+# 使用自定义配置模版
+mygeektime server --config=config_templete.yml
 ```
 
 #### 感谢

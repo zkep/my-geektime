@@ -52,12 +52,13 @@ func (app *App) Run() {
 
 	c.SetBannerFunction(banner)
 
-	c.NewSubCommandFunction("server", "This is http server",
-		api.NewApp(app.ctx, app.quit, app.assets).Run)
+	apiApp := api.NewApp(app.ctx, app.quit, app.assets)
+	c.NewSubCommandFunction("server", "This is http server", apiApp.Run)
 
-	cliApp := cli.NewApp(app.ctx, app.quit)
-	c.NewSubCommand("cli", "This is Command").
-		NewSubCommandFunction("browser", "install browser dependencies", cliApp.Browser)
+	cliApp := cli.NewApp(app.ctx, app.quit, app.assets)
+	subCLI := c.NewSubCommand("cli", "This is Command")
+	subCLI.NewSubCommandFunction("browser", "install browser dependencies", cliApp.Browser)
+	subCLI.NewSubCommandFunction("config", "generate config file templete", cliApp.Config)
 
 	if err := c.Run(); err != nil {
 		fmt.Println(color.Red(err.Error()))
