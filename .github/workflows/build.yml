@@ -22,5 +22,5 @@ jobs:
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
           goversion: 1.22
-          binary_name: "hello"
+          binary_name: "mygeektime"
           extra_files: LICENSE README.md
