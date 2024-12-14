@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/types/geek"
@@ -58,7 +59,6 @@ func Download(ctx context.Context, x *model.Task) error {
 		global.LOG.Info("download video start",
 			zap.String("taskId", x.TaskId),
 			zap.String("otherId", x.OtherId))
-
 		if len(data.Info.Video.HlsMedias) == 0 {
 			return fmt.Errorf("article info not found %s", x.OtherId)
 		}
@@ -77,6 +77,13 @@ func Download(ctx context.Context, x *model.Task) error {
 			Object: global.Storage.GetKey(source, false),
 		}
 		x.Message, _ = json.Marshal(message)
+		converter := md.NewConverter("", true, nil)
+		markdown, err := converter.ConvertString(data.Info.Content)
+		if err == nil {
+			realFile := global.Storage.GetKey(source, true)
+			mdPath := fmt.Sprintf("%s.md", strings.TrimSuffix(realFile, ".mp4"))
+			_ = os.WriteFile(mdPath, []byte(markdown), os.ModePerm)
+		}
 		global.LOG.Info("download video end",
 			zap.String("taskId", x.TaskId),
 			zap.String("url", hlsURL),
@@ -96,6 +103,13 @@ func Download(ctx context.Context, x *model.Task) error {
 			Object: global.Storage.GetKey(source, false),
 		}
 		x.Message, _ = json.Marshal(message)
+		converter := md.NewConverter("", true, nil)
+		markdown, err := converter.ConvertString(data.Info.Content)
+		if err == nil {
+			realFile := global.Storage.GetKey(source, true)
+			mdPath := fmt.Sprintf("%s.md", strings.TrimSuffix(realFile, ".mp3"))
+			_ = os.WriteFile(mdPath, []byte(markdown), os.ModePerm)
+		}
 		global.LOG.Info("download audio end",
 			zap.String("taskId", x.TaskId),
 			zap.String("url", data.Info.Audio.DownloadURL),

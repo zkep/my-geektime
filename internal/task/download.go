@@ -12,6 +12,7 @@ import (
 	"github.com/zkep/mygeektime/internal/service"
 	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/internal/types/task"
+	"github.com/zkep/mygeektime/lib/pool"
 	"go.uber.org/zap"
 )
 
@@ -24,20 +25,34 @@ func TaskHandler(ctx context.Context, t time.Time) error {
 	global.LOG.Debug("task handler Start", zap.Time("time", t))
 	_, loaded := lock.LoadOrStore(keyLock, t)
 	if loaded {
-		global.LOG.Debug("task handler running", zap.Time("time", t))
+		if err := iterators(ctx, global.GPool, true); err != nil {
+			global.LOG.Error("task handler iterators", zap.Error(err), zap.Bool("loaded", loaded))
+		}
 		return nil
 	}
 	defer lock.Delete(keyLock)
+	if err := iterators(ctx, global.GPool, false); err != nil {
+		global.LOG.Error("task handler iterators", zap.Error(err), zap.Bool("loaded", loaded))
+	}
+	global.LOG.Debug("task handler End", zap.Time("time", time.Now()))
+	return nil
+}
+
+func iterators(ctx context.Context, gpool *pool.GPool, loaded bool) error {
 	timeCtx, timeCancel := context.WithTimeout(ctx, time.Hour)
 	defer timeCancel()
 	hasMore, page, psize := true, 1, 5
-	batch := global.GPool.NewBatch()
+	batch := gpool.NewBatch()
 	for hasMore {
 		var ls []*model.Task
-		if err := global.DB.Model(&model.Task{}).
-			Where("status = ?", service.TASK_STATUS_PENDING).
-			Where("deleted_at = ?", 0).
-			Order("id ASC").
+		tx := global.DB.Model(&model.Task{})
+		if loaded {
+			tx = tx.Where("task_pid = ?", "").Where("status <= ?", service.TASK_STATUS_PENDING)
+		} else {
+			tx = tx.Where("status = ?", service.TASK_STATUS_PENDING)
+		}
+		tx = tx.Where("deleted_at = ?", 0)
+		if err := tx.Order("id ASC").
 			Offset((page - 1) * psize).
 			Limit(psize + 1).
 			Find(&ls).Error; err != nil {
@@ -65,7 +80,6 @@ func TaskHandler(ctx context.Context, t time.Time) error {
 		global.LOG.Error("task handler wait", zap.Error(err))
 		return err
 	}
-	global.LOG.Debug("task handler End", zap.Time("time", time.Now()))
 	return nil
 }
 
@@ -132,18 +146,16 @@ func worker(ctx context.Context, x *model.Task) error {
 			"status":     service.TASK_STATUS_RUNNING,
 			"updated_at": time.Now().Unix(),
 		}
-		if len(x.Raw) == 0 {
-			aid, err := strconv.ParseInt(x.OtherId, 10, 64)
-			if err != nil {
-				return err
-			}
-			article, err := service.GetArticleInfo(ctx, geek.ArticlesInfoRequest{Id: aid})
-			if err != nil {
-				return err
-			}
-			x.Raw, _ = json.Marshal(article)
-			m["raw"] = x.Raw
+		aid, err := strconv.ParseInt(x.OtherId, 10, 64)
+		if err != nil {
+			return err
 		}
+		article, err := service.GetArticleInfo(ctx, geek.ArticlesInfoRequest{Id: aid})
+		if err != nil {
+			return err
+		}
+		x.Raw, _ = json.Marshal(article)
+		m["raw"] = x.Raw
 		if err := global.DB.Model(&model.Task{Id: x.Id}).UpdateColumns(m).Error; err != nil {
 			global.LOG.Error("worker UpdateColumns",
 				zap.Error(err),
@@ -152,8 +164,7 @@ func worker(ctx context.Context, x *model.Task) error {
 			return err
 		}
 		status := service.TASK_STATUS_FINISHED
-		err := service.Download(ctx, x)
-		if err != nil {
+		if err = service.Download(ctx, x); err != nil {
 			global.LOG.Error("worker download", zap.Error(err), zap.String("taskId", x.TaskId))
 			status = service.TASK_STATUS_ERROR
 			message := task.TaskMessage{Text: err.Error()}

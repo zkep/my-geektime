@@ -21,10 +21,10 @@ mygeektime server
 
 ##### 自定义配置启动http服务
 ```shell
-# 生成配置模版，后可以自定义模版内容
+# 生成配置模版后, 可以自定义配置
 mygeektime cli config --config=config_templete.yml
 
-# 使用自定义配置模版
+# 使用自定义配置启动服务
 mygeektime server --config=config_templete.yml
 ```
 
@@ -58,7 +58,7 @@ browser:  #
   open_browser: true # 服务启动后自动打开浏览器
 geektime:
   auto_sync: true # 建议开启，默认将geektime的接口数据缓存
-  auth: true # 设置为false，不再登录时候验证geektime的账号信息,可以读取已经缓存的下载任务
+  auth: true # 设置为false，不在登录时验证geektime的账号信息,可以读取已经缓存的下载任务
 ```
 
 

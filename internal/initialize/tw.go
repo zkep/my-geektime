@@ -13,7 +13,7 @@ func Tw(ctx context.Context) error {
 
 	global.TW = schedule.NewTimerWheel(200*time.Millisecond, 1000)
 
-	global.TW.RepeatedTimer(time.Second*5, func(t time.Time) { _ = task.TaskHandler(ctx, t) }, nil)
+	global.TW.RepeatedTimer(time.Second*10, func(t time.Time) { _ = task.TaskHandler(ctx, t) }, nil)
 
 	return nil
 }
