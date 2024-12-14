@@ -92,7 +92,9 @@ func Download(ctx context.Context, x *model.Task) error {
 	markdown, err := converter.ConvertString(data.Info.Content)
 	if err == nil {
 		realFile := global.Storage.GetKey(source, true)
-		mdPath := fmt.Sprintf("%s.md", strings.TrimSuffix(realFile, ".mp4"))
+		realFile = strings.TrimSuffix(realFile, ".mp4")
+		realFile = strings.TrimSuffix(realFile, ".mp3")
+		mdPath := fmt.Sprintf("%s.md", realFile)
 		_ = os.WriteFile(mdPath, []byte(markdown), os.ModePerm)
 	}
 	global.LOG.Info("download end",
