@@ -15,7 +15,7 @@ Commond help:
 mygeektime -help
 ```
 
-#### [FFmpeg 处理视频](https://ffmpeg.org/download.html)
+#### [FFmpeg](https://ffmpeg.org/download.html)
 
 MacOS
 ```shell

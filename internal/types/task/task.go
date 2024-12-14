@@ -76,3 +76,10 @@ type TaskDownloadRequest struct {
 	// url
 	Url string `json:"url,omitempty" form:"url"`
 }
+
+type DeleteRequest struct {
+	// task pid
+	Pid string `json:"pid,omitempty" form:"pid"`
+	// task ids
+	Ids string `json:"ids,omitempty" form:"ids"`
+}

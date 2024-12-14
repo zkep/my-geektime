@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/gin-gonic/gin"
@@ -43,6 +44,7 @@ func (t *Task) List(c *gin.Context) {
 		tx = tx.Where("status = ?", req.Xstatus)
 	}
 	tx = tx.Where("task_pid = ?", req.TaskPid)
+	tx = tx.Where("deleted_at = ?", 0)
 	if req.TaskPid != "" {
 		tx = tx.Order("id ASC")
 	} else {
@@ -139,6 +141,43 @@ func (t *Task) Retry(c *gin.Context) {
 			if err := tx.Model(&model.Task{}).
 				Where("task_id", idx).
 				UpdateColumn("status", service.TASK_STATUS_PENDING).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK"})
+}
+
+func (t *Task) Delete(c *gin.Context) {
+	var req task.DeleteRequest
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	err := global.DB.Transaction(func(tx *gorm.DB) error {
+		if len(req.Pid) > 0 {
+			if err := tx.Model(&model.Task{}).
+				Where("task_id", req.Pid).
+				Updates(map[string]any{"deleted_at": time.Now().Unix()}).Error; err != nil {
+				return err
+			}
+			if len(req.Ids) == 0 {
+				if err := tx.Model(&model.Task{}).
+					Where("task_pid", req.Pid).
+					Updates(map[string]any{"deleted_at": time.Now().Unix()}).Error; err != nil {
+					return err
+				}
+			}
+		}
+		for _, idx := range strings.Split(req.Ids, ",") {
+			if err := tx.Model(&model.Task{}).
+				Where("task_id", idx).
+				Updates(map[string]any{"deleted_at": time.Now().Unix()}).Error; err != nil {
 				return err
 			}
 		}

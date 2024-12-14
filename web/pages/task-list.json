@@ -251,6 +251,18 @@
                               }
                             },
                             "confirmText": "确定要重新下载吗？"
+                          },
+                          {
+                            "label": "批量删除",
+                            "actionType": "ajax",
+                            "api": {
+                              "url": "/v2/task/delete",
+                              "method":"delete",
+                              "data": {
+                                "ids": "${ids | raw}"
+                              }
+                            },
+                            "confirmText": "确定要删除当前任务吗？"
                           }
                         ],
                         "footerToolbar": [
@@ -452,6 +464,19 @@
                                   }
                                 },
                                 "confirmText": "确定要重新下载么？"
+                              },
+                              {
+                                "type": "button",
+                                "icon": "fa-solid fa-trash",
+                                "actionType": "ajax",
+                                "api": {
+                                  "url": "/v2/task/delete",
+                                  "method":"delete",
+                                  "data": {
+                                    "ids": "${task_id}"
+                                  }
+                                },
+                                "confirmText": "确定要删除 [${task_name}] 任务吗？"
                               }
                             ],
                             "placeholder": "-",
@@ -470,6 +495,19 @@
                       }
                     ]
                   }
+                },
+                {
+                  "type": "button",
+                  "icon": "fa-solid fa-trash",
+                  "actionType": "ajax",
+                  "api": {
+                    "url": "/v2/task/delete",
+                    "method":"delete",
+                    "data": {
+                      "pid": "${task_id}"
+                    }
+                  },
+                  "confirmText": "确定要删除 [${task_name}] 任务吗？"
                 }
               ],
               "placeholder": "-",
