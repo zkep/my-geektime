@@ -15,6 +15,20 @@ go install github.com/zkep/mygeektime@latest
 ```shell
 mygeektime -help
 ```
+#### 查看帮助输出
+```shell
+My GeekTime CLI 0.0.1
+
+Available commands:
+
+   server   This is http server 
+   cli      This is command 
+
+Flags:
+
+  -help
+        Get help on the 'mygeektime' command.
+```
 
 ### 依赖项
 
@@ -52,22 +66,6 @@ make && make install
 >* win32：https://storage.googleapis.com/chrome-for-testing-public/${version}/win32/chromedriver-win32.zip
 >* win64：https://storage.googleapis.com/chrome-for-testing-public/${version}/win64/chromedriver-win64.zip
 
-
-#### 查看帮助输出
-```shell
-My GeekTime CLI 0.0.1
-
-Available commands:
-
-   server   This is http server 
-   cli      This is Command 
-
-Flags:
-
-  -help
-        Get help on the 'mygeektime' command.
-
-```
 
 #### 启动web服务
 
