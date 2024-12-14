@@ -118,6 +118,7 @@ func (p *Product) Download(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "error": err.Error()})
 		return
 	}
+	articlesMap := make(map[int64]*model.Article, 10)
 	ids := make([]int64, 0, 1)
 	switch x := req.Ids.(type) {
 	case string:
@@ -149,6 +150,12 @@ func (p *Product) Download(c *gin.Context) {
 		}
 		for _, v := range resp.Data.List {
 			ids = append(ids, v.ID)
+			articlesMap[v.ID] = &model.Article{
+				Aid:   fmt.Sprintf("%d", v.ID),
+				Pid:   fmt.Sprintf("%d", req.Pid),
+				Title: v.ArticleTitle,
+				Cover: v.ArticleCover,
+			}
 		}
 	}
 	var product model.Product
@@ -156,6 +163,17 @@ func (p *Product) Download(c *gin.Context) {
 		Where("pid = ?", req.Pid).Find(&product).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
+	}
+	if len(articlesMap) == 0 {
+		var articles []*model.Article
+		if err := global.DB.Model(&model.Article{}).
+			Where("aid IN ?", ids).Find(&articles).Error; err != nil {
+			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+			return
+		}
+		for _, v := range articles {
+			articlesMap[v.Id] = v
+		}
 	}
 	raw, _ := json.Marshal(req)
 	jobId := service.TaskID()
@@ -167,19 +185,6 @@ func (p *Product) Download(c *gin.Context) {
 		Raw:      raw,
 	}
 	tasks := make([]*model.Task, 0, len(ids))
-	var articles []*model.Article
-	if err := global.DB.Model(&model.Article{}).
-		Where("aid IN ?", ids).Find(&articles).Error; err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
-		return
-	}
-	articlesMap := make(map[int64]*model.Article, len(articles))
-	for _, v := range articles {
-		aid, err := strconv.ParseInt(v.Aid, 10, 64)
-		if err == nil {
-			articlesMap[aid] = v
-		}
-	}
 	for _, id := range ids {
 		var (
 			raw      []byte
@@ -192,7 +197,7 @@ func (p *Product) Download(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 				return
 			}
-			raw, _ = json.Marshal(info.Data)
+			raw, _ = json.Marshal(info)
 			otherId = fmt.Sprintf("%d", info.Data.Info.Id)
 			taskName = info.Data.Info.Title
 		} else {

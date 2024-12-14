@@ -12,7 +12,6 @@ import (
 	"os/exec"
 	"path"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -59,23 +58,13 @@ func Download(ctx context.Context, x *model.Task) error {
 		global.LOG.Info("download video start",
 			zap.String("taskId", x.TaskId),
 			zap.String("otherId", x.OtherId))
-		aid, err := strconv.ParseInt(x.OtherId, 10, 64)
-		if err != nil {
-			return err
-		}
-		article, err := GetArticleInfo(ctx, geek.ArticlesInfoRequest{Id: aid})
-		if err != nil {
-			return err
-		}
-		if len(article.Data.Info.Video.HlsMedias) == 0 {
-			return fmt.Errorf("article info not found %d", aid)
-		}
-		data = article.Data
 
+		if len(data.Info.Video.HlsMedias) == 0 {
+			return fmt.Errorf("article info not found %s", x.OtherId)
+		}
 		sort.Slice(data.Info.Video.HlsMedias, func(i, j int) bool {
 			return data.Info.Video.HlsMedias[i].Size > data.Info.Video.HlsMedias[j].Size
 		})
-
 		hlsURL := data.Info.Video.HlsMedias[0].URL
 		fileName := VerifyFileName(data.Info.Title)
 		dir := path.Join(VerifyFileName(data.Product.Title), fileName)

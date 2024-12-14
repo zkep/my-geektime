@@ -153,9 +153,8 @@
           "method": "get",
           "url": "/v2/product/list"
         },
-        "perPage": 5,
+        "perPage": 10,
         "autoFillHeight": false,
-        "maxKeepItemSelectionLength": 11,
         "keepItemSelectionOnPageChange": true,
         "bulkActions": [],
         "footerToolbar": [
@@ -212,6 +211,7 @@
               {
                 "type": "button",
                 "icon": "fa fa-eye",
+                "loading": true,
                 "actionType": "drawer",
                 "drawer": {
                   "resizable": true,
@@ -282,11 +282,11 @@
                         "url": "/v2/product/articles"
                       },
                       "perPage": 200,
-                      "maxKeepItemSelectionLength": 11,
                       "keepItemSelectionOnPageChange": true,
                       "bulkActions": [
                         {
                           "label": "批量下载",
+                          "loading": true,
                           "actionType": "ajax",
                           "api": {
                             "url": "/v2/product/download",
@@ -336,12 +336,12 @@
                         {
                           "type": "operation",
                           "label": "操作",
-                          "width": "100",
                           "buttons": [
                             {
                               "type": "button",
                               "icon": "fa fa-eye",
                               "actionType": "drawer",
+                              "loading": true,
                               "drawer": {
                                 "resizable": true,
                                 "closeOnOutside": true,
@@ -413,6 +413,7 @@
                             },
                             {
                               "type": "button",
+                              "loading": true,
                               "icon": "fa fa-download",
                               "actionType": "ajax",
                               "api": {
@@ -446,6 +447,7 @@
               },
               {
                 "type": "button",
+                "loading": true,
                 "icon": "fa fa-download",
                 "actionType": "ajax",
                 "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在任务列表查看下载情况",

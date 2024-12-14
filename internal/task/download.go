@@ -3,12 +3,14 @@ package task
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 	"sync"
 	"time"
 
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/service"
+	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/internal/types/task"
 	"go.uber.org/zap"
 )
@@ -129,6 +131,18 @@ func worker(ctx context.Context, x *model.Task) error {
 		m := map[string]any{
 			"status":     service.TASK_STATUS_RUNNING,
 			"updated_at": time.Now().Unix(),
+		}
+		if len(x.Raw) == 0 {
+			aid, err := strconv.ParseInt(x.OtherId, 10, 64)
+			if err != nil {
+				return err
+			}
+			article, err := service.GetArticleInfo(ctx, geek.ArticlesInfoRequest{Id: aid})
+			if err != nil {
+				return err
+			}
+			x.Raw, _ = json.Marshal(article)
+			m["raw"] = x.Raw
 		}
 		if err := global.DB.Model(&model.Task{Id: x.Id}).UpdateColumns(m).Error; err != nil {
 			global.LOG.Error("worker UpdateColumns",

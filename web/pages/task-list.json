@@ -148,6 +148,7 @@
                 {
                   "type": "button",
                   "icon": "fa fa-eye",
+                  "loading": true,
                   "actionType": "drawer",
                   "drawer": {
                     "resizable": true,
@@ -317,12 +318,13 @@
                           {
                             "type": "operation",
                             "label": "操作",
-                            "width": "100",
                             "buttons": [
                               {
                                 "type": "button",
                                 "icon": "fa fa-eye",
                                 "actionType": "drawer",
+                                "visibleOn": "${status !='1'}",
+                                "loading": true,
                                 "drawer": {
                                   "resizable": true,
                                   "closeOnOutside": true,
@@ -500,6 +502,7 @@
                   "type": "button",
                   "icon": "fa-solid fa-trash",
                   "actionType": "ajax",
+                  "loading": true,
                   "api": {
                     "url": "/v2/task/delete",
                     "method":"delete",
