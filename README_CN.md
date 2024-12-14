@@ -53,7 +53,7 @@ make && make install
 
 > 方式1: 浏览器开发者工具获取geektime有效cookie，存入项目执行目录 cookie.txt文件
     
-> 方式2: [ChromeDriver](https://developer.chrome.google.cn/docs/chromedriver/get-started)
+> 方式2: [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing/#stable)
 > 查看 Chrome 版本号, 在谷歌浏览器的地址栏输入：  
 >```shell
 >chrome://version

@@ -36,7 +36,7 @@ make && make install
 
 > Method 1: The browser developer tool retrieves a valid Geektime cookie and stores it in the project execution directory's cookie.txt file
 
-> Method : [ChromeDriver](https://developer.chrome.google.cn/docs/chromedriver/get-started)
+> Method : [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing/#stable)
 > Check the Chrome version number and enter it in the address bar of Google Chrome:
 >```shell
 >chrome://version
