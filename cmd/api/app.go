@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -199,6 +200,10 @@ func (app *App) Login() error {
 		selenium.Output(os.Stderr),
 	}
 	selenium.SetDebug(true)
+	if runtime.GOOS == "windows" {
+		global.CONF.Browser.DriverPath = strings.TrimSuffix(global.CONF.Browser.DriverPath, ".exe")
+		global.CONF.Browser.DriverPath = fmt.Sprintf("%s.exe", global.CONF.Browser.DriverPath)
+	}
 	service, err := selenium.NewChromeDriverService(global.CONF.Browser.DriverPath, port, opts...)
 	if err != nil {
 		return err

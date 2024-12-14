@@ -20,6 +20,7 @@ import (
 type BrowserFlags struct {
 	Driver  string `name:"driver" description:"driver to use " default:"chrome"`
 	Version string `name:"version" description:"browser version of dependency"`
+	OS      string `name:"os" description:"os of dependency, supported values: linux, darwin-arm64, darwin-x64, win64, win32"`
 }
 
 var (
@@ -27,7 +28,7 @@ var (
 	chromeHubURL = "https://storage.googleapis.com/chrome-for-testing-public/"
 
 	chromeOS = map[string]string{
-		"linux64":      "linux64/chromedriver-linux64.zip",
+		"linux":        "linux64/chromedriver-linux64.zip",
 		"darwin-arm64": "mac-arm64/chromedriver-mac-arm64.zip",
 		"darwin-x64":   "mac-x64/chromedriver-mac-x64.zip",
 		"win64":        "win64/chromedriver-win64.zip",
@@ -36,12 +37,13 @@ var (
 
 	chromeVersionHelp = []string{
 		color.Red("Browser version is required ."),
-		color.Cyan("For example: 131.0.6778.109"),
-		color.Red("You can execute in the address bar of Google Chrome browser:"),
-		color.Cyan("chrome://version"),
+		color.Cyan("For example: --version=131.0.6778.109"),
+		color.Blue("You can execute in the address bar of Google Chrome browser get version:"),
+		"",
+		color.Blue("chrome://version"),
 	}
 
-	repo = "repo"
+	depend = "depend"
 )
 
 func browser(f *BrowserFlags) error {
@@ -54,11 +56,22 @@ func browser(f *BrowserFlags) error {
 	defer cancel()
 	switch f.Driver {
 	case "chrome":
-		versionName, ok := chromeOS[systemOS]
-		if !ok {
-			return fmt.Errorf(color.Red("Unsupported drive type %s"), systemOS)
+		var (
+			versionName string
+			ok          bool
+		)
+		if versionName, ok = chromeOS[systemOS]; !ok {
+			if versionName, ok = chromeOS[runtime.GOOS]; !ok {
+				fmt.Println("You can download the corresponding system software from the following link: ")
+				for _, value := range chromeOS {
+					chromeURL := fmt.Sprintf("%s%s/%s", chromeHubURL, f.Version, value)
+					fmt.Println(color.Cyan(chromeURL))
+				}
+				fmt.Println()
+				return fmt.Errorf("unsupported systemOS: %s", runtime.GOOS)
+			}
 		}
-		dirName := path.Join(repo, path.Dir(versionName))
+		dirName := path.Join(depend, path.Dir(versionName))
 		if err := os.MkdirAll(dirName, os.ModePerm); err != nil {
 			return err
 		}
@@ -88,6 +101,7 @@ func browser(f *BrowserFlags) error {
 							ticker.Reset(time.Second)
 							stat, _ := os.Stat(fileName)
 							fmt.Printf("%s, progress: %d / %d", uri, stat.Size(), size)
+							fmt.Println()
 						}
 					}
 				}(downloadURL, r.ContentLength)
@@ -107,10 +121,10 @@ func browser(f *BrowserFlags) error {
 			if err := os.Rename(rename, "chromedriver"); err != nil {
 				return err
 			}
-			_ = os.RemoveAll(repo)
+			_ = os.RemoveAll(depend)
+			_ = os.Remove(depend)
 			fmt.Println("download finished: chromedriver")
 		}
-
 	default:
 		return fmt.Errorf("unsupported driver: %s", f.Driver)
 	}
