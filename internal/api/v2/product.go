@@ -148,6 +148,10 @@ func (p *Product) Download(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 			return
 		}
+		if len(resp.Data.List) == 0 {
+			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": "geektime api busy"})
+			return
+		}
 		for _, v := range resp.Data.List {
 			ids = append(ids, v.ID)
 			articlesMap[v.ID] = &model.Article{

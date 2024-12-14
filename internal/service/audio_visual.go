@@ -54,68 +54,52 @@ func Download(ctx context.Context, x *model.Task) error {
 	if err := json.Unmarshal(x.Raw, &articleInfo); err != nil {
 		return err
 	}
+	var (
+		source      string
+		downloadURL string
+		err         error
+	)
 	data := articleInfo.Data
 	if data.Info.IsVideo {
-		global.LOG.Info("download video start",
-			zap.String("taskId", x.TaskId),
-			zap.String("otherId", x.OtherId))
 		if len(data.Info.Video.HlsMedias) == 0 {
 			return fmt.Errorf("article info not found %s", x.OtherId)
 		}
 		sort.Slice(data.Info.Video.HlsMedias, func(i, j int) bool {
 			return data.Info.Video.HlsMedias[i].Size > data.Info.Video.HlsMedias[j].Size
 		})
-		hlsURL := data.Info.Video.HlsMedias[0].URL
+		downloadURL := data.Info.Video.HlsMedias[0].URL
 		fileName := VerifyFileName(data.Info.Title)
 		dir := path.Join(VerifyFileName(data.Product.Title), fileName)
-		source, err := Video(ctx, hlsURL, dir, fileName)
+		source, err = Video(ctx, downloadURL, dir, fileName)
 		if err != nil {
 			global.LOG.Error("download video", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
-		message := task.TaskMessage{
-			Object: global.Storage.GetKey(source, false),
-		}
-		x.Message, _ = json.Marshal(message)
-		converter := md.NewConverter("", true, nil)
-		markdown, err := converter.ConvertString(data.Info.Content)
-		if err == nil {
-			realFile := global.Storage.GetKey(source, true)
-			mdPath := fmt.Sprintf("%s.md", strings.TrimSuffix(realFile, ".mp4"))
-			_ = os.WriteFile(mdPath, []byte(markdown), os.ModePerm)
-		}
-		global.LOG.Info("download video end",
-			zap.String("taskId", x.TaskId),
-			zap.String("url", hlsURL),
-			zap.Duration("cost", time.Since(t0)),
-		)
 	} else if data.Info.Audio.DownloadURL != "" {
-		global.LOG.Info("download audio start",
-			zap.String("taskId", x.TaskId),
-			zap.String("url", data.Info.Audio.DownloadURL))
-		source, err := Audio(ctx, data.Info.Audio.DownloadURL,
+		downloadURL = data.Info.Audio.DownloadURL
+		source, err = Audio(ctx, data.Info.Audio.DownloadURL,
 			VerifyFileName(data.Product.Title), VerifyFileName(data.Info.Title))
 		if err != nil {
 			global.LOG.Error("download audio", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
-		message := task.TaskMessage{
-			Object: global.Storage.GetKey(source, false),
-		}
-		x.Message, _ = json.Marshal(message)
-		converter := md.NewConverter("", true, nil)
-		markdown, err := converter.ConvertString(data.Info.Content)
-		if err == nil {
-			realFile := global.Storage.GetKey(source, true)
-			mdPath := fmt.Sprintf("%s.md", strings.TrimSuffix(realFile, ".mp3"))
-			_ = os.WriteFile(mdPath, []byte(markdown), os.ModePerm)
-		}
-		global.LOG.Info("download audio end",
-			zap.String("taskId", x.TaskId),
-			zap.String("url", data.Info.Audio.DownloadURL),
-			zap.Duration("cost", time.Since(t0)),
-		)
 	}
+	message := task.TaskMessage{
+		Object: global.Storage.GetKey(source, false),
+	}
+	x.Message, _ = json.Marshal(message)
+	converter := md.NewConverter("", true, nil)
+	markdown, err := converter.ConvertString(data.Info.Content)
+	if err == nil {
+		realFile := global.Storage.GetKey(source, true)
+		mdPath := fmt.Sprintf("%s.md", strings.TrimSuffix(realFile, ".mp4"))
+		_ = os.WriteFile(mdPath, []byte(markdown), os.ModePerm)
+	}
+	global.LOG.Info("download end",
+		zap.String("taskId", x.TaskId),
+		zap.String("url", downloadURL),
+		zap.Duration("cost", time.Since(t0)),
+	)
 	return nil
 }
 
