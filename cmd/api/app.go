@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -21,6 +22,7 @@ import (
 	"github.com/zkep/mygeektime/internal/router"
 	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/lib/browser"
+	"github.com/zkep/mygeektime/lib/color"
 	"github.com/zkep/mygeektime/lib/zhttp"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -63,6 +65,14 @@ func (app *App) Run(f *Flags) error {
 		}
 	}
 	global.CONF = &cfg
+	if err := app.docterFfmpeg(); err != nil {
+		return err
+	}
+	if global.CONF.Geektime.Auth {
+		if err := app.docterAuth(); err != nil {
+			return err
+		}
+	}
 	if err := initialize.Gorm(app.ctx); err != nil {
 		return err
 	}
@@ -103,8 +113,10 @@ func (app *App) Run(f *Flags) error {
 }
 
 func (app *App) newHttpServer(f *config.Config) error {
-	if err := app.Login(); err != nil {
-		return err
+	if global.CONF.Geektime.Auth {
+		if err := app.Login(); err != nil {
+			return err
+		}
 	}
 	addr := fmt.Sprintf("%s:%d", f.Server.HTTPAddr, f.Server.HTTPPort)
 	srv := &http.Server{
@@ -260,6 +272,40 @@ func (app *App) Login() error {
 		return true, nil
 	}
 	if err = wd.WaitWithTimeout(getCookiesCondition, time.Minute*5); nil != err {
+		return err
+	}
+	return nil
+}
+
+func (app *App) docterFfmpeg() error {
+	if _, err := exec.LookPath("ffmpeg"); err != nil {
+		fmt.Println("Please install ffmpeg: ")
+		fmt.Println("Ffmpeg will be used for video merging")
+		fmt.Println()
+		fmt.Println(color.Blue("https://ffmpeg.org/download.html"))
+		fmt.Println()
+		return err
+	}
+	return nil
+}
+
+func (app *App) docterAuth() error {
+	if _, err := os.Stat("cookie.txt"); err != nil {
+		if os.IsNotExist(err) {
+			chromedriver := "./chromedriver"
+			if runtime.GOOS == "windows" {
+				chromedriver = "./chromedriver.exe"
+			}
+			if _, err1 := exec.LookPath(chromedriver); err1 != nil {
+				fmt.Println("Please install chromedriver: ")
+				fmt.Println("Chromedriver will be used by default to simulate login and obtain cookies")
+				fmt.Println(color.Blue("https://googlechromelabs.github.io/chrome-for-testing/#stable"))
+				fmt.Println()
+				fmt.Println(color.Blue("Also you can save Geektime's cookie to 'cookie.txt' in current folder"))
+				return fmt.Errorf("%w OR %w", err, err1)
+			}
+			return nil
+		}
 		return err
 	}
 	return nil

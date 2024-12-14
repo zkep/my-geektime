@@ -55,6 +55,7 @@ browser:
   open_browser: true # Automatically open browser after service startup
 geektime:
   auto_sync: true # Automatically sync geektime api data to db
+  auth: false # check geektime account auth
 ```
 
 Commond help:

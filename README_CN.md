@@ -58,6 +58,7 @@ browser:  #
   open_browser: true # 服务启动后自动打开浏览器
 geektime:
   auto_sync: true # 建议开启，默认将geektime的接口数据缓存
+  auth: false # 设置为false，不再登录时候验证geektime的账号信息
 ```
 
 

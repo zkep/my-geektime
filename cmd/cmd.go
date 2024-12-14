@@ -5,9 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"os"
-	"os/exec"
 	"os/signal"
-	"runtime"
 	"syscall"
 
 	"github.com/uaxe/cliz"
@@ -54,8 +52,6 @@ func (app *App) Run() {
 
 	c.SetBannerFunction(banner)
 
-	c.PreRun(func(_ *cliz.Cli) error { return app.docter() })
-
 	apiApp := api.NewApp(app.ctx, app.quit, app.assets)
 	c.NewSubCommandFunction("server", "This is http server", apiApp.Run)
 
@@ -67,34 +63,4 @@ func (app *App) Run() {
 	if err := c.Run(); err != nil {
 		fmt.Println(color.Red(err.Error()))
 	}
-}
-
-func (app *App) docter() error {
-	if _, err := exec.LookPath("ffmpeg"); err != nil {
-		fmt.Println("Please install ffmpeg: ")
-		fmt.Println("Ffmpeg will be used for video merging")
-		fmt.Println()
-		fmt.Println(color.Blue("https://ffmpeg.org/download.html"))
-		fmt.Println()
-		return err
-	}
-	if _, err := os.Stat("cookie.txt"); err != nil {
-		if os.IsNotExist(err) {
-			chromedriver := "./chromedriver"
-			if runtime.GOOS == "windows" {
-				chromedriver = "./chromedriver.exe"
-			}
-			if _, err1 := exec.LookPath(chromedriver); err1 != nil {
-				fmt.Println("Please install chromedriver: ")
-				fmt.Println("Chromedriver will be used by default to simulate login and obtain cookies")
-				fmt.Println(color.Blue("https://googlechromelabs.github.io/chrome-for-testing/#stable"))
-				fmt.Println()
-				fmt.Println(color.Blue("Also you can save Geektime's cookie to 'cookie.txt' in current folder"))
-				return fmt.Errorf("%w OR %w", err, err1)
-			}
-			return nil
-		}
-		return err
-	}
-	return nil
 }
