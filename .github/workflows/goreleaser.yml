@@ -12,24 +12,23 @@ on:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
-    env:
-      flags: ''
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: 1.22
           cache: true
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
           version: latest
-          args: release --clean ${{ env.flags }}
-          ignore:
-            - goos: windows
-              goarch: 386
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
