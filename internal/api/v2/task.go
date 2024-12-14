@@ -36,7 +36,7 @@ func (t *Task) List(c *gin.Context) {
 		req.Page = 1
 	}
 	ret := task.TaskListResponse{
-		Rows: make([]task.Task, 0, req.PerPage),
+		Rows: make([]task.Task, 0, 10),
 	}
 	var ls []*model.Task
 	tx := global.DB.Model(&model.Task{})

@@ -34,6 +34,7 @@ func TaskHandler(ctx context.Context, t time.Time) error {
 		var ls []*model.Task
 		if err := global.DB.Model(&model.Task{}).
 			Where("status = ?", service.TASK_STATUS_PENDING).
+			Where("deleted_at = ?", 0).
 			Order("id ASC").
 			Offset((page - 1) * psize).
 			Limit(psize + 1).

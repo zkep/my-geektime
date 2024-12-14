@@ -35,7 +35,7 @@
                 "body": [
                   {
                     "type": "select",
-                    "name": "status",
+                    "name": "xstatus",
                     "value": 0,
                     "options": [
                       {
