@@ -1,26 +1,32 @@
-name: GoRelease
+name: GoReleaser
+
+permissions:
+  contents: write
+  id-token: write
+  packages: write
+
 on:
-  create:
-    tags:
-      - v*
+  push:
+    tags: [ 'v*' ]
 
 jobs:
-  release:
-    name: Release on GitHub
+  goreleaser:
     runs-on: ubuntu-latest
+    env:
+      flags: ''
     steps:
-      - name: Check out code
-        uses: actions/checkout@v1
-
-      - name: Validates GO releaser config
-        uses: docker://goreleaser/goreleaser:latest
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
         with:
-          args: check
-
-      - name: Create release on GitHub
-        uses: docker://goreleaser/goreleaser:latest
+          go-version: 1.21
+          cache: true
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v5
         with:
-          args: release
+          distribution: goreleaser
+          version: latest
+          args: release --clean ${{ env.flags }}
         env:
-          CGO_ENABLED: 0
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
