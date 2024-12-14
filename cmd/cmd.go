@@ -87,7 +87,7 @@ func (app *App) docter() error {
 			if _, err1 := exec.LookPath(chromedriver); err1 != nil {
 				fmt.Println("Please install chromedriver: ")
 				fmt.Println("Chromedriver will be used by default to simulate login and obtain cookies")
-				fmt.Println(color.Blue("https://ffmpeg.org/download.html"))
+				fmt.Println(color.Blue("https://googlechromelabs.github.io/chrome-for-testing/#stable"))
 				fmt.Println()
 				fmt.Println(color.Blue("Also you can save Geektime's cookie to 'cookie.txt' in current folder"))
 				return fmt.Errorf("%w OR %w", err, err1)
