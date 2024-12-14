@@ -94,8 +94,8 @@ storage: # mp4 或 mp3 存储目录
   bucket: object
   host: http://127.0.0.1:8090 # 端口与server中的 http_port 保持一致
 browser:  # 
-  driver_path: ./chromedriver # 如果没有cookie文件，默认使用chromedriver模拟登录获取cookie
-  cookie_path: ./cookie.txt # geektime的cookie文件存放位置
+  driver_path: chromedriver # 如果没有cookie文件，默认使用chromedriver模拟登录获取cookie
+  cookie_path: cookie.txt # geektime的cookie文件存放位置
   open_browser: true # 服务启动后自动打开浏览器
 geektime:
   auto_sync: true # 建议开启，默认将geektime的接口数据缓存

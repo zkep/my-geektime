@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -185,6 +186,16 @@ func (app *App) auth(cookies, path string) error {
 }
 
 func (app *App) Login() error {
+	cookiePath, err := filepath.Abs(global.CONF.Browser.CookiePath)
+	if err != nil {
+		return err
+	}
+	global.CONF.Browser.CookiePath = cookiePath
+	driverPath, err := filepath.Abs(global.CONF.Browser.DriverPath)
+	if err != nil {
+		return err
+	}
+	global.CONF.Browser.DriverPath = driverPath
 	if stat, err := os.Stat(global.CONF.Browser.CookiePath); err == nil && stat.Size() > 0 {
 		if raw, err := os.ReadFile(global.CONF.Browser.CookiePath); err != nil {
 			return err
