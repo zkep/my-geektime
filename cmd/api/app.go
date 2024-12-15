@@ -3,27 +3,18 @@ package api
 import (
 	"context"
 	"embed"
-	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/cookiejar"
 	"os"
 	"os/exec"
-	"path/filepath"
-	"runtime"
-	"strings"
 	"time"
 
-	"github.com/tebeka/selenium"
 	"github.com/zkep/mygeektime/internal/config"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/initialize"
-	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/router"
-	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/lib/browser"
 	"github.com/zkep/mygeektime/lib/color"
-	"github.com/zkep/mygeektime/lib/zhttp"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
@@ -65,14 +56,6 @@ func (app *App) Run(f *Flags) error {
 		}
 	}
 	global.CONF = &cfg
-	if err := app.docterFfmpeg(); err != nil {
-		return err
-	}
-	if global.CONF.Geektime.Auth {
-		if err := app.docterAuth(); err != nil {
-			return err
-		}
-	}
 	if err := initialize.Gorm(app.ctx); err != nil {
 		return err
 	}
@@ -113,10 +96,8 @@ func (app *App) Run(f *Flags) error {
 }
 
 func (app *App) newHttpServer(f *config.Config) error {
-	if global.CONF.Geektime.Auth {
-		if err := app.Login(); err != nil {
-			return err
-		}
+	if err := app.docterFfmpeg(); err != nil {
+		return err
 	}
 	addr := fmt.Sprintf("%s:%d", f.Server.HTTPAddr, f.Server.HTTPPort)
 	srv := &http.Server{
@@ -138,145 +119,6 @@ func (app *App) newHttpServer(f *config.Config) error {
 	return nil
 }
 
-const (
-	loginURL    = "https://account.geekbang.org/login"
-	authURL     = "https://account.geekbang.org/serv/v1/user/auth"
-	refererURL  = "https://time.geekbang.org/dashboard/usercenter"
-	geekTimeURL = "https://time.geekbang.org"
-)
-
-func (app *App) auth(cookies, path string) error {
-	jar, _ := cookiejar.New(nil)
-	global.HttpClient = &http.Client{Jar: jar, Timeout: 5 * time.Minute}
-	t := time.Now().UnixMilli()
-	authUrl := fmt.Sprintf("%s?t=%d&v_t=%d", authURL, t, t)
-
-	err := zhttp.R.Client(global.HttpClient).
-		Before(func(r *http.Request) {
-			r.Header.Set("Accept", "application/json, text/plain, */*")
-			r.Header.Set("Referer", refererURL)
-			r.Header.Set("Cookie", cookies)
-			r.Header.Set("Sec-Ch-Ua", `"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"`)
-			r.Header.Set("User-Agent", zhttp.RandomUserAgent())
-			r.Header.Set("Accept", "application/json, text/plain, */*")
-			r.Header.Set("Content-Type", "application/json")
-			r.Header.Set("Origin", "https://time.geekbang.com")
-		}).
-		After(func(r *http.Response) error {
-			var auth geek.AuthResponse
-			if err := json.NewDecoder(r.Body).Decode(&auth); err != nil {
-				return err
-			}
-			if err := os.WriteFile(path, []byte(cookies), os.ModePerm); err != nil {
-				return err
-			}
-			global.GeekUser = auth.Data
-			global.GeekCookies = cookies
-			user := model.User{
-				Uid:      fmt.Sprintf("%d", global.GeekUser.UID),
-				NikeName: global.GeekUser.Nick,
-				Avatar:   global.GeekUser.Avatar,
-			}
-			if err := global.DB.Where(
-				model.User{
-					Uid: fmt.Sprintf("%d", global.GeekUser.UID),
-				}).
-				Assign(model.User{
-					UserName: global.GeekUser.Nick,
-					Avatar:   global.GeekUser.Avatar,
-				}).
-				FirstOrCreate(&user).Error; err != nil {
-				return err
-			}
-			return nil
-		}).
-		DoWithRetry(context.Background(), http.MethodGet, authUrl, nil)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (app *App) Login() error {
-	cookiePath, err := filepath.Abs(global.CONF.Browser.CookiePath)
-	if err != nil {
-		return err
-	}
-	global.CONF.Browser.CookiePath = cookiePath
-	driverPath, err := filepath.Abs(global.CONF.Browser.DriverPath)
-	if err != nil {
-		return err
-	}
-	global.CONF.Browser.DriverPath = driverPath
-	if stat, err := os.Stat(global.CONF.Browser.CookiePath); err == nil && stat.Size() > 0 {
-		if raw, err := os.ReadFile(global.CONF.Browser.CookiePath); err != nil {
-			return err
-		} else if err = app.auth(string(raw), global.CONF.Browser.CookiePath); err == nil {
-			return nil
-		}
-	}
-	port, err := zhttp.PickUnusedPort()
-	if err != nil {
-		return err
-	}
-	opts := []selenium.ServiceOption{
-		selenium.Output(os.Stderr),
-	}
-	selenium.SetDebug(true)
-	if runtime.GOOS == "windows" {
-		global.CONF.Browser.DriverPath = strings.TrimSuffix(global.CONF.Browser.DriverPath, ".exe")
-		global.CONF.Browser.DriverPath = fmt.Sprintf("%s.exe", global.CONF.Browser.DriverPath)
-	}
-	service, err := selenium.NewChromeDriverService(global.CONF.Browser.DriverPath, port, opts...)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = service.Stop() }()
-	caps := selenium.Capabilities{"browserName": "chrome"}
-	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
-	if err != nil {
-		return err
-	}
-	defer func() { _ = wd.Quit() }()
-
-	if err = wd.Get(loginURL); nil != err {
-		return err
-	}
-
-	getCookiesCondition := func(wd selenium.WebDriver) (bool, error) {
-		currentURL, err := wd.CurrentURL()
-		if err != nil {
-			return false, err
-		}
-		if strings.Contains(currentURL, loginURL) {
-			return false, nil
-		}
-		noLoop := strings.HasPrefix(currentURL, geekTimeURL)
-		if !noLoop {
-			return false, nil
-		}
-		cookies, err := wd.GetCookies()
-		if err != nil {
-			return false, err
-		}
-		cookiesLine := ""
-		for k, v := range cookies {
-			cookiesLine += fmt.Sprintf("%s=%s", v.Name, v.Value)
-			if k < len(cookies)-1 {
-				cookiesLine += ";"
-			}
-		}
-		if err = app.auth(cookiesLine, global.CONF.Browser.CookiePath); err != nil {
-			return false, err
-		}
-		return true, nil
-	}
-	if err = wd.WaitWithTimeout(getCookiesCondition, time.Minute*5); nil != err {
-		return err
-	}
-	return nil
-}
-
 func (app *App) docterFfmpeg() error {
 	if _, err := exec.LookPath("ffmpeg"); err != nil {
 		fmt.Println("Please install ffmpeg: ")
@@ -284,28 +126,6 @@ func (app *App) docterFfmpeg() error {
 		fmt.Println()
 		fmt.Println(color.Blue("https://ffmpeg.org/download.html"))
 		fmt.Println()
-		return err
-	}
-	return nil
-}
-
-func (app *App) docterAuth() error {
-	if _, err := os.Stat("cookie.txt"); err != nil {
-		if os.IsNotExist(err) {
-			chromedriver := "./chromedriver"
-			if runtime.GOOS == "windows" {
-				chromedriver = "./chromedriver.exe"
-			}
-			if _, err1 := exec.LookPath(chromedriver); err1 != nil {
-				fmt.Println("Please install chromedriver: ")
-				fmt.Println("Chromedriver will be used by default to simulate login and obtain cookies")
-				fmt.Println(color.Blue("https://googlechromelabs.github.io/chrome-for-testing/#stable"))
-				fmt.Println()
-				fmt.Println(color.Blue("Also you can save Geektime's cookie to 'cookie.txt' in current folder"))
-				return fmt.Errorf("%w OR %w", err, err1)
-			}
-			return nil
-		}
 		return err
 	}
 	return nil

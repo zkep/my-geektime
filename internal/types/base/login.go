@@ -1,6 +1,7 @@
 package base
 
 type LoginRequest struct {
-	UserName string `json:"username,omitempty" validate:"min=5,max=50"`
+	Account  string `json:"account,omitempty" validate:"min=5,max=50"`
 	Password string `json:"password,omitempty" validate:"min=5,max=50"`
+	Type     string `json:"type,omitempty" validate:"min=5,max=50"`
 }

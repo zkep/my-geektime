@@ -17,7 +17,7 @@ database:
   max_open_conns: 10
 storage: # mp4 or mp3 save folder
   driver: local
-  directory: repo  # Customize download folder, default to execute repo directory under the directory
+  directory: /tmp/repo  # Customize download folder, default to execute repo directory under the directory
   bucket: object
   host: http://127.0.0.1:8090  # Keep the port consistent with the http_port in the server
 browser:
@@ -26,4 +26,4 @@ browser:
   open_browser: true # Automatically open browser after service startup
 geektime:
   auto_sync: true # Automatically sync geektime api data to db
-  auth: true  # check geektime account auth
+  auth_validate: true  # check geektime account auth
