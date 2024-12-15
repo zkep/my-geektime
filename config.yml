@@ -17,7 +17,7 @@ database:
   max_open_conns: 10
 storage: # mp4 or mp3 save folder
   driver: local
-  directory: /tmp/repo  # Customize download folder, default to execute repo directory under the directory
+  directory: repo  # Customize download folder, default to execute repo directory under the directory
   bucket: object
   host: http://127.0.0.1:8090  # Keep the port consistent with the http_port in the server
 browser:
