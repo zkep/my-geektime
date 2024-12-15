@@ -1,10 +1,5 @@
 package geek
 
-const (
-	SOURCE_FROM_ME   = "me"
-	SOURCE_FROM_PVIP = "pvip"
-)
-
 type PvipProductRequest struct {
 	TagIds       []any `json:"tag_ids"  form:"tag_ids"`
 	ProductType  int   `json:"product_type"  form:"product_type"`

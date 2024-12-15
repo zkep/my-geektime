@@ -132,7 +132,7 @@ func GetLearnProduct(ctx context.Context, req geek.ProductListRequest) (*geek.Pr
 					Title:  value.Share.Title,
 					Cover:  value.Share.Cover,
 					Raw:    itemRaw,
-					Source: geek.SOURCE_FROM_ME,
+					Source: value.Type,
 				}
 				if err := global.DB.
 					Model(&model.Product{}).
@@ -175,7 +175,7 @@ func GetPvipProduct(ctx context.Context, req geek.PvipProductRequest) (*geek.Pro
 					Title:  value.Share.Title,
 					Cover:  value.Share.Cover,
 					Raw:    itemRaw,
-					Source: geek.SOURCE_FROM_PVIP,
+					Source: value.Type,
 				}
 				if err := global.DB.
 					Model(&model.Product{}).
