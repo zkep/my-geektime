@@ -28,7 +28,7 @@ go.work.sum
 .idea
 .DS_Store
 *.db
-cookie1.txt
+cookie.txt
 chromedriver
 dist/
 ./dist
