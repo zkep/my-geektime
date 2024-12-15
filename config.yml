@@ -5,7 +5,7 @@ server:
   http_port: 8090
 jwt:
   secret: mygeektime-secret
-  expires: 7200
+  expires: 86400
 database:
 # driver: mysql
 # source: root:123456@tcp(127.0.0.1:3306)/mygeektime?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
