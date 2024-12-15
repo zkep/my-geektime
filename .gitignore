@@ -27,8 +27,4 @@ go.work.sum
 # idea
 .idea
 .DS_Store
-*.db
-cookie.txt
-chromedriver
-dist/
-./dist
+logs/

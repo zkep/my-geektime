@@ -29,6 +29,7 @@ func GetArticleInfo(ctx context.Context, req geek.ArticlesInfoRequest) (*geek.Ar
 			return nil
 		}
 		if err := json.Unmarshal(raw, &resp); err != nil {
+			global.LOG.Error("GetArticleInfo", zap.Error(err))
 			return err
 		}
 		if resp.Code != 0 {
@@ -71,6 +72,7 @@ func GetArticles(ctx context.Context, req geek.ArticlesListRequest) (*geek.Artic
 			return nil
 		}
 		if err := json.Unmarshal(raw, &resp); err != nil {
+			global.LOG.Error("GetArticles", zap.Error(err))
 			return err
 		}
 		if resp.Code != 0 {
@@ -118,6 +120,7 @@ func GetLearnProduct(ctx context.Context, req geek.ProductListRequest) (*geek.Pr
 			return nil
 		}
 		if err := json.Unmarshal(raw, &resp); err != nil {
+			global.LOG.Error("GetLearnProduct", zap.Error(err))
 			return err
 		}
 		if resp.Code != 0 {
@@ -161,6 +164,7 @@ func GetPvipProduct(ctx context.Context, req geek.PvipProductRequest) (*geek.Pro
 			return nil
 		}
 		if err := json.Unmarshal(raw, &resp); err != nil {
+			global.LOG.Error("GetPvipProduct", zap.Error(err))
 			return err
 		}
 		if resp.Code != 0 {

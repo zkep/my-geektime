@@ -402,23 +402,12 @@ type ArticlesResponse struct {
 	Extra any `json:"extra,omitempty"`
 	Data  struct {
 		List []struct {
-			ID              int64  `json:"id,omitempty"`
-			HadViewed       bool   `json:"had_viewed,omitempty"`
-			ArticleTitle    string `json:"article_title,omitempty"`
-			ArticleCover    string `json:"article_cover,omitempty"`
-			ArticleSubtitle string `json:"article_subtitle,omitempty"`
-			VideoCover      string `json:"video_cover,omitempty"`
-			VideoMediaMap   struct {
-				Sd struct {
-					Size int `json:"size,omitempty"`
-				} `json:"sd,omitempty"`
-				Ld struct {
-					Size int `json:"size,omitempty"`
-				} `json:"ld,omitempty"`
-				Hd struct {
-					Size int `json:"size,omitempty"`
-				} `json:"hd,omitempty"`
-			} `json:"video_media_map,omitempty"`
+			ID                  int64  `json:"id,omitempty"`
+			HadViewed           bool   `json:"had_viewed,omitempty"`
+			ArticleTitle        string `json:"article_title,omitempty"`
+			ArticleCover        string `json:"article_cover,omitempty"`
+			ArticleSubtitle     string `json:"article_subtitle,omitempty"`
+			VideoCover          string `json:"video_cover,omitempty"`
 			AuthorName          string `json:"author_name,omitempty"`
 			AuthorIntro         string `json:"author_intro,omitempty"`
 			AudioDownloadURL    string `json:"audio_download_url,omitempty"`
@@ -436,14 +425,9 @@ type ArticlesResponse struct {
 			ArticleSummary      string `json:"article_summary,omitempty"`
 			RatePercent         int    `json:"rate_percent,omitempty"`
 			VideoSize           int    `json:"video_size,omitempty"`
-			VideoTimeArr        struct {
-				M string `json:"m,omitempty"`
-				S string `json:"s,omitempty"`
-				H string `json:"h,omitempty"`
-			} `json:"video_time_arr,omitempty"`
-			VideoID   string `json:"video_id,omitempty"`
-			ColumnSku int    `json:"column_sku,omitempty"`
-			Offline   struct {
+			VideoID             string `json:"video_id,omitempty"`
+			ColumnSku           int    `json:"column_sku,omitempty"`
+			Offline             struct {
 				FileName    string `json:"file_name,omitempty"`
 				DownloadURL string `json:"download_url,omitempty"`
 			} `json:"offline,omitempty"`
