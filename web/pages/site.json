@@ -6,15 +6,20 @@
       {
         "label": "Home",
         "url": "/",
-        "redirect": "/product/list"
+        "redirect": "/product/pvip"
       },
       {
         "label": "课程管理",
-        "rewrite": "/product/list",
+        "rewrite": "/product/pvip",
         "icon": "fa fa-magic",
         "children": [
           {
-            "label": "我的课程",
+            "label": "课程",
+            "url": "/product/pvip",
+            "schemaApi": "get:/pages/product-pvip.json"
+          },
+          {
+            "label": "我的",
             "url": "/product/list",
             "schemaApi": "get:/pages/product-list.json"
           }
@@ -26,7 +31,7 @@
         "icon": "fa fa-magic",
         "children": [
           {
-            "label": "任务列表",
+            "label": "列表",
             "url": "/task/list",
             "schemaApi": "get:/pages/task-list.json"
           }

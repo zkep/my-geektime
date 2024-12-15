@@ -14,6 +14,7 @@ func product(_, private *gin.RouterGroup) {
 	api := v2.NewProduct()
 	{
 		private.GET("/product/list", cache.CachePage(store, time.Second*5, api.List))
+		private.GET("/product/pvip/list", cache.CachePage(store, time.Minute, api.PvipProductList))
 		private.GET("/product/articles", cache.CachePage(store, time.Minute, api.Articles))
 		private.GET("/product/article/info", cache.CachePage(store, time.Minute, api.ArticleInfo))
 		private.POST("/product/download", api.Download)

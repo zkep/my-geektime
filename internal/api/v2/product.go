@@ -37,7 +37,10 @@ func (p *Product) List(c *gin.Context) {
 		return
 	}
 	ret := geek.ProductListResponse{Rows: make([]geek.ProductListRow, 0)}
-	ret.HasNext = resp.Data.Page.More
+	ret.Count = resp.Data.Page.Total
+	if resp.Data.Page.Total == 0 {
+		ret.HasNext = resp.Data.Page.More
+	}
 	for _, v := range resp.Data.Products {
 		ret.Rows = append(ret.Rows, geek.ProductListRow{
 			ID:            v.ID,

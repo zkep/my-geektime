@@ -17,6 +17,8 @@ message Product {
   string cover = 6 [(gogoproto.moretags) = "gorm:\"comment:cover\""];
   // raw
   bytes raw = 7 [(gogoproto.moretags) = "gorm:\"comment:raw\""];
+  // source
+  string source = 8 [(gogoproto.moretags) = "gorm:\"index;comment:source\""];
   // status
   int32 status = 19 [(gogoproto.moretags) = "gorm:\"default:1;size:2;comment:status 1 normal\""];
   // created_at

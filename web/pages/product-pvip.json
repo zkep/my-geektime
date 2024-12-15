@@ -9,7 +9,7 @@
     "body": [
       {
         "type": "crud",
-        "name": "product-list",
+        "name": "product-pvip",
         "parsePrimitiveQuery": {
           "enable": true,
           "types": [
@@ -35,107 +35,75 @@
               "body": [
                 {
                   "type": "select",
-                  "label": "最近",
+                  "label": "最新/热度",
                   "name": "sort",
-                  "value": 1,
+                  "value": 8,
                   "options": [
                     {
-                      "label": "最近学习",
+                      "label": "综合",
+                      "value": 8
+                    },
+                    {
+                      "label": "最新",
                       "value": 1
                     },
                     {
-                      "label": "最近加入",
-                      "value": 2
+                      "label": "最热",
+                      "value": 4
                     }
                   ]
                 },
                 {
                   "type": "select",
-                  "name": "type",
                   "label": "课程类型",
-                  "value": "",
-                  "options": [
-                    {
-                      "label": "所有类型",
-                      "value": ""
-                    },
-                    {
-                      "label": "专栏",
-                      "value": "c1"
-                    },
-                    {
-                      "label": "视频课",
-                      "value": "c3"
-                    },
-                    {
-                      "label": "每日一课",
-                      "value": "d"
-                    },
-                    {
-                      "label": "公开课",
-                      "value": "p"
-                    },
-                    {
-                      "label": "大厂案例",
-                      "value": "q"
-                    },
-                    {
-                      "label": "训练营",
-                      "value": "u21"
-                    },
-                    {
-                      "label": "体验课",
-                      "value": "u27"
-                    },
-                    {
-                      "label": "严选课",
-                      "value": "zx"
-                    },
-                    {
-                      "label": "其他",
-                      "value": "x"
-                    }
-                  ]
-                },
-                {
-                  "type": "select",
-                  "label": "学习进度",
-                  "name": "learn_status",
+                  "name": "product_type",
                   "value": 0,
                   "options": [
                     {
-                      "label": "全部进度",
+                      "label": "全部类型",
                       "value": 0
                     },
                     {
-                      "label": "未学完",
+                      "label": "体系课",
                       "value": 1
                     },
                     {
-                      "label": "已学完",
-                      "value": 2
+                      "label": "公开课",
+                      "value": 4
+                    },
+                    {
+                      "label": "线下大会",
+                      "value": 5
+                    },
+                    {
+                      "label": "严选课",
+                      "value": 6
                     }
                   ]
                 },
                 {
                   "type": "select",
-                  "label": "有效/过期",
-                  "name": "expire",
-                  "value": 1,
+                  "label": "课程形式",
+                  "name": "product_form",
+                  "value": 0,
                   "options": [
                     {
-                      "label": "有效课程",
+                      "label": "全部形式",
+                      "value": 0
+                    },
+                    {
+                      "label": "图文+音频",
                       "value": 1
                     },
                     {
-                      "label": "过期课程",
+                      "label": "视频",
                       "value": 2
                     }
                   ]
                 },
                 {
                   "type": "hidden",
-                  "name": "desc",
+                  "name": "with_articles",
                   "value": true
                 }
               ]
@@ -155,13 +123,16 @@
         },
         "api": {
           "method": "get",
-          "url": "/v2/product/list"
+          "url": "/v2/product/pvip/list"
         },
-        "perPage": 10,
         "autoFillHeight": false,
+        "defaultParams": {
+          "perPage": 10
+        },
         "keepItemSelectionOnPageChange": true,
         "bulkActions": [],
         "footerToolbar": [
+          "statistics",
           "switch-per-page",
           "pagination"
         ],

@@ -14,9 +14,10 @@ import (
 )
 
 const (
-	LearnProductURL = "https://time.geekbang.org/serv/v3/learn/product"
-	ArticlesURL     = "https://time.geekbang.com/serv/v1/column/articles"
-	ArticleInfoURL  = "https://time.geekbang.org/serv/v3/article/info"
+	LearnProductURL    = "https://time.geekbang.org/serv/v3/learn/product"
+	ArticlesURL        = "https://time.geekbang.com/serv/v1/column/articles"
+	ArticleInfoURL     = "https://time.geekbang.org/serv/v3/article/info"
+	PvipProductListURL = "https://time.geekbang.org/serv/v4/pvip/product_list"
 )
 
 func GetArticleInfo(ctx context.Context, req geek.ArticlesInfoRequest) (*geek.ArticleInfoResponse, error) {
@@ -108,9 +109,9 @@ func GetArticles(ctx context.Context, req geek.ArticlesListRequest) (*geek.Artic
 	return &resp, nil
 }
 
-func GetLearnProduct(ctx context.Context, req geek.ProductListRequest) (*geek.LearnProductResponse, error) {
+func GetLearnProduct(ctx context.Context, req geek.ProductListRequest) (*geek.ProductResponse, error) {
 	raw, _ := json.Marshal(req)
-	var resp geek.LearnProductResponse
+	var resp geek.ProductResponse
 	err := Request(ctx, http.MethodPost, LearnProductURL, bytes.NewBuffer(raw), func(raw []byte) error {
 		// auto sync to db
 		if !global.CONF.Geektime.AutoSync {
@@ -127,10 +128,11 @@ func GetLearnProduct(ctx context.Context, req geek.ProductListRequest) (*geek.Le
 			for _, value := range resp.Data.Products {
 				itemRaw, _ := json.Marshal(value)
 				product := model.Product{
-					Pid:   fmt.Sprintf("%d", value.ID),
-					Title: value.Share.Title,
-					Cover: value.Share.Cover,
-					Raw:   itemRaw,
+					Pid:    fmt.Sprintf("%d", value.ID),
+					Title:  value.Share.Title,
+					Cover:  value.Share.Cover,
+					Raw:    itemRaw,
+					Source: geek.SOURCE_FROM_ME,
 				}
 				if err := global.DB.
 					Model(&model.Product{}).
@@ -138,6 +140,49 @@ func GetLearnProduct(ctx context.Context, req geek.ProductListRequest) (*geek.Le
 					Assign(product).
 					FirstOrCreate(&product).Error; err != nil {
 					global.LOG.Error("GetLearnProduct.AutoSync",
+						zap.Error(err), zap.String("raw", string(raw)))
+				}
+			}
+		}()
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func GetPvipProduct(ctx context.Context, req geek.PvipProductRequest) (*geek.ProductResponse, error) {
+	raw, _ := json.Marshal(req)
+	var resp geek.ProductResponse
+	err := Request(ctx, http.MethodPost, PvipProductListURL, bytes.NewBuffer(raw), func(raw []byte) error {
+		// auto sync to db
+		if !global.CONF.Geektime.AutoSync {
+			return nil
+		}
+		if err := json.Unmarshal(raw, &resp); err != nil {
+			return err
+		}
+		if resp.Code != 0 {
+			global.LOG.Warn("GetPvipProduct", zap.String("raw", string(raw)))
+			return nil
+		}
+		go func() {
+			for _, value := range resp.Data.Products {
+				itemRaw, _ := json.Marshal(value)
+				product := model.Product{
+					Pid:    fmt.Sprintf("%d", value.ID),
+					Title:  value.Share.Title,
+					Cover:  value.Share.Cover,
+					Raw:    itemRaw,
+					Source: geek.SOURCE_FROM_PVIP,
+				}
+				if err := global.DB.
+					Model(&model.Product{}).
+					Where("pid=?", product.Pid).
+					Assign(product).
+					FirstOrCreate(&product).Error; err != nil {
+					global.LOG.Error("GetPvipProduct.AutoSync",
 						zap.Error(err), zap.String("raw", string(raw)))
 				}
 			}

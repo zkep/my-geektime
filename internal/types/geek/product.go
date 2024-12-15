@@ -15,7 +15,8 @@ type ProductListRequest struct {
 }
 
 type ProductListResponse struct {
-	HasNext bool             `json:"hasNext"`
+	HasNext bool             `json:"hasNext,omitempty"`
+	Count   int              `json:"count,omitempty"`
 	Rows    []ProductListRow `json:"rows"`
 }
 
@@ -81,7 +82,7 @@ type Extra struct {
 	RequestID string  `json:"request-id,omitempty"`
 }
 
-type LearnProductResponse struct {
+type ProductResponse struct {
 	Code  int   `json:"code,omitempty"`
 	Error any   `json:"error,omitempty"`
 	Extra Extra `json:"extra,omitempty"`
@@ -370,7 +371,7 @@ type LearnProductResponse struct {
 		} `json:"products,omitempty"`
 		Page struct {
 			More   bool `json:"more,omitempty"`
-			Count  int  `json:"count,omitempty"`
+			Total  int  `json:"total,omitempty"`
 			Score  int  `json:"score,omitempty"`
 			Score0 int  `json:"score0,omitempty"`
 		} `json:"page,omitempty"`
