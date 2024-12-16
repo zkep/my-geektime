@@ -20,6 +20,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/tebeka/selenium"
 	"github.com/zkep/mygeektime/internal/global"
+	"github.com/zkep/mygeektime/internal/middleware"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/types/base"
 	"github.com/zkep/mygeektime/internal/types/geek"
@@ -44,49 +45,29 @@ func (b *Base) Login(c *gin.Context) {
 		})
 		return
 	}
-	cookiePath, err := filepath.Abs(global.CONF.Browser.CookiePath)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
-			"msg":    err.Error(),
-		})
-	}
-	global.CONF.Browser.CookiePath = cookiePath
-	if stat, err := os.Stat(global.CONF.Browser.CookiePath); err == nil && stat.Size() > 0 {
-		raw, err := os.ReadFile(global.CONF.Browser.CookiePath)
-		if err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"status": http.StatusBadRequest,
-				"msg":    err.Error(),
-			})
-		}
-		if err = auth(string(raw), cookieSavePath(string(raw), global.CONF.Browser.CookiePath)); err == nil {
-			token, expire, err := global.JWT.DefaultTokenGenerator(
-				func() (jwt.MapClaims, error) {
-					claims := jwt.MapClaims{}
-					claims["identity"] = global.GeekUser.UID
-					return claims, nil
-				})
-			if err != nil {
-				c.JSON(http.StatusOK, gin.H{
-					"status": http.StatusBadRequest,
-					"msg":    "Login Fail",
-				})
-				return
-			}
-			c.JSON(http.StatusOK, gin.H{
-				"status": 0,
-				"msg":    "OK",
-				"token":  token,
-				"user":   global.GeekUser,
-				"expire": expire.Format(time.RFC3339),
-			})
-			return
-		}
-	}
+
+	var user model.User
 	switch r.Type {
 	case geek.LoginWithUser:
-		if err = loginWithAccount(r); err != nil {
+		//if err := global.DB.
+		//	Where(model.User{
+		//		Phone: r.Account,
+		//	}).
+		//	First(&user).Error; err != nil {
+		//	c.JSON(http.StatusOK, gin.H{
+		//		"status": http.StatusBadRequest,
+		//		"msg":    "Login Fail",
+		//	})
+		//	return
+		//}
+		//if user.Phone == "" {
+		//	c.JSON(http.StatusOK, gin.H{
+		//		"status": http.StatusBadRequest,
+		//		"msg":    "not fund user",
+		//	})
+		//	return
+		//}
+		if err := loginWithAccount(r); err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"status": http.StatusBadRequest,
 				"msg":    err.Error(),
@@ -94,15 +75,21 @@ func (b *Base) Login(c *gin.Context) {
 			return
 		}
 	case geek.LoginWithCookie:
-		if err = auth(r.Account, cookieSavePath(r.Account, global.CONF.Browser.CookiePath)); err != nil {
+		var auth geek.AuthResponse
+		if err := authority(r.Account, saveCookie(r.Account, &auth)); err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"status": http.StatusBadRequest,
 				"msg":    err.Error(),
 			})
 			return
 		}
+		user.Phone = auth.Data.Cellphone
+		user.Avatar = auth.Data.Avatar
+		user.NikeName = auth.Data.Nick
+		user.Uid = fmt.Sprintf("%d", auth.Data.UID)
+		user.AccessToken = r.Account
 	default:
-		if err = docterChromedriver(""); err != nil {
+		if err := docterChromedriver(""); err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"status": http.StatusBadRequest,
 				"msg":    err.Error(),
@@ -110,7 +97,7 @@ func (b *Base) Login(c *gin.Context) {
 			return
 		}
 		go func() {
-			if err = loginWithSimulate(); err != nil {
+			if err := loginWithSimulate(); err != nil {
 				global.LOG.Error("Login With Simulate", zap.Any("err", err))
 			}
 		}()
@@ -123,7 +110,7 @@ func (b *Base) Login(c *gin.Context) {
 	token, expire, err := global.JWT.DefaultTokenGenerator(
 		func() (jwt.MapClaims, error) {
 			claims := jwt.MapClaims{}
-			claims["identity"] = global.GeekUser.UID
+			claims[middleware.Identity] = user.Uid
 			return claims, nil
 		})
 	if err != nil {
@@ -137,9 +124,11 @@ func (b *Base) Login(c *gin.Context) {
 		"status": 0,
 		"msg":    "OK",
 		"token":  token,
-		"user":   global.GeekUser,
+		"user":   user,
 		"expire": expire.Format(time.RFC3339),
 	})
+	c.SetCookie("analogjwt", user.AccessToken,
+		int(expire.Unix()), "/", "", false, false)
 }
 
 const (
@@ -150,29 +139,27 @@ const (
 	geekTimeURL    = "https://time.geekbang.org"
 )
 
-func cookieSavePath(cookies, path string) func(r *http.Response) error {
+func saveCookie(cookies string, auth *geek.AuthResponse) func(r *http.Response) error {
 	return func(r *http.Response) error {
-		var auth geek.AuthResponse
-		if err := json.NewDecoder(r.Body).Decode(&auth); err != nil {
+		if err := json.NewDecoder(r.Body).Decode(auth); err != nil {
 			return err
 		}
-		if err := os.WriteFile(path, []byte(cookies), os.ModePerm); err != nil {
-			return err
-		}
-		global.GeekUser = auth.Data
-		global.GeekCookies = cookies
 		user := model.User{
-			Uid:      fmt.Sprintf("%d", global.GeekUser.UID),
-			NikeName: global.GeekUser.Nick,
-			Avatar:   global.GeekUser.Avatar,
+			Uid:         fmt.Sprintf("%d", auth.Data.UID),
+			NikeName:    auth.Data.Nick,
+			Avatar:      auth.Data.Avatar,
+			AccessToken: cookies,
+			Phone:       auth.Data.Cellphone,
 		}
 		if err := global.DB.Where(
 			model.User{
-				Uid: fmt.Sprintf("%d", global.GeekUser.UID),
+				Uid: fmt.Sprintf("%d", auth.Data.UID),
 			}).
 			Assign(model.User{
-				UserName: global.GeekUser.Nick,
-				Avatar:   global.GeekUser.Avatar,
+				UserName:    auth.Data.Nick,
+				Avatar:      auth.Data.Avatar,
+				AccessToken: cookies,
+				Phone:       auth.Data.Cellphone,
 			}).
 			FirstOrCreate(&user).Error; err != nil {
 			return err
@@ -181,7 +168,7 @@ func cookieSavePath(cookies, path string) func(r *http.Response) error {
 	}
 }
 
-func auth(cookies string, after func(*http.Response) error) error {
+func authority(cookies string, after func(*http.Response) error) error {
 	jar, _ := cookiejar.New(nil)
 	global.HttpClient = &http.Client{Jar: jar, Timeout: 5 * time.Minute}
 	t := time.Now().UnixMilli()
@@ -288,7 +275,8 @@ func loginWithSimulate() error {
 				cookiesLine += ";"
 			}
 		}
-		if err = auth(cookiesLine, cookieSavePath(cookiesLine, global.CONF.Browser.CookiePath)); err != nil {
+		var auth geek.AuthResponse
+		if err = authority(cookiesLine, saveCookie(cookiesLine, &auth)); err != nil {
 			return false, err
 		}
 

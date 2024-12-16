@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/zkep/mygeektime/internal/middleware"
 	"github.com/zkep/mygeektime/internal/service"
 	"github.com/zkep/mygeektime/internal/types/geek"
 )
@@ -22,7 +23,9 @@ func (p *Product) PvipProductList(c *gin.Context) {
 	if req.Prev < 0 {
 		req.Prev = 0
 	}
-	resp, err := service.GetPvipProduct(c, req)
+	identity := c.GetString(middleware.Identity)
+	accessToken := c.GetString(middleware.AccessToken)
+	resp, err := service.GetPvipProduct(c, identity, accessToken, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return

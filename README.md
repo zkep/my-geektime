@@ -51,7 +51,6 @@ storage: # mp4 or mp3 save folder
   host: http://127.0.0.1:8090  # Keep the port consistent with the http_port in the server
 browser:
   driver_path: chromedriver # If there is no cookie file, chromedriver will be used by default to simulate login and obtain cookies
-  cookie_path: cookie.txt  # Geektime's cookie file storage location
   open_browser: true # Automatically open browser after service startup
 geektime:
   auto_sync: true # Automatically sync geektime api data to db

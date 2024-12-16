@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
+	"github.com/zkep/mygeektime/internal/middleware"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/service"
 	"github.com/zkep/mygeektime/internal/types/geek"
@@ -34,7 +35,9 @@ func (p *Product) List(c *gin.Context) {
 	if req.Prev < 0 {
 		req.Prev = 0
 	}
-	resp, err := service.GetLearnProduct(c, req)
+	identity := c.GetString(middleware.Identity)
+	accessToken := c.GetString(middleware.AccessToken)
+	resp, err := service.GetLearnProduct(c, identity, accessToken, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
@@ -76,7 +79,9 @@ func (p *Product) Articles(c *gin.Context) {
 	}
 	req.Size = req.PerPage
 	req.Prev = req.Page
-	resp, err := service.GetArticles(c, req)
+	identity := c.GetString(middleware.Identity)
+	accessToken := c.GetString(middleware.AccessToken)
+	resp, err := service.GetArticles(c, identity, accessToken, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
@@ -110,7 +115,9 @@ func (p *Product) ArticleInfo(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
 	}
-	resp, err := service.GetArticleInfo(c, req)
+	identity := c.GetString(middleware.Identity)
+	accessToken := c.GetString(middleware.AccessToken)
+	resp, err := service.GetArticleInfo(c, identity, accessToken, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
@@ -124,6 +131,8 @@ func (p *Product) Download(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "error": err.Error()})
 		return
 	}
+	identity := c.GetString(middleware.Identity)
+	accessToken := c.GetString(middleware.AccessToken)
 	articlesMap := make(map[int64]*model.Article, 10)
 	ids := make([]int64, 0, 1)
 	switch x := req.Ids.(type) {
@@ -143,7 +152,9 @@ func (p *Product) Download(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": "not valid ids"})
 			return
 		}
+
 		resp, err := service.GetArticles(c,
+			identity, accessToken,
 			geek.ArticlesListRequest{
 				Cid:   fmt.Sprintf("%d", req.Pid),
 				Order: "earliest",
@@ -189,6 +200,7 @@ func (p *Product) Download(c *gin.Context) {
 	jobId := service.TaskID()
 	job := &model.Task{
 		TaskId:   jobId,
+		Uid:      identity,
 		TaskName: product.Title,
 		TaskType: service.TASK_TYPE_PRODUCT,
 		OtherId:  fmt.Sprintf("%d", req.Pid),
@@ -204,7 +216,7 @@ func (p *Product) Download(c *gin.Context) {
 			cover    string
 		)
 		if article, ok := articlesMap[id]; !ok {
-			info, err := service.GetArticleInfo(c, geek.ArticlesInfoRequest{Id: id})
+			info, err := service.GetArticleInfo(c, identity, accessToken, geek.ArticlesInfoRequest{Id: id})
 			if err != nil {
 				c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 				return
@@ -222,6 +234,7 @@ func (p *Product) Download(c *gin.Context) {
 		item := model.Task{
 			TaskPid:  jobId,
 			TaskId:   service.TaskID(),
+			Uid:      identity,
 			OtherId:  otherId,
 			TaskName: taskName,
 			TaskType: service.TASK_TYPE_ARTICLE,

@@ -19,6 +19,10 @@ message User {
   string password = 5 [(gogoproto.moretags) = "gorm:\"size:128;comment:password\""];
   // avatar
   string avatar = 6 [(gogoproto.moretags) = "gorm:\"size:255;comment:avatar\""];
+  // access_token
+  string access_token = 7 [(gogoproto.moretags) = "gorm:\"comment:access_token\""];
+  // phone
+  string phone = 8 [(gogoproto.moretags) = "gorm:\"index;size:20;comment:phone\""];
   // status
   int32 status = 19 [(gogoproto.moretags) = "gorm:\"default:1;size:2;comment:status 1 normal\""];
   // created_at

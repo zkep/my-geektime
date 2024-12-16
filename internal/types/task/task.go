@@ -4,7 +4,7 @@ import "github.com/zkep/mygeektime/internal/types/geek"
 
 type TaskListRequest struct {
 	TaskPid string `json:"task_pid"  form:"task_pid"`
-	Xstatus int    `json:"xstatus" form:"xstatus"`
+	Xstatus int32  `json:"xstatus" form:"xstatus"`
 	Page    int    `json:"page" form:"page"`
 	PerPage int    `json:"perPage"  form:"perPage"`
 }

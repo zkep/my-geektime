@@ -150,7 +150,11 @@ func worker(ctx context.Context, x *model.Task) error {
 		if err != nil {
 			return err
 		}
-		article, err := service.GetArticleInfo(ctx, geek.ArticlesInfoRequest{Id: aid})
+		var user model.User
+		if err = global.DB.Where(&model.Task{Uid: x.Uid}).Find(&user).Error; err != nil {
+			return err
+		}
+		article, err := service.GetArticleInfo(ctx, user.Uid, user.AccessToken, geek.ArticlesInfoRequest{Id: aid})
 		if err != nil {
 			return err
 		}

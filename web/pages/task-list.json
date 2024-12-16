@@ -345,7 +345,7 @@
                               "resizable": true,
                               "closeOnOutside": true,
                               "actions": [],
-                              "size": "lg",
+                              "size": "xl",
                               "title": "任务详情",
                               "body": [
                                 {

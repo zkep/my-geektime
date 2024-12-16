@@ -13,13 +13,13 @@ import (
 )
 
 func Request(ctx context.Context, method, url string,
-	body io.Reader, after func(raw []byte) error) error {
+	body io.Reader, accessToken string, after func(raw []byte) error) error {
 	return zhttp.R.Client(global.HttpClient).
 		Before(func(r *http.Request) {
 			r.Header.Set("Accept", "application/json, text/plain, */*")
 			r.Header.Set("Content-Type", "application/json")
 			r.Header.Set("Sec-Ch-Ua", `"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"`)
-			r.Header.Set("Cookie", global.GeekCookies)
+			r.Header.Set("Cookie", accessToken)
 			r.Header.Set("User-Agent", zhttp.RandomUserAgent())
 			r.Header.Set("Referer", url)
 			r.Header.Set("Origin", "https://time.geekbang.org")

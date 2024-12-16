@@ -13,14 +13,16 @@ message Task {
   string task_id = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:task id\""];
   // task pid
   string task_pid = 3 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:task pid\""];
+  // uid
+  string uid = 4 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:uid\""];
   // other id
-  string other_id = 4 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:other id\""];
+  string other_id = 5 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:other id\""];
   // task name
-  string task_name = 5 [(gogoproto.moretags) = "gorm:\"size:128;comment:task name\""];
+  string task_name = 6 [(gogoproto.moretags) = "gorm:\"size:128;comment:task name\""];
   // task type
-  string task_type = 6 [(gogoproto.moretags) = "gorm:\"index;size:50;comment:task type\""];
+  string task_type = 7 [(gogoproto.moretags) = "gorm:\"index;size:50;comment:task type\""];
   // cover
-  string cover = 7 [(gogoproto.moretags) = "gorm:\"comment:cover\""];
+  string cover = 8 [(gogoproto.moretags) = "gorm:\"comment:cover\""];
   // raw
   bytes raw = 10 [(gogoproto.moretags) = "gorm:\"comment:raw\""];
   // message
