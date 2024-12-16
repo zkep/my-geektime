@@ -25,6 +25,8 @@ type Task struct {
 	TaskName string `json:"task_name,omitempty"`
 	// task type
 	TaskType string `json:"task_type,omitempty"`
+	// cover
+	Cover string `json:"cover,omitempty"`
 	// status
 	Status int32 `json:"status,omitempty"`
 	// statistics
@@ -61,9 +63,9 @@ type TaskInfoRequest struct {
 
 type TaskInfoResponse struct {
 	// Task
-	Task
-	// ArticleInfo
-	geek.ArticleInfo
+	Task Task `json:"task"`
+	// Article
+	Article geek.ArticleInfo `json:"article"`
 	// message
 	Message TaskMessage `json:"message,omitempty"`
 }

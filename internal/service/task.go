@@ -24,5 +24,7 @@ var ALLStatus = []int{
 }
 
 func TaskID() string {
-	return uuid.New().String()
+	src := uuid.New().String()
+	slicedUUID := src[0:8] + src[9:13] + src[14:18] + src[19:23]
+	return slicedUUID
 }

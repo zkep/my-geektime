@@ -70,6 +70,7 @@ func (t *Task) List(c *gin.Context) {
 			Status:     l.Status,
 			Statistics: statistics,
 			TaskType:   l.TaskType,
+			Cover:      l.Cover,
 			CreatedAt:  l.CreatedAt,
 			UpdatedAt:  l.UpdatedAt,
 		})
@@ -114,13 +115,14 @@ func (t *Task) Info(c *gin.Context) {
 			OtherId:    l.OtherId,
 			TaskName:   l.TaskName,
 			Status:     l.Status,
+			Cover:      l.Cover,
 			Statistics: statistics,
 			TaskType:   l.TaskType,
 			CreatedAt:  l.CreatedAt,
 			UpdatedAt:  l.UpdatedAt,
 		},
-		ArticleInfo: articleData.Data.Info,
-		Message:     taskMessage,
+		Article: articleData.Data.Info,
+		Message: taskMessage,
 	}
 	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": resp})
 }

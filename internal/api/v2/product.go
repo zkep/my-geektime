@@ -30,7 +30,10 @@ func (p *Product) List(c *gin.Context) {
 	}
 	req.WithLearnCount = 1
 	req.Size = req.PerPage
-	req.Prev = req.Page
+	req.Prev = req.Page - 1
+	if req.Prev < 0 {
+		req.Prev = 0
+	}
 	resp, err := service.GetLearnProduct(c, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
@@ -182,14 +185,15 @@ func (p *Product) Download(c *gin.Context) {
 			articlesMap[v.Id] = v
 		}
 	}
-	raw, _ := json.Marshal(req)
+	reqRaw, _ := json.Marshal(req)
 	jobId := service.TaskID()
 	job := &model.Task{
 		TaskId:   jobId,
 		TaskName: product.Title,
 		TaskType: service.TASK_TYPE_PRODUCT,
 		OtherId:  fmt.Sprintf("%d", req.Pid),
-		Raw:      raw,
+		Cover:    product.Cover,
+		Raw:      reqRaw,
 	}
 	tasks := make([]*model.Task, 0, len(ids))
 	for _, id := range ids {
@@ -197,6 +201,7 @@ func (p *Product) Download(c *gin.Context) {
 			raw      []byte
 			otherId  string
 			taskName string
+			cover    string
 		)
 		if article, ok := articlesMap[id]; !ok {
 			info, err := service.GetArticleInfo(c, geek.ArticlesInfoRequest{Id: id})
@@ -207,10 +212,12 @@ func (p *Product) Download(c *gin.Context) {
 			raw, _ = json.Marshal(info)
 			otherId = fmt.Sprintf("%d", info.Data.Info.Id)
 			taskName = info.Data.Info.Title
+			cover = info.Data.Info.Cover.Default
 		} else {
 			raw = article.Raw
 			otherId = article.Aid
 			taskName = article.Title
+			cover = article.Cover
 		}
 		item := model.Task{
 			TaskPid:  jobId,
@@ -218,6 +225,7 @@ func (p *Product) Download(c *gin.Context) {
 			OtherId:  otherId,
 			TaskName: taskName,
 			TaskType: service.TASK_TYPE_ARTICLE,
+			Cover:    cover,
 			Raw:      raw,
 		}
 		tasks = append(tasks, &item)

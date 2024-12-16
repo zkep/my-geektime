@@ -157,7 +157,9 @@
           "method": "get",
           "url": "/v2/product/list"
         },
-        "perPage": 10,
+        "defaultParams": {
+          "perPage": 10
+        },
         "autoFillHeight": false,
         "keepItemSelectionOnPageChange": true,
         "bulkActions": [],

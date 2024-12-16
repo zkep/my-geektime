@@ -17,11 +17,6 @@
             "label": "课程",
             "url": "/product/pvip",
             "schemaApi": "get:/pages/product-pvip.json"
-          },
-          {
-            "label": "我的",
-            "url": "/product/list",
-            "schemaApi": "get:/pages/product-list.json"
           }
         ]
       },

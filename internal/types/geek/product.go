@@ -10,8 +10,8 @@ type ProductListRequest struct {
 	Sort           int    `json:"sort" form:"sort"`
 	Type           string `json:"type" form:"type"`
 	WithLearnCount int    `json:"with_learn_count" form:"with_learn_count"`
-	Page           int    `json:"page,omitempty" form:"page"`
-	PerPage        int    `json:"perPage,omitempty"  form:"perPage"`
+	Page           int    `json:"-" form:"page"`
+	PerPage        int    `json:"-"  form:"perPage"`
 }
 
 type ProductListResponse struct {
@@ -393,8 +393,8 @@ type ArticlesListRequest struct {
 	Prev    int    `json:"prev" form:"prev"`
 	Order   string `json:"order" form:"order"`
 	Sample  bool   `json:"sample" form:"sample"`
-	Page    int    `json:"page,omitempty" form:"page"`
-	PerPage int    `json:"perPage,omitempty"  form:"perPage"`
+	Page    int    `json:"-" form:"page"`
+	PerPage int    `json:"-"  form:"perPage"`
 }
 
 type ArticlesResponse struct {

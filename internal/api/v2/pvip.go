@@ -14,8 +14,14 @@ func (p *Product) PvipProductList(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
 	}
+	if req.Tag > 0 {
+		req.TagIds = []int{req.Tag}
+	}
 	req.Size = req.PerPage
-	req.Prev = req.Page
+	req.Prev = req.Page - 1
+	if req.Prev < 0 {
+		req.Prev = 0
+	}
 	resp, err := service.GetPvipProduct(c, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})

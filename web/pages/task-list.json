@@ -17,7 +17,7 @@
               "number"
             ]
           },
-          "syncLocation": true,
+          "syncLocation": false,
           "filterTogglable": {
             "label": "更多搜索",
             "activeLabel": "收起搜索",
@@ -90,210 +90,228 @@
             "pagination"
           ],
           "tableLayout": "fixed",
-          "columns": [
-            {
-              "name": "task_id",
-              "type": "static",
-              "label": "任务ID",
-              "copyable": true
+          "mode": "cards",
+          "columnsCount": 4,
+          "card": {
+            "header": {
+              "className": "bg-white",
+              "title": "$task_name",
+              "subTitle": "",
+              "description": "",
+              "avatar": "${cover | raw}",
+              "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
             },
-            {
-              "name": "other_id",
-              "type": "static",
-              "label": "业务ID",
-              "copyable": true
-            },
-            {
-              "name": "task_name",
-              "type": "static",
-              "label": "任务名称"
-            },
-            {
-              "type": "static",
-              "name": "statistics.count",
-              "label": "任务数"
-            },
-            {
-              "type": "tpl",
-              "label": "任务统计",
-              "tpl": "<div>排队中: ${statistics.items.1}<br/>处理中: ${statistics.items.2}<br/>已完成: ${statistics.items.3}<br/>异常: ${statistics.items.4}<div>"
-            },
-            {
-              "name": "status",
-              "type": "static-mapping",
-              "label": "状态",
-              "map": {
-                "1": "排队中",
-                "2": "处理中",
-                "3": "已完成",
-                "4": "异常"
+            "bodyClassName": "padder",
+            "body": [
+              {
+                "type": "property",
+                "title": "",
+                "mode": "simple",
+                "separator": "：",
+                "items": [
+                  {
+                    "label": "任务ID",
+                    "content": "${task_id}",
+                    "span": 3
+                  },
+                  {
+                    "label": "业务ID",
+                    "content": "${other_id}",
+                    "span": 3
+                  },
+                  {
+                    "label": "任务数",
+                    "content": "${statistics.count}"
+                  }
+                ]
+              },
+              {
+                "type": "tpl",
+                "label": "任务统计: ",
+                "tpl": "<div>排队中: ${statistics.items.1}<br/>处理中: ${statistics.items.2}<br/>已完成: ${statistics.items.3}<br/>异常: ${statistics.items.4}<div>"
+              },
+              {
+                "name": "status",
+                "type": "static-mapping",
+                "label": "状态: ",
+                "map": {
+                  "1": "排队中",
+                  "2": "处理中",
+                  "3": "已完成",
+                  "4": "异常"
+                }
+              },
+              {
+                "name": "created_at",
+                "type": "date",
+                "format": "YYYY-MM-DD HH:mm:ss",
+                "label": "创建时间: "
+              },
+              {
+                "name": "updated_at",
+                "type": "date",
+                "format": "YYYY-MM-DD HH:mm:ss",
+                "label": "更新时间: "
               }
-            },
-            {
-              "name": "created_at",
-              "type": "date",
-              "format": "YYYY-MM-DD HH:mm:ss",
-              "label": "创建时间"
-            },
-            {
-              "name": "updated_at",
-              "type": "date",
-              "format": "YYYY-MM-DD HH:mm:ss",
-              "label": "更新时间"
-            },
-            {
-              "type": "operation",
-              "label": "操作",
-              "buttons": [
-                {
-                  "type": "button",
-                  "icon": "fa fa-eye",
-                  "loading": true,
-                  "actionType": "drawer",
-                  "drawer": {
-                    "resizable": true,
-                    "closeOnOutside": true,
-                    "actions": [],
-                    "size": "xl",
-                    "title": "任务详情",
-                    "body": [
-                      {
-                        "type": "crud",
-                        "name": "product-list-items",
-                        "parsePrimitiveQuery": {
-                          "enable": true,
-                          "types": [
-                            "boolean",
-                            "number"
-                          ]
-                        },
-                        "syncLocation": true,
-                        "filterTogglable": {
-                          "label": "更多搜索",
-                          "activeLabel": "收起搜索",
-                          "icon": "fa fa-arrow-down mr-1",
-                          "activeIcon": "fa fa-arrow-up mr-1"
-                        },
-                        "headerToolbar": [
-                          "filter-toggler",
-                          "bulkActions"
-                        ],
-                        "filter": {
-                          "title": "条件搜索",
-                          "body": [
-                            {
-                              "type": "group",
-                              "body": [
-                                {
-                                  "type": "hidden",
-                                  "name": "task_pid",
-                                  "value": "${task_id}"
-                                },
-                                {
-                                  "type": "select",
-                                  "name": "xstatus",
-                                  "value": 0,
-                                  "options": [
-                                    {
-                                      "label": "全部状态",
-                                      "value": 0
-                                    },
-                                    {
-                                      "label": "排队中",
-                                      "value": 1
-                                    },
-                                    {
-                                      "label": "处理中",
-                                      "value": 2
-                                    },
-                                    {
-                                      "label": "已完成",
-                                      "value": 3
-                                    },
-                                    {
-                                      "label": "异常",
-                                      "value": 4
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ],
-                          "actions": [
-                            {
-                              "type": "reset",
-                              "label": "重置"
-                            },
-                            {
-                              "type": "submit",
-                              "level": "primary",
-                              "label": "搜索"
-                            }
-                          ]
-                        },
-                        "api": {
-                          "method": "get",
-                          "url": "/v2/task/list"
-                        },
-                        "defaultParams": {
-                          "perPage": 10
-                        },
-                        "keepItemSelectionOnPageChange": true,
-                        "bulkActions": [
+            ],
+            "actions": [
+              {
+                "type": "button",
+                "icon": "fa fa-eye",
+                "loading": true,
+                "actionType": "drawer",
+                "drawer": {
+                  "resizable": true,
+                  "closeOnOutside": true,
+                  "actions": [],
+                  "size": "xl",
+                  "position": "left",
+                  "title": "任务详情",
+                  "body": [
+                    {
+                      "type": "crud",
+                      "name": "product-list-items",
+                      "parsePrimitiveQuery": {
+                        "enable": true,
+                        "types": [
+                          "boolean",
+                          "number"
+                        ]
+                      },
+                      "syncLocation": false,
+                      "filterTogglable": {
+                        "label": "更多搜索",
+                        "activeLabel": "收起搜索",
+                        "icon": "fa fa-arrow-down mr-1",
+                        "activeIcon": "fa fa-arrow-up mr-1"
+                      },
+                      "headerToolbar": [
+                        "filter-toggler",
+                        "bulkActions"
+                      ],
+                      "filter": {
+                        "title": "条件搜索",
+                        "body": [
                           {
-                            "label": "批量下载",
-                            "actionType": "ajax",
-                            "api": {
-                              "url": "/v2/task/retry",
-                              "method":"post",
-                              "data": {
-                                "pid": "${task_pid}",
-                                "ids": "${ids | raw}"
+                            "type": "group",
+                            "body": [
+                              {
+                                "type": "hidden",
+                                "name": "task_pid",
+                                "value": "${task_id}"
+                              },
+                              {
+                                "type": "select",
+                                "name": "xstatus",
+                                "value": 0,
+                                "options": [
+                                  {
+                                    "label": "全部状态",
+                                    "value": 0
+                                  },
+                                  {
+                                    "label": "排队中",
+                                    "value": 1
+                                  },
+                                  {
+                                    "label": "处理中",
+                                    "value": 2
+                                  },
+                                  {
+                                    "label": "已完成",
+                                    "value": 3
+                                  },
+                                  {
+                                    "label": "异常",
+                                    "value": 4
+                                  }
+                                ]
                               }
-                            },
-                            "confirmText": "确定要重新下载吗？"
-                          },
-                          {
-                            "label": "批量删除",
-                            "actionType": "ajax",
-                            "api": {
-                              "url": "/v2/task/delete",
-                              "method":"delete",
-                              "data": {
-                                "ids": "${ids | raw}"
-                              }
-                            },
-                            "confirmText": "确定要删除当前任务吗？"
+                            ]
                           }
                         ],
-                        "footerToolbar": [
-                          "statistics",
-                          "switch-per-page",
-                          "pagination"
-                        ],
-                        "primaryField": "task_id",
-                        "columns": [
+                        "actions": [
+                          {
+                            "type": "reset",
+                            "label": "重置"
+                          },
+                          {
+                            "type": "submit",
+                            "level": "primary",
+                            "label": "搜索"
+                          }
+                        ]
+                      },
+                      "api": {
+                        "method": "get",
+                        "url": "/v2/task/list"
+                      },
+                      "defaultParams": {
+                        "perPage": 10
+                      },
+                      "keepItemSelectionOnPageChange": true,
+                      "bulkActions": [
+                        {
+                          "label": "批量下载",
+                          "actionType": "ajax",
+                          "api": {
+                            "url": "/v2/task/retry",
+                            "method":"post",
+                            "data": {
+                              "pid": "${task_pid}",
+                              "ids": "${ids | raw}"
+                            }
+                          },
+                          "confirmText": "确定要重新下载吗？"
+                        },
+                        {
+                          "label": "批量删除",
+                          "actionType": "ajax",
+                          "api": {
+                            "url": "/v2/task/delete",
+                            "method":"delete",
+                            "data": {
+                              "ids": "${ids | raw}"
+                            }
+                          },
+                          "confirmText": "确定要删除当前任务吗？"
+                        }
+                      ],
+                      "footerToolbar": [
+                        "statistics",
+                        "switch-per-page",
+                        "pagination"
+                      ],
+                      "primaryField": "task_id",
+                      "mode": "cards",
+                      "columnsCount": 4,
+                      "card": {
+                        "header": {
+                          "className": "bg-white",
+                          "title": "$task_name",
+                          "subTitle": "",
+                          "description": "",
+                          "avatar": "${cover | raw}",
+                          "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
+                        },
+                        "bodyClassName": "padder",
+                        "body":[
                           {
                             "name": "task_id",
                             "type": "static",
-                            "label": "任务ID",
+                            "label": "任务ID: ",
                             "copyable": true
                           },
                           {
                             "name": "other_id",
                             "type": "static",
-                            "label": "业务ID",
+                            "label": "业务ID: ",
                             "copyable": true
-                          },
-                          {
-                            "name": "task_name",
-                            "type": "static",
-                            "label": "任务名称"
                           },
                           {
                             "name": "status",
                             "type": "static-mapping",
-                            "label": "状态",
+                            "label": "状态: ",
                             "canAccessSuperData": false,
                             "classNameExpr": "${ status =='4' ? 'text-danger' : '' }",
                             "map": {
@@ -307,216 +325,185 @@
                             "name": "created_at",
                             "type": "date",
                             "format": "YYYY-MM-DD HH:mm:ss",
-                            "label": "创建时间"
+                            "label": "创建时间: "
                           },
                           {
                             "name": "updated_at",
                             "type": "date",
                             "format": "YYYY-MM-DD HH:mm:ss",
-                            "label": "更新时间"
-                          },
+                            "label": "更新时间: "
+                          }
+                        ],
+                        "actions":[
                           {
-                            "type": "operation",
-                            "label": "操作",
-                            "buttons": [
-                              {
-                                "type": "button",
-                                "icon": "fa fa-eye",
-                                "actionType": "drawer",
-                                "visibleOn": "${status !='1'}",
-                                "loading": true,
-                                "drawer": {
-                                  "resizable": true,
-                                  "closeOnOutside": true,
-                                  "actions": [],
-                                  "size": "lg",
-                                  "title": "任务详情",
+                            "type": "button",
+                            "icon": "fa fa-eye",
+                            "actionType": "drawer",
+                            "visibleOn": "${status !='1'}",
+                            "loading": true,
+                            "drawer": {
+                              "resizable": true,
+                              "closeOnOutside": true,
+                              "actions": [],
+                              "size": "lg",
+                              "title": "任务详情",
+                              "body": [
+                                {
+                                  "type": "service",
+                                  "api": {
+                                    "method": "get",
+                                    "url": "/v2/task/info?id=${task_id}"
+                                  },
                                   "body": [
                                     {
-                                      "type": "service",
-                                      "api": {
-                                        "method": "get",
-                                        "url": "/v2/task/info?id=${task_id}"
-                                      },
-                                      "body": [
+                                      "type": "property",
+                                      "title": "${article.title}",
+                                      "mode": "simple",
+                                      "separator": "：",
+                                      "items": [
                                         {
-                                          "name": "pid",
-                                          "type": "static",
                                           "label": "PID",
-                                          "copyable": true
+                                          "content": "${article.pid}"
                                         },
                                         {
-                                          "type": "divider"
-                                        },
-                                        {
-                                          "name": "id",
-                                          "type": "static",
                                           "label": "ID",
-                                          "copyable": true
-                                        },
+                                          "content": "${article.id}"
+                                        } ,
                                         {
-                                          "type": "divider"
-                                        },
-                                        {
-                                          "name": "title",
-                                          "type": "static",
-                                          "label": "标题"
-                                        },
-                                        {
-                                          "type": "divider"
-                                        },
-                                        {
-                                          "type": "static",
-                                          "name": "message.text",
                                           "label": "下载信息",
+                                          "content": "${message.text}",
+                                          "span": 3,
                                           "visibleOn": "${ message.text !== '' }"
-                                        },
-                                        {
-                                          "type": "divider"
-                                        },
-                                        {
-                                          "type": "button-group",
-                                          "tiled": true,
-                                          "btnLevel": "default",
-                                          "btnActiveLevel": "light",
-                                          "buttons": [
-                                            {
-                                              "label": "下载音频",
-                                              "type": "action",
-                                              "actionType": "download",
-                                              "size": "sm",
-                                              "api": "/v2/task/download?id=${task_id}&type=audio",
-                                              "visibleOn": "${ audio.download_url !== undefined && message.object !==''}"
-                                            },
-                                            {
-                                              "label": "下载视频",
-                                              "type": "action",
-                                              "actionType": "download",
-                                              "size": "sm",
-                                              "api": "/v2/task/download?id=${task_id}&type=video",
-                                              "visibleOn": "${ video.cover !== undefined && message.object !=='' }"
-                                            },
-                                            {
-                                              "label": "导出Markdown文本",
-                                              "type": "action",
-                                              "size": "sm",
-                                              "actionType": "download",
-                                              "api": "/v2/task/download?id=${task_id}&type=markdown"
-                                            }
-                                          ]
-                                        },
-                                        {
-                                          "type": "divider"
-                                        },
-                                        {
-                                          "type": "video",
-                                          "muted": true,
-                                          "autoPlay": false,
-                                          "rates": [1.0, 1.5, 2.0],
-                                          "src": "${message.object}",
-                                          "poster": "${video.cover}",
-                                          "visibleOn": "${ video.cover !== undefined && message.object!=='' }"
-                                        },
-                                        {
-                                          "type": "video",
-                                          "muted": true,
-                                          "autoPlay": false,
-                                          "rates": [1.0, 1.5, 2.0],
-                                          "src": "${video.hls_medias|last|pick:url}",
-                                          "poster": "${video.cover}",
-                                          "visibleOn": "${ video.cover !== undefined && message.object==='' }"
-                                        },
-                                        {
-                                          "type": "audio",
-                                          "autoPlay": false,
-                                          "rates": [1.0, 1.5, 2.0],
-                                          "src": "${message.object}",
-                                          "visibleOn": "${ audio.download_url !== undefined && message.object!==''}"
-                                        },
-                                        {
-                                          "type": "audio",
-                                          "autoPlay": false,
-                                          "rates": [1.0, 1.5, 2.0],
-                                          "src": "${audio.download_url}",
-                                          "visibleOn": "${ audio.download_url !== undefined && message.object===''}"
-                                        },
-                                        {
-                                          "type": "divider"
-                                        },
-                                        {
-                                          "type": "html",
-                                          "name": "content",
-                                          "label": "附件"
                                         }
                                       ]
+                                    },
+                                    {
+                                      "type": "divider"
+                                    },
+                                    {
+                                      "type": "button-group",
+                                      "tiled": true,
+                                      "btnLevel": "default",
+                                      "btnActiveLevel": "light",
+                                      "buttons": [
+                                        {
+                                          "label": "下载音频",
+                                          "type": "action",
+                                          "actionType": "download",
+                                          "size": "sm",
+                                          "api": "/v2/task/download?id=${task_id}&type=audio",
+                                          "visibleOn": "${ article.audio.download_url !== undefined && message.object !==''}"
+                                        },
+                                        {
+                                          "label": "下载视频",
+                                          "type": "action",
+                                          "actionType": "download",
+                                          "size": "sm",
+                                          "api": "/v2/task/download?id=${task_id}&type=video",
+                                          "visibleOn": "${ article.video.cover !== undefined && message.object !=='' }"
+                                        },
+                                        {
+                                          "label": "导出Markdown文本",
+                                          "type": "action",
+                                          "size": "sm",
+                                          "actionType": "download",
+                                          "api": "/v2/task/download?id=${task_id}&type=markdown"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "divider"
+                                    },
+                                    {
+                                      "type": "video",
+                                      "muted": true,
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.5, 2.0],
+                                      "src": "${article.video.hls_medias|last|pick:url}",
+                                      "poster": "${article.video.cover}",
+                                      "visibleOn": "${ article.video.cover !== undefined }"
+                                    },
+                                    {
+                                      "type": "divider"
+                                    },
+                                    {
+                                      "type": "audio",
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.5, 2.0],
+                                      "src": "${article.audio.download_url}",
+                                      "visibleOn": "${ article.audio.download_url !== undefined }"
+                                    },
+                                    {
+                                      "type": "divider"
+                                    },
+                                    {
+                                      "type": "html",
+                                      "name": "article.content",
+                                      "label": "附件"
                                     }
                                   ]
                                 }
-                              },
-                              {
-                                "type": "button",
-                                "icon": "fa-solid fa-repeat",
-                                "actionType": "ajax",
-                                "api": {
-                                  "url": "/v2/task/retry",
-                                  "method":"post",
-                                  "data": {
-                                    "pid": "${task_pid}",
-                                    "ids": "${task_id}"
-                                  }
-                                },
-                                "confirmText": "确定要重新下载么？"
-                              },
-                              {
-                                "type": "button",
-                                "icon": "fa-solid fa-trash",
-                                "actionType": "ajax",
-                                "api": {
-                                  "url": "/v2/task/delete",
-                                  "method":"delete",
-                                  "data": {
-                                    "ids": "${task_id}"
-                                  }
-                                },
-                                "confirmText": "确定要删除 [${task_name}] 任务吗？"
+                              ]
+                            }
+                          },
+                          {
+                            "type": "button",
+                            "icon": "fa-solid fa-repeat",
+                            "actionType": "ajax",
+                            "api": {
+                              "url": "/v2/task/retry",
+                              "method":"post",
+                              "data": {
+                                "pid": "${task_pid}",
+                                "ids": "${task_id}"
                               }
-                            ],
-                            "placeholder": "-",
-                            "fixed": "right"
+                            },
+                            "confirmText": "确定要重新下载么？"
+                          },
+                          {
+                            "type": "button",
+                            "icon": "fa-solid fa-trash",
+                            "actionType": "ajax",
+                            "api": {
+                              "url": "/v2/task/delete",
+                              "method":"delete",
+                              "data": {
+                                "ids": "${task_id}"
+                              }
+                            },
+                            "confirmText": "确定要删除 [${task_name}] 任务吗？"
                           }
-                        ],
-                        "affixHeader": true,
-                        "columnsTogglable": "auto",
-                        "placeholder": "暂无数据",
-                        "tableClassName": "table-db table-striped",
-                        "headerClassName": "crud-table-header",
-                        "footerClassName": "crud-table-footer",
-                        "toolbarClassName": "crud-table-toolbar",
-                        "combineNum": 0,
-                        "bodyClassName": "panel-default"
-                      }
-                    ]
+                        ]
+                      },
+                      "affixHeader": true,
+                      "columnsTogglable": "auto",
+                      "placeholder": "暂无数据",
+                      "tableClassName": "table-db table-striped",
+                      "headerClassName": "crud-table-header",
+                      "footerClassName": "crud-table-footer",
+                      "toolbarClassName": "crud-table-toolbar",
+                      "combineNum": 0,
+                      "bodyClassName": "panel-default"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "button",
+                "icon": "fa-solid fa-trash",
+                "actionType": "ajax",
+                "loading": true,
+                "api": {
+                  "url": "/v2/task/delete",
+                  "method":"delete",
+                  "data": {
+                    "pid": "${task_id}"
                   }
                 },
-                {
-                  "type": "button",
-                  "icon": "fa-solid fa-trash",
-                  "actionType": "ajax",
-                  "loading": true,
-                  "api": {
-                    "url": "/v2/task/delete",
-                    "method":"delete",
-                    "data": {
-                      "pid": "${task_id}"
-                    }
-                  },
-                  "confirmText": "确定要删除 [${task_name}] 任务吗？"
-                }
-              ],
-              "placeholder": "-",
-              "fixed": "right"
-            }
-          ],
+                "confirmText": "确定要删除 [${task_name}] 任务吗？"
+              }
+            ]
+          },
           "affixHeader": true,
           "columnsTogglable": "auto",
           "placeholder": "暂无数据",

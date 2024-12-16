@@ -17,7 +17,7 @@
             "number"
           ]
         },
-        "syncLocation": true,
+        "syncLocation": false,
         "filterTogglable": {
           "label": "更多搜索",
           "activeLabel": "收起搜索",
@@ -31,10 +31,286 @@
           "title": "条件搜索",
           "body": [
             {
+              "type": "list-select",
+              "name": "direction",
+              "label": "方向",
+              "clearable": true,
+              "value": 3,
+              "options":[
+                {
+                  "label": "后端/架构",
+                  "value": 3
+                },
+                {
+                  "label": "前端/移动",
+                  "value": 5
+                },
+                {
+                  "label": "计算机基础",
+                  "value": 9
+                },
+                {
+                  "label": "AI/大数据",
+                  "value": 8
+                },
+                {
+                  "label": "运维/测试",
+                  "value": 6
+                },
+                {
+                  "label": "产品/运营",
+                  "value": 7
+                },
+                {
+                  "label": "管理/成长",
+                  "value": 4
+                }
+              ],
+              "onEvent": {
+                "change": {
+                  "actions": [
+                    {
+                      "actionType": "setValue",
+                      "componentId": "pvip-tag",
+                      "args": {
+                        "msg": "${event.data.value}"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "list-select",
+              "id": "pvip-tag",
+              "name": "tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 3,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 3
+                },
+                {
+                  "label": "Java",
+                  "value": 10
+                },
+                {
+                  "label": "Go",
+                  "value": 11
+                },
+                {
+                  "label": "Python",
+                  "value": 12
+                },
+                {
+                  "label": ".Net",
+                  "value": 65
+                },
+                {
+                  "label": "C语言",
+                  "value": 64
+                },
+                {
+                  "label": "基本功",
+                  "value": 22
+                },
+                {
+                  "label": "分布式",
+                  "value": 20
+                },
+                {
+                  "label": "中间件",
+                  "value": 17
+                },
+                {
+                  "label": "区块链",
+                  "value": 23
+                },
+                {
+                  "label": "全栈",
+                  "value": 21
+                },
+                {
+                  "label": "C++",
+                  "value": 61
+                },
+                {
+                  "label": "中台",
+                  "value": 19
+                },
+                {
+                  "label": "DDD",
+                  "value": 13
+                },
+                {
+                  "label": "案例",
+                  "value": 18
+                },
+                {
+                  "label": "微服务",
+                  "value": 16
+                },
+                {
+                  "label": "数据库",
+                  "value": 13
+                },
+                {
+                  "label": "Rust",
+                  "value": 98
+                }
+              ],
+              "visibleOn": "${ direction == 3 }"
+            },
+            {
+              "type": "list-select",
+              "id": "pvip-tag",
+              "name": "tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 5,
+              "options": [
+                {
+                  "label": "全部",
+                  "value": 5
+                },
+                {
+                  "label": "JavaScript",
+                  "value": 30
+                },
+                {
+                  "label": "iOS",
+                  "value": 34
+                },
+                {
+                  "label": "Android",
+                  "value": 33
+                },
+                {
+                  "label": "Node.js",
+                  "value": 41
+                },
+                {
+                  "label": "网络",
+                  "value": 40
+                },
+                {
+                  "label": "webpack",
+                  "value": 39
+                },
+                {
+                  "label": "音视频",
+                  "value": 38
+                },
+                {
+                  "label": "浏览器",
+                  "value": 37
+                },
+                {
+                  "label": "Swift",
+                  "value": 36
+                },
+                {
+                  "label": "Kotlin",
+                  "value": 35
+                },
+                {
+                  "label": "框架",
+                  "value": 32
+                },
+                {
+                  "label": "TypeScript",
+                  "value": 31
+                },
+                {
+                  "label": "可视化",
+                  "value": 70
+                }
+              ],
+              "visibleOn": "${ direction == 5 }"
+            },
+            {
+              "type": "list-select",
+              "name": "tag",
+              "id": "pvip-tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 9,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 9
+                }
+              ],
+              "visibleOn": "${ direction == 9 }"
+            },
+            {
+              "type": "list-select",
+              "name": "tag",
+              "id": "pvip-tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 8,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 8
+                }
+              ],
+              "visibleOn": "${ direction == 8 }"
+            },
+            {
+              "type": "list-select",
+              "name": "tag",
+              "id": "pvip-tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 6,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 6
+                }
+              ],
+              "visibleOn": "${ direction == 6 }"
+            },
+            {
+              "type": "list-select",
+              "name": "tag",
+              "id": "pvip-tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 7,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 7
+                }
+              ],
+              "visibleOn": "${ direction == 7 }"
+            },
+            {
+              "type": "list-select",
+              "name": "tag",
+              "id": "pvip-tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 4,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 4
+                }
+              ],
+              "visibleOn": "${ direction == 4 }"
+            },
+            {
               "type": "group",
               "body": [
                 {
-                  "type": "select",
+                  "type": "list-select",
+                  "clearable": true,
                   "label": "最新/热度",
                   "name": "sort",
                   "value": 8,
@@ -127,7 +403,7 @@
         },
         "autoFillHeight": false,
         "defaultParams": {
-          "perPage": 10
+          "perPage": 20
         },
         "keepItemSelectionOnPageChange": true,
         "bulkActions": [],
@@ -136,53 +412,62 @@
           "switch-per-page",
           "pagination"
         ],
-        "columns": [
-          {
-            "name": "id",
-            "type": "static",
-            "label": "ID",
-            "copyable": true
+        "mode": "cards",
+        "columnsCount": 4,
+        "card": {
+          "header": {
+            "className": "bg-white",
+            "title": "$title",
+            "subTitle": "$subtitle",
+            "description": "",
+            "avatar": "${cover.square | raw}",
+            "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
           },
-          {
-            "name": "share.title",
-            "type": "static",
-            "label": "标题"
-          },
-          {
-            "name": "author.avatar",
-            "type": "image",
-            "enlargeAble": true,
-            "thumbMode": "cover",
-            "label": "作者头像"
-          },
-          {
-            "name": "author.name",
-            "type": "static",
-            "label": "作者"
-          },
-          {
-            "name": "is_video",
-            "type": "static-mapping",
-            "label": "视频",
-            "map": {
-              "true": "是",
-              "*": "否"
+          "bodyClassName": "padder",
+          "body": [
+            {
+              "type": "property",
+              "title": "",
+              "mode": "simple",
+              "separator": "：",
+              "items": [
+                {
+                  "label": "ID",
+                  "content": "${id}"
+                },
+                {
+                  "label": "文章数",
+                  "content": "${article.count} 篇",
+                  "span": 2
+                },
+                {
+                  "label": "类型",
+                  "content": "${ is_audio === true ? '音频': '视频'}",
+                  "visibleOn": "${ is_audio !== undefined }"
+                },
+                {
+                  "label": "类型",
+                  "content": "${ is_video === true ? '视频': '音频'}",
+                  "visibleOn": "${ is_video !== undefined }"
+                },
+                {
+                  "label": "完结",
+                  "content": "${ is_finish === true ? '是': '否'}",
+                  "span": 2
+                },
+                {
+                  "label": "作者",
+                  "content": "${author.name}"
+                },
+                {
+                  "label": "作者简介",
+                  "content": "${author.intro}",
+                  "span": 3
+                }
+              ]
             }
-          },
-          {
-            "name": "is_finish",
-            "type": "static-mapping",
-            "label": "完结",
-            "classNameExpr": "${ is_finish == true ? 'text-success' : 'text-muted' }",
-            "map": {
-              "true": "是",
-              "*": "否"
-            }
-          },
-          {
-            "type": "operation",
-            "label": "操作",
-            "buttons": [
+          ],
+          "actions": [
               {
                 "type": "button",
                 "icon": "fa fa-eye",
@@ -198,13 +483,18 @@
                     {
                       "type": "card",
                       "header": {
-                        "title": "${share.title}",
-                        "subTitle": "${title}",
-                        "description": "${subtitle}",
-                        "avatarClassName": "pull-left thumb-md avatar b-3x m-r",
-                        "avatar":"${author.avatar}"
+                        "title": "${title}",
+                        "subTitle": "$subtitle",
+                        "description": "",
+                        "avatar": "${cover.square | raw}",
+                        "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
                       },
                       "body": [
+                        {
+                          "label": "文章数",
+                          "type": "tpl",
+                          "tpl": "${article.count} 篇"
+                        },
                         {
                           "type": "divider"
                         },
@@ -225,7 +515,7 @@
                           "number"
                         ]
                       },
-                      "syncLocation": true,
+                      "syncLocation": false,
                       "filter": {
                         "title": "",
                         "body": [
@@ -257,7 +547,131 @@
                         "url": "/v2/product/articles"
                       },
                       "perPage": 200,
-                      "keepItemSelectionOnPageChange": true,
+                      "mode": "cards",
+                      "columnsCount": 4,
+                      "card": {
+                        "header": {
+                          "className": "bg-white",
+                          "title": "${ LEN(article_title) > 20 ? article_title | substring:0:20 ? article_title }",
+                          "subTitle":  "$article_title",
+                          "description": "${article_summary}",
+                          "avatar": "${article_cover | raw}",
+                          "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
+                        },
+                        "bodyClassName": "padder",
+                        "body": [
+                          {
+                            "type": "property",
+                            "title": "",
+                            "mode": "simple",
+                            "separator": "：",
+                            "items": [
+                              {
+                                "label": "ID",
+                                "content": "${id}"
+                              },
+                              {
+                                "label": "视频大小",
+                                "content": "${ FLOOR(video_size/1048576, 2) } M",
+                                "visibleOn": "${ video_size !== undefined }"
+                              },
+                              {
+                                "label": "音频大小",
+                                "content": "${ FLOOR(audio_size/1048576, 2) } M",
+                                "visibleOn": "${ audio_size !== undefined }"
+                              }
+                            ]
+                          }
+                        ],
+                        "actions": [
+                          {
+                            "type": "button",
+                            "icon": "fa fa-eye",
+                            "actionType": "drawer",
+                            "loading": true,
+                            "drawer": {
+                              "resizable": true,
+                              "closeOnOutside": true,
+                              "actions": [],
+                              "size": "lg",
+                              "title": "课程详情",
+                              "body": [
+                                {
+                                  "type": "service",
+                                  "api": {
+                                    "method": "get",
+                                    "url": "/v2/product/article/info?id=${id}"
+                                  },
+                                  "body": [
+                                    {
+                                      "type": "property",
+                                      "title": "${title}",
+                                      "mode": "simple",
+                                      "separator": "：",
+                                      "items": [
+                                        {
+                                          "label": "ID",
+                                          "content": "${id}"
+                                        },
+                                        {
+                                          "label": "视频大小",
+                                          "content": "${ FLOOR(video_size/1048576, 2) } M",
+                                          "visibleOn": "${ video_size !== undefined }"
+                                        },
+                                        {
+                                          "label": "音频大小",
+                                          "content": "${ FLOOR(audio_size/1048576, 2) } M",
+                                          "visibleOn": "${ audio_size !== undefined }"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "video",
+                                      "muted": true,
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.5, 2.0],
+                                      "src": "${video.hls_medias|last|pick:url}",
+                                      "poster": "${video.cover}",
+                                      "visibleOn": "${ video.cover !== undefined }"
+                                    },
+                                    {
+                                      "type": "audio",
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.5, 2.0],
+                                      "src": "${audio.download_url}",
+                                      "visibleOn": "${ audio.download_url !== undefined }"
+                                    },
+                                    {
+                                      "type": "divider"
+                                    },
+                                    {
+                                      "type": "html",
+                                      "name": "content",
+                                      "label": "附件"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "button",
+                            "loading": true,
+                            "icon": "fa fa-download",
+                            "actionType": "ajax",
+                            "api": {
+                              "url": "/v2/product/download",
+                              "method":"post",
+                              "data": {
+                                "pid": "${cid}",
+                                "ids": "${id | trim}"
+                              }
+                            },
+                            "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在任务列表查看下载情况"
+                          }
+                        ]
+                      },
+                      "keepItemSelectionOnPageChange": false,
                       "bulkActions": [
                         {
                           "label": "批量下载",
@@ -290,123 +704,6 @@
                         "switch-per-page",
                         "pagination"
                       ],
-                      "columns": [
-                        {
-                          "name": "id",
-                          "type": "static",
-                          "label": "ID",
-                          "copyable": true
-                        },
-                        {
-                          "name": "article_title",
-                          "type": "static",
-                          "label": "标题"
-                        },
-                        {
-                          "name": "article_cover",
-                          "type": "static-image",
-                          "label": "封面图",
-                          "thumbMode": "cover"
-                        },
-                        {
-                          "type": "operation",
-                          "label": "操作",
-                          "buttons": [
-                            {
-                              "type": "button",
-                              "icon": "fa fa-eye",
-                              "actionType": "drawer",
-                              "loading": true,
-                              "drawer": {
-                                "resizable": true,
-                                "closeOnOutside": true,
-                                "actions": [],
-                                "size": "lg",
-                                "title": "课程详情",
-                                "body": [
-                                  {
-                                    "type": "service",
-                                    "api": {
-                                      "method": "get",
-                                      "url": "/v2/product/article/info?id=${id}"
-                                    },
-                                    "body": [
-                                      {
-                                        "name": "pid",
-                                        "type": "static",
-                                        "label": "PID",
-                                        "copyable": true
-                                      },
-                                      {
-                                        "type": "divider"
-                                      },
-                                      {
-                                        "name": "id",
-                                        "type": "static",
-                                        "label": "ID",
-                                        "copyable": true
-                                      },
-                                      {
-                                        "type": "divider"
-                                      },
-                                      {
-                                        "name": "title",
-                                        "type": "static",
-                                        "label": "标题"
-                                      },
-                                      {
-                                        "type": "divider"
-                                      },
-                                      {
-                                        "type": "video",
-                                        "muted": true,
-                                        "autoPlay": false,
-                                        "rates": [1.0, 1.5, 2.0],
-                                        "src": "${video.hls_medias|last|pick:url}",
-                                        "poster": "${video.cover}",
-                                        "visibleOn": "${ video.cover !== undefined }"
-                                      },
-                                      {
-                                        "type": "audio",
-                                        "autoPlay": false,
-                                        "rates": [1.0, 1.5, 2.0],
-                                        "src": "${audio.download_url}",
-                                        "visibleOn": "${ audio.download_url !== undefined }"
-                                      },
-                                      {
-                                        "type": "divider"
-                                      },
-                                      {
-                                        "type": "html",
-                                        "name": "content",
-                                        "label": "附件"
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            },
-                            {
-                              "type": "button",
-                              "loading": true,
-                              "icon": "fa fa-download",
-                              "actionType": "ajax",
-                              "api": {
-                                "url": "/v2/product/download",
-                                "method":"post",
-                                "data": {
-                                  "pid": "${cid}",
-                                  "ids": "${id | trim}"
-                                }
-                              },
-                              "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在任务列表查看下载情况"
-                            }
-
-                          ],
-                          "placeholder": "-",
-                          "fixed": "right"
-                        }
-                      ],
                       "affixHeader": true,
                       "columnsTogglable": "auto",
                       "placeholder": "暂无数据",
@@ -434,11 +731,8 @@
                   }
                 }
               }
-            ],
-            "placeholder": "-",
-            "fixed": "right"
-          }
-        ],
+            ]
+        },
         "affixHeader": true,
         "columnsTogglable": "auto",
         "placeholder": "暂无数据",
