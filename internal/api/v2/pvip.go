@@ -19,10 +19,7 @@ func (p *Product) PvipProductList(c *gin.Context) {
 		req.TagIds = []int{req.Tag}
 	}
 	req.Size = req.PerPage
-	req.Prev = req.Page - 1
-	if req.Prev < 0 {
-		req.Prev = 0
-	}
+	req.Prev = req.Page
 	identity := c.GetString(global.Identity)
 	accessToken := c.GetString(global.AccessToken)
 	resp, err := service.GetPvipProduct(c, identity, accessToken, req)

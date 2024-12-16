@@ -30,10 +30,7 @@ func (p *Product) List(c *gin.Context) {
 	}
 	req.WithLearnCount = 1
 	req.Size = req.PerPage
-	req.Prev = req.Page - 1
-	if req.Prev < 0 {
-		req.Prev = 0
-	}
+	req.Prev = req.Page
 	identity := c.GetString(global.Identity)
 	accessToken := c.GetString(global.AccessToken)
 	resp, err := service.GetLearnProduct(c, identity, accessToken, req)
