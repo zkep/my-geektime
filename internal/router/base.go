@@ -9,5 +9,6 @@ func base(public, _ *gin.RouterGroup) {
 	api := v2.NewBase()
 	{
 		public.POST("/base/login", api.Login)
+		public.GET("/base/redirect", api.Redirect)
 	}
 }

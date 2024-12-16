@@ -10,7 +10,6 @@ import (
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/internal/middleware"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/service"
 	"github.com/zkep/mygeektime/internal/types/geek"
@@ -36,7 +35,7 @@ func (t *Task) List(c *gin.Context) {
 	if req.Page <= 0 {
 		req.Page = 1
 	}
-	identity := c.GetString(middleware.Identity)
+	identity := c.GetString(global.Identity)
 	ret := task.TaskListResponse{
 		Rows: make([]task.Task, 0, 10),
 	}

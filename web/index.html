@@ -48,61 +48,6 @@
 
         let login_tabs = []
 
-        // login_tabs.push({
-        //     title: "浏览器模拟器登录",
-        //     body:  {
-        //         type: "form",
-        //         title: "",
-        //         actions: [],
-        //         wrapWithPanel: false,
-        //         api: {
-        //             url: "/v2/base/login?waitSeconds=3",
-        //             method: "post",
-        //             data: {
-        //                 account: "simulate",
-        //                 password: "simulate",
-        //                 type: "${type}"
-        //             },
-        //             adaptor: function (payload, response, api, context) {
-        //                 if (payload.status === 0 && payload.token !== undefined) {
-        //                     localStorage.setItem("token", payload.token);
-        //                     localStorage.setItem("uname", payload.user.nike_name);
-        //                     localStorage.setItem("uid", payload.user.uid);
-        //                     localStorage.setItem("avatar", payload.user.avatar);
-        //                     location.href="/";
-        //                 }
-        //                 return payload;
-        //             }
-        //         },
-        //         body: [
-        //             {
-        //                 type: "hidden",
-        //                 name: "type",
-        //                 value: "simulate"
-        //             },
-        //             {
-        //                 type: "flex",
-        //                 alignItems: "center",
-        //                 style: {
-        //                     height: "100%",
-        //                     backgroundColor: "#fff"
-        //                 },
-        //                 items: [
-        //                     {
-        //                         label: "浏览器模拟器登录｜Open Browser Simulate",
-        //                         level: "light",
-        //                         size: "lg",
-        //                         type: "submit",
-        //                         style: {
-        //                             margin: 20,
-        //                         },
-        //                     }
-        //                 ]
-        //             },
-        //         ]
-        //     }
-        // })
-
         login_tabs.push({
             title: "cookie登录",
             body: {
@@ -261,6 +206,61 @@
             }
         })
 
+        login_tabs.push({
+            title: "浏览器模拟器登录",
+            body:  {
+                type: "form",
+                title: "",
+                actions: [],
+                wrapWithPanel: false,
+                api: {
+                    url: "/v2/base/login?waitSeconds=3",
+                    method: "post",
+                    data: {
+                        account: "simulate",
+                        password: "simulate",
+                        type: "${type}"
+                    },
+                    adaptor: function (payload, response, api, context) {
+                        if (payload.status === 0 && payload.token !== undefined) {
+                            localStorage.setItem("token", payload.token);
+                            localStorage.setItem("uname", payload.user.nike_name);
+                            localStorage.setItem("uid", payload.user.uid);
+                            localStorage.setItem("avatar", payload.user.avatar);
+                            location.href="/";
+                        }
+                        return payload;
+                    }
+                },
+                body: [
+                    {
+                        type: "hidden",
+                        name: "type",
+                        value: "simulate"
+                    },
+                    {
+                        type: "flex",
+                        alignItems: "center",
+                        style: {
+                            height: "100%",
+                            backgroundColor: "#fff"
+                        },
+                        items: [
+                            {
+                                label: "浏览器模拟器登录｜Open Browser Simulate",
+                                level: "light",
+                                size: "lg",
+                                type: "submit",
+                                style: {
+                                    margin: 20,
+                                },
+                            }
+                        ]
+                    },
+                ]
+            }
+        })
+
         const login = {
             type: "page",
             body: {
@@ -342,7 +342,7 @@
                                             level: "secondary",
                                             label: "退出",
                                             size: "sm",
-                                            onClick: "localStorage.clear();location.href='/';"
+                                            onClick: "localStorage.clear(); document.cookie = 'analogjwt=; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';location.href='/';"
                                         }
                                     ]
                                 }
@@ -354,6 +354,17 @@
             footer: '<div class="p-2 text-center bg-light">My Geek Time</div>',
             api: '/pages/site.json'
         };
+
+        function getCookie(name) {
+            var cookieArr = document.cookie.split(";");
+            for (var i = 0; i < cookieArr.length; i++) {
+                var cookiePair = cookieArr[i].split("=");
+                if (name === cookiePair[0].trim()) {
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            return null;
+        }
 
         function normalizeLink(to, location = history.location) {
             to = to || '';
@@ -415,7 +426,8 @@
             return decodeURI(pathname) === link;
         }
 
-        const token =  localStorage.getItem("token")
+        const token =  localStorage.getItem("token") ||  getCookie("analogjwt");
+
 
         let amisInstance = amis.embed(
             '#root',
@@ -439,7 +451,7 @@
                         ...api,
                         headers: {
                             ...api.headers,
-                            Authorization: "Bearer "+localStorage.getItem("token")
+                            Authorization: "Bearer "+token
                         }
                     };
                 },
@@ -447,6 +459,7 @@
                     // console.log('responseAdaptor',payload)
                     if(payload.status === 401 || payload.status === 400 || payload.status === 403) {
                         localStorage.clear();
+                        document.cookie = 'analogjwt=; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                         location.href="/";
                     }
                     return {

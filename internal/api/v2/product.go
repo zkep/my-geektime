@@ -9,7 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/internal/middleware"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/service"
 	"github.com/zkep/mygeektime/internal/types/geek"
@@ -35,8 +34,8 @@ func (p *Product) List(c *gin.Context) {
 	if req.Prev < 0 {
 		req.Prev = 0
 	}
-	identity := c.GetString(middleware.Identity)
-	accessToken := c.GetString(middleware.AccessToken)
+	identity := c.GetString(global.Identity)
+	accessToken := c.GetString(global.AccessToken)
 	resp, err := service.GetLearnProduct(c, identity, accessToken, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
@@ -79,8 +78,8 @@ func (p *Product) Articles(c *gin.Context) {
 	}
 	req.Size = req.PerPage
 	req.Prev = req.Page
-	identity := c.GetString(middleware.Identity)
-	accessToken := c.GetString(middleware.AccessToken)
+	identity := c.GetString(global.Identity)
+	accessToken := c.GetString(global.AccessToken)
 	resp, err := service.GetArticles(c, identity, accessToken, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
@@ -115,8 +114,8 @@ func (p *Product) ArticleInfo(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
 		return
 	}
-	identity := c.GetString(middleware.Identity)
-	accessToken := c.GetString(middleware.AccessToken)
+	identity := c.GetString(global.Identity)
+	accessToken := c.GetString(global.AccessToken)
 	resp, err := service.GetArticleInfo(c, identity, accessToken, req)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
@@ -131,8 +130,8 @@ func (p *Product) Download(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "error": err.Error()})
 		return
 	}
-	identity := c.GetString(middleware.Identity)
-	accessToken := c.GetString(middleware.AccessToken)
+	identity := c.GetString(global.Identity)
+	accessToken := c.GetString(global.AccessToken)
 	articlesMap := make(map[int64]*model.Article, 10)
 	ids := make([]int64, 0, 1)
 	switch x := req.Ids.(type) {

@@ -13,11 +13,6 @@ import (
 	"github.com/zkep/mygeektime/lib/rest"
 )
 
-const (
-	Identity    = "identity"
-	AccessToken = "access_token"
-)
-
 func JWTMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token, err := ParseToken(global.JWT, c)
@@ -59,8 +54,8 @@ func doWithToken(c *gin.Context, token *jwt.Token) error {
 		c.AbortWithStatusJSON(http.StatusOK, gin.H{"status": http.StatusBadRequest, "msg": "token is expired"})
 		return ErrExpiredToken
 	}
-	c.Set(Identity, claims[Identity])
-	c.Set(AccessToken, c.Request.Header.Get("Cookie"))
+	c.Set(global.Identity, claims[global.Identity])
+	c.Set(global.AccessToken, claims[global.AccessToken])
 	return nil
 }
 
@@ -74,8 +69,7 @@ func ParseToken(j *rest.JWTConfig, c *gin.Context) (*jwt.Token, error) {
 			break
 		}
 		parts := strings.Split(strings.TrimSpace(method), ":")
-		k := strings.TrimSpace(parts[0])
-		v := strings.TrimSpace(parts[1])
+		k, v := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
 		switch k {
 		case "header":
 			token, err = jwtFromHeader(c, v)

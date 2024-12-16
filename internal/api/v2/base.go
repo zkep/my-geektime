@@ -3,6 +3,7 @@ package v2
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,7 +21,6 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/tebeka/selenium"
 	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/internal/middleware"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/types/base"
 	"github.com/zkep/mygeektime/internal/types/geek"
@@ -49,24 +49,6 @@ func (b *Base) Login(c *gin.Context) {
 	var user model.User
 	switch r.Type {
 	case geek.LoginWithUser:
-		//if err := global.DB.
-		//	Where(model.User{
-		//		Phone: r.Account,
-		//	}).
-		//	First(&user).Error; err != nil {
-		//	c.JSON(http.StatusOK, gin.H{
-		//		"status": http.StatusBadRequest,
-		//		"msg":    "Login Fail",
-		//	})
-		//	return
-		//}
-		//if user.Phone == "" {
-		//	c.JSON(http.StatusOK, gin.H{
-		//		"status": http.StatusBadRequest,
-		//		"msg":    "not fund user",
-		//	})
-		//	return
-		//}
 		if err := loginWithAccount(r); err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"status": http.StatusBadRequest,
@@ -110,7 +92,8 @@ func (b *Base) Login(c *gin.Context) {
 	token, expire, err := global.JWT.DefaultTokenGenerator(
 		func() (jwt.MapClaims, error) {
 			claims := jwt.MapClaims{}
-			claims[middleware.Identity] = user.Uid
+			claims[global.Identity] = user.Uid
+			claims[global.AccessToken] = user.AccessToken
 			return claims, nil
 		})
 	if err != nil {
@@ -127,8 +110,51 @@ func (b *Base) Login(c *gin.Context) {
 		"user":   user,
 		"expire": expire.Format(time.RFC3339),
 	})
-	c.SetCookie("analogjwt", user.AccessToken,
-		int(expire.Unix()), "/", "", false, false)
+	c.SetCookie(global.Analogjwt, token, int(expire.Unix()), "/", "", false, false)
+}
+
+func (b *Base) Redirect(c *gin.Context) {
+	var r base.RedirectRequest
+	if err := c.ShouldBind(&r); err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": http.StatusBadRequest,
+			"msg":    "Login Fail",
+		})
+		return
+	}
+	tokenByte, err := base64.URLEncoding.DecodeString(r.Token)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": http.StatusBadRequest,
+			"msg":    "Login Fail",
+		})
+		return
+	}
+	cookieToken := string(tokenByte)
+	var auth geek.AuthResponse
+	if err = authority(cookieToken, saveCookie(cookieToken, &auth)); err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": http.StatusBadRequest,
+			"msg":    err.Error(),
+		})
+		return
+	}
+	token, expire, err := global.JWT.DefaultTokenGenerator(
+		func() (jwt.MapClaims, error) {
+			claims := jwt.MapClaims{}
+			claims[global.Identity] = auth.Data.UID
+			claims[global.AccessToken] = cookieToken
+			return claims, nil
+		})
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": http.StatusBadRequest,
+			"msg":    "Login Fail",
+		})
+		return
+	}
+	c.SetCookie(global.Analogjwt, token, int(expire.Unix()), "/", "", false, false)
+	c.Redirect(http.StatusFound, "/")
 }
 
 const (
@@ -279,11 +305,10 @@ func loginWithSimulate() error {
 		if err = authority(cookiesLine, saveCookie(cookiesLine, &auth)); err != nil {
 			return false, err
 		}
-
 		addr := fmt.Sprintf("%s:%d", global.CONF.Server.HTTPAddr, global.CONF.Server.HTTPPort)
-		openURL := fmt.Sprintf("http://%s", addr)
+		token := base64.URLEncoding.EncodeToString([]byte(cookiesLine))
+		openURL := fmt.Sprintf("http://%s/%s?token=%s", addr, "v2/base/redirect", token)
 		_ = browser.Open(openURL)
-
 		return true, nil
 	}
 

@@ -28,7 +28,7 @@ const (
 var (
 	DefaultJWTConfig = JWTConfig{
 		SigningMethod: AlgorithmHS256,
-		TokenLookup:   "header:Authorization",
+		TokenLookup:   "header:Authorization,cookie:analogjwt",
 		AuthScheme:    "Bearer",
 		Claims:        jwt.MapClaims{},
 		SigningKeys:   map[string]any{},
