@@ -8,9 +8,9 @@ This is a tool to obtain the geektime video or articles with you geektime accoun
 
 #### docker
 ```shell
-docker pull zkep/mygeeektime:v0.0.1
+docker pull zkep/mygeeektime:latest
 
-docker run -p 8090:8090 -d --restart always zkep/mygeektime:v0.0.1 mygeektime server  
+docker run -p 8090:8090 -d --restart always zkep/mygeektime:latest  server  
 ```
 #### golang
 ```shell

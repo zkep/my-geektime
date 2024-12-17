@@ -12,3 +12,5 @@ FROM jrottenberg/ffmpeg
 COPY --from=builder /app/mygeektime /usr/bin/
 
 EXPOSE 8090
+
+ENTRYPOINT ["mygeektime"]
