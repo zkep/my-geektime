@@ -6,7 +6,19 @@
 
 ---
 ### 安装
+#### docker
+```shell
 
+git clone  https://github.com/zkep/mygeektime.git
+
+cd mygeektime
+
+docker build -t mygeektime:latest .
+
+docker run -p 8090:8090 mygeektime:latest mygeektime server  
+```
+
+#### golang
 ```shell
 go install github.com/zkep/mygeektime@latest
 ```

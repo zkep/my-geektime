@@ -7,9 +7,14 @@ COPY . /app
 
 RUN make all
 
-FROM alpine:latest
+FROM ubuntu:22.04
 
-RUN apk add --no-cache tzdata
+RUN apt update -y  && apt upgrade -y && apt install wget
+RUN wget https://ffmpeg.org/releases/ffmpeg-7.1.tar.xz
+RUN tar -xvf ffmpeg-7.1.tar.xz
+RUN cd ffmpeg-7.1.tar.xz
+RUN ./configure --enable-gpl --enable-libx264
+RUN make && make  install
 
 COPY --from=builder /app/mygeektime /usr/bin/
 
