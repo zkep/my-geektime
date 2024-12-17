@@ -8,14 +8,9 @@
 ### 安装
 #### docker
 ```shell
+docker pull zkep/mygeeektime:v1
 
-git clone  https://github.com/zkep/mygeektime.git
-
-cd mygeektime
-
-docker build -t mygeektime:latest .
-
-docker run -p 8090:8090 mygeektime:latest mygeektime server  
+docker run -p 8090:8090 --restart always mygeektime:v1 mygeektime server 
 ```
 
 #### golang
@@ -106,7 +101,7 @@ git clone https://github.com/FFmpeg/FFmpeg.git ffmpeg
 
 cd ffmpeg
 
-./configure --enable-ffplay --enable-ffserver
+./configure --enable-gpl --enable-libx264
 
 make && make install
 ```
