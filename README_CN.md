@@ -8,9 +8,9 @@
 ### 安装
 #### docker
 ```shell
-docker pull zkep/mygeeektime:v1
+docker pull zkep/mygeeektime:v0.0.1
 
-docker run -p 8090:8090 --restart always mygeektime:v1 mygeektime server 
+docker run -p 8090:8090 -d --restart always zkep/mygeektime:v0.0.1 mygeektime server  
 ```
 
 #### golang

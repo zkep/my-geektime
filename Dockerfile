@@ -7,12 +7,7 @@ COPY . /app
 
 RUN make all
 
-FROM ubuntu:22.04
-
-#RUN apt update -y --fix-missing
-#RUN apt install git -y --fix-missing
-#RUN git clone https://github.com/FFmpeg/FFmpeg.git && cd FFmpeg && ./configure --enable-gpl --enable-libx264
-#RUN make && make  install
+FROM jrottenberg/ffmpeg
 
 COPY --from=builder /app/mygeektime /usr/bin/
 
