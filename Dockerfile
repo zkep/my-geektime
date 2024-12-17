@@ -9,7 +9,7 @@ RUN make all
 
 FROM ubuntu:22.04
 
-RUN apt update -y
+RUN apt update -y --fix-missing
 RUN apt install wget -y --fix-missing
 RUN wget https://ffmpeg.org/releases/ffmpeg-7.1.tar.xz
 RUN tar -xvf ffmpeg-7.1.tar.xz
