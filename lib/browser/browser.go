@@ -25,6 +25,9 @@ func OpenContext(ctx context.Context, url string) error {
 		// "linux", "freebsd", "openbsd", "netbsd"
 		cmd = "xdg-open"
 	}
+	if _, err := exec.LookPath(cmd); err != nil {
+		return err
+	}
 	args = append(args, url)
 	return exec.CommandContext(ctx, cmd, args...).Start()
 }

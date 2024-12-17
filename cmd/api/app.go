@@ -113,7 +113,7 @@ func (app *App) newHttpServer(f *config.Config) error {
 	if f.Browser.OpenBrowser {
 		openURL := fmt.Sprintf("http://%s", addr)
 		if err := browser.Open(openURL); err != nil {
-			return err
+			global.LOG.Error("browser open: ", zap.Error(err))
 		}
 	}
 	return nil

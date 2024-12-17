@@ -142,15 +142,15 @@
                 },
                 {
                   "label": "DDD",
-                  "value": 13
-                },
-                {
-                  "label": "案例",
                   "value": 18
                 },
                 {
-                  "label": "微服务",
+                  "label": "案例",
                   "value": 16
+                },
+                {
+                  "label": "微服务",
+                  "value": 14
                 },
                 {
                   "label": "数据库",
@@ -485,25 +485,16 @@
                       "header": {
                         "title": "${title}",
                         "subTitle": "$subtitle",
-                        "description": "",
+                        "description": "共 ${article.count} 章",
                         "avatar": "${cover.square | raw}",
                         "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
                       },
-                      "body": [
-                        {
-                          "label": "文章数",
-                          "type": "tpl",
-                          "tpl": "${article.count} 篇"
-                        },
-                        {
-                          "type": "divider"
-                        },
-                        {
-                          "name": "intro_html",
-                          "type": "html",
-                          "label": "课程介绍"
-                        }
-                      ]
+                      "body": []
+                    },
+                    {
+                      "type": "html",
+                      "name": "intro_html",
+                      "label": "课程介绍"
                     },
                     {
                       "type": "crud",

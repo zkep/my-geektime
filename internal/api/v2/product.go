@@ -221,11 +221,13 @@ func (p *Product) Download(c *gin.Context) {
 			otherId = fmt.Sprintf("%d", info.Data.Info.Id)
 			taskName = info.Data.Info.Title
 			cover = info.Data.Info.Cover.Default
+			fmt.Println("cover", cover, info.Data.Info)
 		} else {
 			raw = article.Raw
 			otherId = article.Aid
 			taskName = article.Title
 			cover = article.Cover
+			fmt.Println("article cover", cover, article)
 		}
 		item := model.Task{
 			TaskPid:  jobId,
