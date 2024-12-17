@@ -416,7 +416,7 @@
         "columnsCount": 4,
         "card": {
           "header": {
-            "className": "bg-white",
+            "className": "bg-white word-break",
             "title": "$title",
             "subTitle": "$subtitle",
             "description": "",
@@ -483,7 +483,8 @@
                     {
                       "type": "card",
                       "header": {
-                        "title": "${title}",
+                        "className": "bg-white word-break",
+                        "title": "$title",
                         "subTitle": "$subtitle",
                         "description": "共 ${article.count} 章",
                         "avatar": "${cover.square | raw}",
@@ -542,10 +543,10 @@
                       "columnsCount": 4,
                       "card": {
                         "header": {
-                          "className": "bg-white",
-                          "title": "${ LEN(article_title) > 20 ? article_title | substring:0:20 ? article_title }",
-                          "subTitle":  "$article_title",
-                          "description": "${article_summary}",
+                          "className": "bg-white word-break",
+                          "title": "$article_title",
+                          "subTitle":  "",
+                          "description": "$article_summary",
                           "avatar": "${article_cover | raw}",
                           "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
                         },

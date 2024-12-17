@@ -94,7 +94,7 @@
           "columnsCount": 4,
           "card": {
             "header": {
-              "className": "bg-white",
+              "className": "bg-white word-break",
               "title": "$task_name",
               "subTitle": "",
               "description": "",
@@ -287,7 +287,7 @@
                       "columnsCount": 4,
                       "card": {
                         "header": {
-                          "className": "bg-white",
+                          "className": "bg-white word-break",
                           "title": "$task_name",
                           "subTitle": "",
                           "description": "",
