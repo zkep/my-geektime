@@ -125,6 +125,62 @@
             }
         })
 
+
+        login_tabs.push({
+            title: "浏览器模拟器登录",
+            body:  {
+                type: "form",
+                title: "",
+                actions: [],
+                wrapWithPanel: false,
+                api: {
+                    url: "/v2/base/login?waitSeconds=3",
+                    method: "post",
+                    data: {
+                        account: "simulate",
+                        password: "simulate",
+                        type: "${type}"
+                    },
+                    adaptor: function (payload, response, api, context) {
+                        if (payload.status === 0 && payload.token !== undefined) {
+                            localStorage.setItem("token", payload.token);
+                            localStorage.setItem("uname", payload.user.nike_name);
+                            localStorage.setItem("uid", payload.user.uid);
+                            localStorage.setItem("avatar", payload.user.avatar);
+                            location.href="/";
+                        }
+                        return payload;
+                    }
+                },
+                body: [
+                    {
+                        type: "hidden",
+                        name: "type",
+                        value: "simulate"
+                    },
+                    {
+                        type: "flex",
+                        alignItems: "center",
+                        style: {
+                            height: "100%",
+                            backgroundColor: "#fff"
+                        },
+                        items: [
+                            {
+                                label: "浏览器模拟器登录｜Open Browser Simulate",
+                                level: "light",
+                                size: "lg",
+                                type: "submit",
+                                style: {
+                                    margin: 20,
+                                },
+                            }
+                        ]
+                    },
+                ]
+            }
+        })
+
         login_tabs.push({
             title: "账号密码登录",
             body: {
@@ -201,61 +257,6 @@
                         items: [
                             {
                                 label: "登 录｜Login，开发中。。。。 ",
-                                level: "light",
-                                size: "lg",
-                                type: "submit",
-                                style: {
-                                    margin: 20,
-                                },
-                            }
-                        ]
-                    },
-                ]
-            }
-        })
-
-        login_tabs.push({
-            title: "浏览器模拟器登录",
-            body:  {
-                type: "form",
-                title: "",
-                actions: [],
-                wrapWithPanel: false,
-                api: {
-                    url: "/v2/base/login?waitSeconds=3",
-                    method: "post",
-                    data: {
-                        account: "simulate",
-                        password: "simulate",
-                        type: "${type}"
-                    },
-                    adaptor: function (payload, response, api, context) {
-                        if (payload.status === 0 && payload.token !== undefined) {
-                            localStorage.setItem("token", payload.token);
-                            localStorage.setItem("uname", payload.user.nike_name);
-                            localStorage.setItem("uid", payload.user.uid);
-                            localStorage.setItem("avatar", payload.user.avatar);
-                            location.href="/";
-                        }
-                        return payload;
-                    }
-                },
-                body: [
-                    {
-                        type: "hidden",
-                        name: "type",
-                        value: "simulate"
-                    },
-                    {
-                        type: "flex",
-                        alignItems: "center",
-                        style: {
-                            height: "100%",
-                            backgroundColor: "#fff"
-                        },
-                        items: [
-                            {
-                                label: "浏览器模拟器登录｜Open Browser Simulate",
                                 level: "light",
                                 size: "lg",
                                 type: "submit",
