@@ -541,6 +541,7 @@
                       "perPage": 200,
                       "mode": "cards",
                       "columnsCount": 4,
+                      "checkOnItemClick": true,
                       "card": {
                         "header": {
                           "className": "word-break",
