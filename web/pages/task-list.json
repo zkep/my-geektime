@@ -94,10 +94,10 @@
           "columnsCount": 4,
           "card": {
             "header": {
-              "className": "bg-white word-break",
-              "title": "$task_name",
+              "className": "word-break",
+              "title": "",
               "subTitle": "",
-              "description": "",
+              "description": "$task_name",
               "avatar": "${cover | raw}",
               "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
             },
@@ -287,14 +287,13 @@
                       "columnsCount": 4,
                       "card": {
                         "header": {
-                          "className": "bg-white word-break",
-                          "title": "$task_name",
+                          "className": "word-break",
+                          "title": "",
                           "subTitle": "",
-                          "description": "",
+                          "description": "$task_name",
                           "avatar": "${cover | raw}",
                           "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
                         },
-                        "bodyClassName": "padder",
                         "body":[
                           {
                             "name": "task_id",
@@ -438,6 +437,7 @@
                                     },
                                     {
                                       "type": "html",
+                                      "classname": "word-break",
                                       "name": "article.content",
                                       "label": "附件"
                                     }

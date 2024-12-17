@@ -416,14 +416,13 @@
         "columnsCount": 4,
         "card": {
           "header": {
-            "className": "bg-white word-break",
+            "className": "word-break",
             "title": "$title",
             "subTitle": "$subtitle",
             "description": "",
             "avatar": "${cover.square | raw}",
             "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
           },
-          "bodyClassName": "padder",
           "body": [
             {
               "type": "property",
@@ -483,7 +482,7 @@
                     {
                       "type": "card",
                       "header": {
-                        "className": "bg-white word-break",
+                        "className": "word-break",
                         "title": "$title",
                         "subTitle": "$subtitle",
                         "description": "共 ${article.count} 章",
@@ -494,6 +493,7 @@
                     },
                     {
                       "type": "html",
+                      "wrapperComponent": "pre",
                       "name": "intro_html",
                       "label": "课程介绍"
                     },
@@ -543,15 +543,20 @@
                       "columnsCount": 4,
                       "card": {
                         "header": {
-                          "className": "bg-white word-break",
-                          "title": "$article_title",
+                          "className": "word-break",
+                          "title": "",
                           "subTitle":  "",
-                          "description": "$article_summary",
+                          "description": "$article_title",
                           "avatar": "${article_cover | raw}",
                           "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
                         },
-                        "bodyClassName": "padder",
                         "body": [
+                          {
+                            "type": "tpl",
+                            "label": "",
+                            "classname": "word-break",
+                            "tpl": "$article_summary"
+                          },
                           {
                             "type": "property",
                             "title": "",
@@ -638,6 +643,7 @@
                                     },
                                     {
                                       "type": "html",
+                                      "classname": "word-break",
                                       "name": "content",
                                       "label": "附件"
                                     }
