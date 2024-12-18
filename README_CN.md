@@ -8,8 +8,6 @@
 ### 安装
 #### docker
 ```shell
-docker pull zkep/mygeeektime:latest
-
 docker run -p 8090:8090 -d --name mygeektime --restart always zkep/mygeektime:latest  server  
 ```
 
