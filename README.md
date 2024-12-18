@@ -99,7 +99,7 @@ make && make install
 
 ### Simulate user login：
 
-> Method 1: The browser developer tool retrieves a valid Geektime cookie and stores it in the project execution directory's cookie.txt file
+> Method 1: The browser developer tool retrieves a valid Geektime cookie
 
 > Method : [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing/#stable)
 > Check the Chrome version number and enter it in the address bar of Google Chrome:

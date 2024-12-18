@@ -118,7 +118,7 @@ make && make install
 
 ### 模拟用户登录：
 
-> 方式1: 浏览器开发者工具获取geektime有效cookie，存入项目执行目录 cookie.txt文件
+> 方式1: 浏览器开发者工具获取geektime有效cookie
     
 > 方式2: [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing/#stable)
 > 查看 Chrome 版本号, 在谷歌浏览器的地址栏输入：  
