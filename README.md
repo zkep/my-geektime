@@ -6,7 +6,7 @@ This is a tool to obtain the geektime video or articles with you geektime accoun
 ---
 #### Install
 
-#### docker
+#### install with  docker 
 ```shell
 docker run -p 8090:8090 -d --name mygeektime --restart always zkep/mygeektime:latest  server  
 ```
@@ -20,7 +20,10 @@ docker run  -d  --restart always \
 --name mygeektime \
 zkep/mygeektime:latest  server  
 ```
-#### golang
+browser web url:  http://127.0.0.1:8090  
+
+
+#### install with golang
 ```shell
 go install github.com/zkep/mygeektime@latest
 ```
