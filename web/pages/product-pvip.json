@@ -435,8 +435,8 @@
                   "content": "${id}"
                 },
                 {
-                  "label": "文章数",
-                  "content": "${article.count} 篇",
+                  "label": "课程数",
+                  "content": "${article.count} 讲",
                   "span": 2
                 },
                 {
@@ -453,6 +453,18 @@
                   "label": "完结",
                   "content": "${ is_finish === true ? '是': '否'}",
                   "span": 2
+                },
+                {
+                  "label": "价格",
+                  "content": "免费",
+                  "span": 2,
+                  "visibleOn": "${ sale_type === 6 ||  sale_type === 7 }"
+                },
+                {
+                  "label": "价格",
+                  "content": "¥${ROUND(sale/100,2)}",
+                  "span": 2,
+                  "visibleOn": "${ sale_type !== 6 &&  sale_type !== 7 }"
                 },
                 {
                   "label": "作者",
@@ -485,7 +497,7 @@
                         "className": "word-break",
                         "title": "$title",
                         "subTitle": "$subtitle",
-                        "description": "共 ${article.count} 章",
+                        "description": "共 ${article.count} 讲",
                         "avatar": "${cover.square | raw}",
                         "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
                       },

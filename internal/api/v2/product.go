@@ -58,6 +58,9 @@ func (p *Product) List(c *gin.Context) {
 			IsUniversity:  v.IsUniversity,
 			IsOpencourse:  v.IsOpencourse,
 			IsQconp:       v.IsQconp,
+			IsSale:        v.IsSale,
+			Sale:          v.Price.Sale,
+			SaleType:      v.Price.SaleType,
 			Share:         v.Share,
 			Author:        v.Author,
 			Cover:         v.Cover,
@@ -267,4 +270,51 @@ func (p *Product) Download(c *gin.Context) {
 	}
 	resp := geek.DowloadResponse{JobID: jobId}
 	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": resp})
+}
+
+func (p *Product) DailyProductList(c *gin.Context) {
+	var req geek.DailyProductRequest
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	req.Size = req.PerPage
+	req.Prev = req.Page
+	identity := c.GetString(global.Identity)
+	accessToken := c.GetString(global.AccessToken)
+	resp, err := service.GetDailyProduct(c, identity, accessToken, req)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		return
+	}
+	ret := geek.ProductListResponse{Rows: make([]geek.ProductListRow, 0)}
+	ret.Count = resp.Data.Page.Count
+	if resp.Data.Page.Count == 0 {
+		ret.HasNext = resp.Data.Page.More
+	}
+	for _, v := range resp.Data.List {
+		ret.Rows = append(ret.Rows, geek.ProductListRow{
+			ID:            v.ID,
+			Title:         v.Title,
+			Subtitle:      v.Subtitle,
+			Intro:         v.Intro,
+			IntroHTML:     v.IntroHTML,
+			Ucode:         v.Ucode,
+			IsFinish:      v.IsFinish,
+			IsVideo:       v.IsVideo,
+			IsAudio:       v.IsAudio,
+			IsDailylesson: v.IsDailylesson,
+			IsUniversity:  v.IsUniversity,
+			IsOpencourse:  v.IsOpencourse,
+			IsQconp:       v.IsQconp,
+			IsSale:        v.IsSale,
+			Sale:          v.Price.Sale,
+			SaleType:      v.Price.SaleType,
+			Share:         v.Share,
+			Author:        v.Author,
+			Cover:         v.Cover,
+			Article:       v.Article,
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": ret})
 }

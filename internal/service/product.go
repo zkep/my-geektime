@@ -17,6 +17,7 @@ const (
 	LearnProductURL    = "https://time.geekbang.org/serv/v3/learn/product"
 	ArticlesURL        = "https://time.geekbang.com/serv/v1/column/articles"
 	ArticleInfoURL     = "https://time.geekbang.org/serv/v3/article/info"
+	ProductListURL     = "https://time.geekbang.org/serv/v3/product/list"
 	PvipProductListURL = "https://time.geekbang.org/serv/v4/pvip/product_list"
 )
 
@@ -209,6 +210,55 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 						Assign(product).
 						FirstOrCreate(&product).Error; err != nil {
 						global.LOG.Error("GetPvipProduct.AutoSync", zap.Error(err))
+					}
+				}
+			}()
+			return nil
+		})
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func GetDailyProduct(ctx context.Context, uid, accessToken string,
+	req geek.DailyProductRequest) (*geek.DailyProductResponse, error) {
+	raw, _ := json.Marshal(req)
+	var resp geek.DailyProductResponse
+	err := Request(ctx, http.MethodPost, ProductListURL,
+		bytes.NewBuffer(raw), accessToken, func(raw []byte) error {
+			// auto sync to db
+			if !global.CONF.Geektime.AutoSync {
+				return nil
+			}
+			if err := json.Unmarshal(raw, &resp); err != nil {
+				global.LOG.Error("GetProduct", zap.Error(err))
+				return err
+			}
+			if resp.Code != 0 {
+				global.LOG.Warn("GetProduct", zap.Any("error", resp.Error))
+				return nil
+			}
+			go func() {
+				for _, value := range resp.Data.List {
+					itemRaw, _ := json.Marshal(value)
+					product := model.Product{
+						Pid:    fmt.Sprintf("%d", value.ID),
+						Uid:    uid,
+						Title:  value.Share.Title,
+						Cover:  value.Share.Cover,
+						Raw:    itemRaw,
+						Source: value.Type,
+					}
+					if err := global.DB.
+						Model(&model.Product{}).
+						Where(&model.Product{
+							Pid: product.Pid,
+							Uid: uid,
+						}).
+						Assign(product).
+						FirstOrCreate(&product).Error; err != nil {
+						global.LOG.Error("GetProduct.AutoSync", zap.Error(err))
 					}
 				}
 			}()
