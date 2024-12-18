@@ -437,6 +437,13 @@
                                       "type": "divider"
                                     },
                                     {
+                                      "type": "audio",
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.5, 2.0],
+                                      "src": "${article.audio.download_url}",
+                                      "visibleOn": "${ article.audio.download_url !== undefined }"
+                                    },
+                                    {
                                       "type": "html",
                                       "classname": "word-break",
                                       "name": "article.content",
