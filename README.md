@@ -10,6 +10,16 @@ This is a tool to obtain the geektime video or articles with you geektime accoun
 ```shell
 docker run -p 8090:8090 -d --name mygeektime --restart always zkep/mygeektime:latest  server  
 ```
+
+##### docker with specify download directory
+replace ${directory} with you local directory
+```shell
+docker run  -d  --restart always \
+-p 8090:8090 \
+-v  ${directory}:/repo \ 
+--name mygeektime \
+zkep/mygeektime:latest  server  
+```
 #### golang
 ```shell
 go install github.com/zkep/mygeektime@latest

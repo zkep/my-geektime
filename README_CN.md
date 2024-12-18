@@ -11,6 +11,15 @@
 docker run -p 8090:8090 -d --name mygeektime --restart always zkep/mygeektime:latest  server  
 ```
 
+##### docker 挂载下载目录
+使用宿主机目录替换下面的 ${directory}
+```shell
+docker run  -d  --restart always \
+-p 8090:8090 \
+-v  ${directory}:/repo \ 
+--name mygeektime \
+zkep/mygeektime:latest  server  
+```
 #### golang
 ```shell
 go install github.com/zkep/mygeektime@latest
