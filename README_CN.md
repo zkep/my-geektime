@@ -10,7 +10,7 @@
 ```shell
 docker pull zkep/mygeeektime:latest
 
-docker run -p 8090:8090 -d --restart always zkep/mygeektime:latest server  
+docker run -p 8090:8090 -d --name mygeektime --restart always zkep/mygeektime:latest  server  
 ```
 
 #### golang

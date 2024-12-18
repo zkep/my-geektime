@@ -9,7 +9,7 @@ RUN make all
 
 FROM jrottenberg/ffmpeg
 
-COPY --from=builder /app/mygeektime /root
+COPY --from=builder /app/mygeektime /usr/bin/
 
 EXPOSE 8090
 
