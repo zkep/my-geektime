@@ -110,12 +110,11 @@ func (app *App) newHttpServer(f *config.Config) error {
 			global.LOG.Error("listen: ", zap.Error(err))
 		}
 	}()
+	openURL := fmt.Sprintf("http://%s", addr)
 	if f.Browser.OpenBrowser {
-		openURL := fmt.Sprintf("http://%s", addr)
-		if err := browser.Open(openURL); err != nil {
-			global.LOG.Error("browser open: ", zap.Error(err))
-		}
+		_ = browser.Open(openURL)
 	}
+	fmt.Printf("browser open: %s", openURL)
 	return nil
 }
 

@@ -7,10 +7,7 @@ COPY . /app
 
 RUN make all
 
-FROM jrottenberg/ffmpeg
-
-RUN apt update -y
-RUN apt install libc6 -y
+FROM jrottenberg/ffmpeg:7.1-ubuntu2404
 
 COPY --from=builder /app/mygeektime /usr/bin/mygeektime
 
