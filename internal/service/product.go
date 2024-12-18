@@ -35,7 +35,7 @@ func GetArticleInfo(ctx context.Context, uid, accessToken string,
 				return err
 			}
 			if resp.Code != 0 {
-				global.LOG.Warn("GetArticleInfo", zap.String("raw", string(raw)))
+				global.LOG.Warn("GetArticleInfo", zap.Any("error", resp.Error))
 				return nil
 			}
 			go func(info geek.ArticleInfoResponse) {
@@ -57,8 +57,7 @@ func GetArticleInfo(ctx context.Context, uid, accessToken string,
 					}).
 					Assign(&article).
 					FirstOrCreate(&article).Error; err != nil {
-					global.LOG.Error("GetArticleInfo.AutoSync",
-						zap.Error(err), zap.String("raw", string(raw)))
+					global.LOG.Error("GetArticleInfo.AutoSync", zap.Error(err))
 				}
 			}(resp)
 			return nil
@@ -84,7 +83,7 @@ func GetArticles(ctx context.Context, uid, accessToken string,
 				return err
 			}
 			if resp.Code != 0 {
-				global.LOG.Warn("GetArticles", zap.String("raw", string(raw)))
+				global.LOG.Warn("GetArticles", zap.Any("error", resp.Error))
 				return nil
 			}
 			go func() {
@@ -110,8 +109,7 @@ func GetArticles(ctx context.Context, uid, accessToken string,
 						}).
 						Assign(&article).
 						FirstOrCreate(&article).Error; err != nil {
-						global.LOG.Error("GetArticles.AutoSync",
-							zap.Error(err), zap.String("raw", string(raw)))
+						global.LOG.Error("GetArticles.AutoSync", zap.Error(err))
 					}
 				}
 			}()
@@ -139,7 +137,7 @@ func GetLearnProduct(ctx context.Context, uid, accessToken string,
 				return err
 			}
 			if resp.Code != 0 {
-				global.LOG.Warn("GetLearnProduct", zap.String("raw", string(raw)))
+				global.LOG.Warn("GetLearnProduct", zap.Any("error", resp.Error))
 				return nil
 			}
 			go func() {
@@ -161,8 +159,7 @@ func GetLearnProduct(ctx context.Context, uid, accessToken string,
 						}).
 						Assign(&product).
 						FirstOrCreate(&product).Error; err != nil {
-						global.LOG.Error("GetLearnProduct.AutoSync",
-							zap.Error(err), zap.String("raw", string(raw)))
+						global.LOG.Error("GetLearnProduct.AutoSync", zap.Error(err))
 					}
 				}
 			}()
@@ -189,7 +186,7 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 				return err
 			}
 			if resp.Code != 0 {
-				global.LOG.Warn("GetPvipProduct", zap.String("raw", string(raw)))
+				global.LOG.Warn("GetPvipProduct", zap.Any("error", resp.Error))
 				return nil
 			}
 			go func() {
@@ -211,8 +208,7 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 						}).
 						Assign(product).
 						FirstOrCreate(&product).Error; err != nil {
-						global.LOG.Error("GetPvipProduct.AutoSync",
-							zap.Error(err), zap.String("raw", string(raw)))
+						global.LOG.Error("GetPvipProduct.AutoSync", zap.Error(err))
 					}
 				}
 			}()

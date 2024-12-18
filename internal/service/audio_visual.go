@@ -61,16 +61,21 @@ func Download(ctx context.Context, x *model.Task) error {
 	)
 	data := articleInfo.Data
 	if data.Info.IsVideo {
-		if len(data.Info.Video.HlsMedias) == 0 {
+		var isPreview bool
+		if len(data.Info.Video.HlsMedias) == 0 && len(data.Info.VideoPreview.Medias) > 0 {
+			data.Info.Video.HlsMedias = data.Info.VideoPreview.Medias
+			isPreview = true
+		}
+		if len(data.Info.Video.HlsMedias) == 0 && len(data.Info.VideoPreview.Medias) == 0 {
 			return fmt.Errorf("article info not found %s", x.OtherId)
 		}
 		sort.Slice(data.Info.Video.HlsMedias, func(i, j int) bool {
 			return data.Info.Video.HlsMedias[i].Size > data.Info.Video.HlsMedias[j].Size
 		})
-		downloadURL := data.Info.Video.HlsMedias[0].URL
+		downloadURL = data.Info.Video.HlsMedias[0].URL
 		fileName := VerifyFileName(data.Info.Title)
 		dir := path.Join(VerifyFileName(data.Product.Title), fileName)
-		source, err = Video(ctx, downloadURL, dir, fileName)
+		source, err = Video(ctx, downloadURL, dir, fileName, isPreview)
 		if err != nil {
 			global.LOG.Error("download video", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
@@ -84,28 +89,30 @@ func Download(ctx context.Context, x *model.Task) error {
 			return err
 		}
 	}
-	message := task.TaskMessage{
-		Object: global.Storage.GetKey(source, false),
+	message := task.TaskMessage{}
+	if len(source) > 0 {
+		message.Object = global.Storage.GetKey(source, false)
+	} else {
+		message.Text = "not found download url"
 	}
 	x.Message, _ = json.Marshal(message)
-	converter := md.NewConverter("", true, nil)
-	markdown, err := converter.ConvertString(data.Info.Content)
-	if err == nil {
-		realFile := global.Storage.GetKey(source, true)
-		realFile = strings.TrimSuffix(realFile, ".mp4")
-		realFile = strings.TrimSuffix(realFile, ".mp3")
-		mdPath := fmt.Sprintf("%s.md", realFile)
-		_ = os.WriteFile(mdPath, []byte(markdown), os.ModePerm)
+	if len(data.Info.Content) > 0 {
+		converter := md.NewConverter("", true, nil)
+		if markdown, err := converter.ConvertString(data.Info.Content); err == nil {
+			realFile := global.Storage.GetKey(source, true)
+			realFile = strings.TrimSuffix(realFile, ".mp4")
+			realFile = strings.TrimSuffix(realFile, ".mp3")
+			mdPath := fmt.Sprintf("%s.md", realFile)
+			_ = os.WriteFile(mdPath, []byte(markdown), os.ModePerm)
+		}
 	}
-	global.LOG.Info("download end",
-		zap.String("taskId", x.TaskId),
-		zap.String("url", downloadURL),
-		zap.Duration("cost", time.Since(t0)),
+	global.LOG.Info("download end", zap.String("taskId", x.TaskId),
+		zap.String("url", downloadURL), zap.Duration("cost", time.Since(t0)),
 	)
 	return nil
 }
 
-func Video(ctx context.Context, hlsURL, dir, fileName string) (string, error) {
+func Video(ctx context.Context, hlsURL, dir, fileName string, _ bool) (string, error) {
 	retryCtx, retryCancel := context.WithTimeout(ctx, time.Minute*30)
 	defer retryCancel()
 

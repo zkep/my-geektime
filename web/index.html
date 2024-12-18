@@ -181,94 +181,94 @@
             }
         })
 
-        login_tabs.push({
-            title: "账号密码登录",
-            body: {
-                type: "form",
-                title: "",
-                actions: [],
-                wrapWithPanel: false,
-                api: {
-                    url: "/v2/base/login?waitSeconds=3",
-                    method: "post",
-                    data: {
-                        account: "${account}",
-                        password: "${password}",
-                        type: "${type}"
-                    },
-                    adaptor: function (payload, response, api, context) {
-                        if (payload.status === 0 && payload.token !== undefined) {
-                            localStorage.setItem("token", payload.token);
-                            localStorage.setItem("uname", payload.user.nike_name);
-                            localStorage.setItem("uid", payload.user.uid);
-                            localStorage.setItem("avatar", payload.user.avatar);
-                            location.href="/";
-                        }
-                        return payload;
-                    }
-                },
-                body: [
-                    {
-                        label: "账 号｜Account",
-                        type: "input-text",
-                        required: true,
-                        placeholder: "请输入极客时间账号",
-                        name: "account",
-                        validations: {
-                            minLength: 5
-                        },
-                        validationErrors: {
-                            minLength: "账号不少于$1个字符"
-                        },
-                        borderMode: "half",
-                        style: {
-                            margin: 20
-                        },
-                    },
-                    {
-                        label: "密 码｜Password",
-                        type: "input-password",
-                        required: true,
-                        placeholder: "请输入极客时间密码",
-                        name: "password",
-                        validations: {
-                            minLength: 6
-                        },
-                        validationErrors: {
-                            minLength: "密码不少于$1个字符"
-                        },
-                        borderMode: "half",
-                        style: {
-                            margin: 20
-                        },
-                    },
-                    {
-                        type: "hidden",
-                        name: "type",
-                        value: "user"
-                    },
-                    {
-                        type: "flex",
-                        alignItems: "center",
-                        style: {
-                            height: "100%",
-                            backgroundColor: "#fff"
-                        },
-                        items: [
-                            {
-                                label: "登 录｜Login，开发中。。。。 ",
-                                level: "light",
-                                size: "lg",
-                                type: "submit",
-                                style: {
-                                    margin: 20,
-                                },
-                            }
-                        ]
-                    },
-                ]
-            }
-        })
+        // login_tabs.push({
+        //     title: "账号密码登录",
+        //     body: {
+        //         type: "form",
+        //         title: "",
+        //         actions: [],
+        //         wrapWithPanel: false,
+        //         api: {
+        //             url: "/v2/base/login?waitSeconds=3",
+        //             method: "post",
+        //             data: {
+        //                 account: "${account}",
+        //                 password: "${password}",
+        //                 type: "${type}"
+        //             },
+        //             adaptor: function (payload, response, api, context) {
+        //                 if (payload.status === 0 && payload.token !== undefined) {
+        //                     localStorage.setItem("token", payload.token);
+        //                     localStorage.setItem("uname", payload.user.nike_name);
+        //                     localStorage.setItem("uid", payload.user.uid);
+        //                     localStorage.setItem("avatar", payload.user.avatar);
+        //                     location.href="/";
+        //                 }
+        //                 return payload;
+        //             }
+        //         },
+        //         body: [
+        //             {
+        //                 label: "账 号｜Account",
+        //                 type: "input-text",
+        //                 required: true,
+        //                 placeholder: "请输入极客时间账号",
+        //                 name: "account",
+        //                 validations: {
+        //                     minLength: 5
+        //                 },
+        //                 validationErrors: {
+        //                     minLength: "账号不少于$1个字符"
+        //                 },
+        //                 borderMode: "half",
+        //                 style: {
+        //                     margin: 20
+        //                 },
+        //             },
+        //             {
+        //                 label: "密 码｜Password",
+        //                 type: "input-password",
+        //                 required: true,
+        //                 placeholder: "请输入极客时间密码",
+        //                 name: "password",
+        //                 validations: {
+        //                     minLength: 6
+        //                 },
+        //                 validationErrors: {
+        //                     minLength: "密码不少于$1个字符"
+        //                 },
+        //                 borderMode: "half",
+        //                 style: {
+        //                     margin: 20
+        //                 },
+        //             },
+        //             {
+        //                 type: "hidden",
+        //                 name: "type",
+        //                 value: "user"
+        //             },
+        //             {
+        //                 type: "flex",
+        //                 alignItems: "center",
+        //                 style: {
+        //                     height: "100%",
+        //                     backgroundColor: "#fff"
+        //                 },
+        //                 items: [
+        //                     {
+        //                         label: "登 录｜Login，开发中。。。。 ",
+        //                         level: "light",
+        //                         size: "lg",
+        //                         type: "submit",
+        //                         style: {
+        //                             margin: 20,
+        //                         },
+        //                     }
+        //                 ]
+        //             },
+        //         ]
+        //     }
+        // })
 
         const login = {
             type: "page",

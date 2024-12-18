@@ -91,26 +91,18 @@ func worker(ctx context.Context, x *model.Task) error {
 			Where("task_pid = ?", x.TaskId).
 			Where("status <= ?", service.TASK_STATUS_RUNNING).
 			Count(&count).Error; err != nil {
-			global.LOG.Error("worker",
-				zap.Error(err),
-				zap.String("taskId", x.TaskId),
-			)
+			global.LOG.Error("worker", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
 		status := service.TASK_STATUS_FINISHED
 		if count > 0 {
 			global.LOG.Info("worker sub task",
-				zap.Int64("pending", count),
-				zap.String("taskId", x.TaskId),
-			)
+				zap.Int64("pending", count), zap.String("taskId", x.TaskId))
 			status = service.TASK_STATUS_PENDING
 		}
 		var statistics task.TaskStatistics
 		if err := json.Unmarshal(x.Statistics, &statistics); err != nil {
-			global.LOG.Error("worker Unmarshal",
-				zap.Error(err),
-				zap.String("taskId", x.TaskId),
-			)
+			global.LOG.Error("worker Unmarshal", zap.Error(err), zap.String("taskId", x.TaskId))
 		}
 		if statistics.Items == nil {
 			statistics.Items = make(map[int]int, 5)
@@ -121,30 +113,26 @@ func worker(ctx context.Context, x *model.Task) error {
 				Where("task_pid = ?", x.TaskId).
 				Where("status = ?", item).
 				Count(&itemCount).Error; err != nil {
-				global.LOG.Error("worker count",
-					zap.Error(err),
-					zap.String("taskId", x.TaskId),
-				)
+				global.LOG.Error("worker count", zap.Error(err), zap.String("taskId", x.TaskId))
 			}
 			statistics.Items[item] = int(itemCount)
 		}
 		raw, _ := json.Marshal(statistics)
-		m := map[string]any{
-			"status":     status,
-			"statistics": raw,
-			"updated_at": time.Now().Unix(),
+		m := model.Task{
+			Id:         x.Id,
+			Status:     int32(status),
+			Statistics: raw,
+			UpdatedAt:  time.Now().Unix(),
 		}
-		if err := global.DB.Model(&model.Task{Id: x.Id}).UpdateColumns(m).Error; err != nil {
-			global.LOG.Error("worker UpdateColumns",
-				zap.Error(err),
-				zap.String("taskId", x.TaskId),
-			)
+		if err := global.DB.Where(&model.Task{Id: x.Id}).Updates(&m).Error; err != nil {
+			global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
 	case service.TASK_TYPE_ARTICLE:
-		m := map[string]any{
-			"status":     service.TASK_STATUS_RUNNING,
-			"updated_at": time.Now().Unix(),
+		m := model.Task{
+			Id:        x.Id,
+			Status:    service.TASK_STATUS_RUNNING,
+			UpdatedAt: time.Now().Unix(),
 		}
 		aid, err := strconv.ParseInt(x.OtherId, 10, 64)
 		if err != nil {
@@ -159,12 +147,9 @@ func worker(ctx context.Context, x *model.Task) error {
 			return err
 		}
 		x.Raw, _ = json.Marshal(article)
-		m["raw"] = x.Raw
-		if err := global.DB.Model(&model.Task{Id: x.Id}).UpdateColumns(m).Error; err != nil {
-			global.LOG.Error("worker UpdateColumns",
-				zap.Error(err),
-				zap.String("taskId", x.TaskId),
-			)
+		m.Raw = x.Raw
+		if err := global.DB.Where(&model.Task{Id: x.Id}).Updates(m).Error; err != nil {
+			global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
 		status := service.TASK_STATUS_FINISHED
@@ -174,14 +159,12 @@ func worker(ctx context.Context, x *model.Task) error {
 			message := task.TaskMessage{Text: err.Error()}
 			x.Message, _ = json.Marshal(message)
 		}
-		m = map[string]any{
-			"status":     status,
-			"updated_at": time.Now().Unix(),
-			"message":    x.Message,
-		}
-		err = global.DB.Model(&model.Task{Id: x.Id}).UpdateColumns(m).Error
+		m.Message = x.Message
+		m.Status = int32(status)
+		m.UpdatedAt = time.Now().Unix()
+		err = global.DB.Where(&model.Task{Id: x.Id}).Updates(&m).Error
 		if err != nil {
-			global.LOG.Error("worker UpdateColumns", zap.Error(err), zap.String("taskId", x.TaskId))
+			global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
 	}

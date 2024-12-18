@@ -78,8 +78,8 @@ type ProductArticle struct {
 }
 
 type Extra struct {
-	Cost      float64 `json:"cost,omitempty"`
-	RequestID string  `json:"request-id,omitempty"`
+	Cost      any `json:"cost,omitempty"`
+	RequestID any `json:"request-id,omitempty"`
 }
 
 type ProductResponse struct {
@@ -499,12 +499,8 @@ type ArticlesInfoRequest struct {
 type ArticleInfoResponse struct {
 	Code  int         `json:"code,omitempty"`
 	Data  ArticleData `json:"data,omitempty"`
-	Error struct {
-	} `json:"error,omitempty"`
-	Extra struct {
-		Cost      float64 `json:"cost,omitempty"`
-		RequestID string  `json:"request-id,omitempty"`
-	} `json:"extra,omitempty"`
+	Error any         `json:"error,omitempty"`
+	Extra Extra       `json:"extra,omitempty"`
 }
 
 type ArticleData struct {

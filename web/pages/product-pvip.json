@@ -630,7 +630,16 @@
                                       "rates": [1.0, 1.5, 2.0],
                                       "src": "${video.hls_medias|last|pick:url}",
                                       "poster": "${video.cover}",
-                                      "visibleOn": "${ video.cover !== undefined }"
+                                      "visibleOn": "${ video.hls_medias !== undefined }"
+                                    },
+                                    {
+                                      "type": "video",
+                                      "muted": true,
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.5, 2.0],
+                                      "src": "${video_preview.medias|last|pick:url}",
+                                      "poster": "${video.cover}",
+                                      "visibleOn": "${ video.hls_medias === undefined && video_preview.medias !== undefined }"
                                     },
                                     {
                                       "type": "audio",

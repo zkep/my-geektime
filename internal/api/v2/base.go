@@ -235,7 +235,6 @@ func docterChromedriver(chromedriver string) error {
 		fmt.Println("Chromedriver will be used by default to simulate login and obtain cookies")
 		fmt.Println(color.Blue("https://googlechromelabs.github.io/chrome-for-testing/#stable"))
 		fmt.Println()
-		fmt.Println(color.Blue("Also you can save Geektime's cookie to 'cookie.txt' in current folder"))
 		return err
 	}
 	return nil
