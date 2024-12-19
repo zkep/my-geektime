@@ -21,6 +21,14 @@ message Product {
   bytes raw = 7 [(gogoproto.moretags) = "gorm:\"comment:raw\""];
   // source
   string source = 8 [(gogoproto.moretags) = "gorm:\"index;comment:source\""];
+  // other type
+  int32 other_type = 9 [(gogoproto.moretags) = "gorm:\"index;size:4;comment:other type\""];
+  // other tag
+  int32 other_tag = 10 [(gogoproto.moretags) = "gorm:\"index;size:4;comment:other tag\""];
+  // other form
+  int32 other_form = 11 [(gogoproto.moretags) = "gorm:\"index;size:4;comment:other form\""];
+  // other sort
+  int32 other_sort = 12 [(gogoproto.moretags) = "gorm:\"index;size:4;comment:other sort\""];
   // status
   int32 status = 19 [(gogoproto.moretags) = "gorm:\"default:1;size:2;comment:status 1 normal\""];
   // created_at

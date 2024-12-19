@@ -17,24 +17,32 @@ message Task {
   string uid = 4 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:uid\""];
   // other id
   string other_id = 5 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:other id\""];
-  // task name
-  string task_name = 6 [(gogoproto.moretags) = "gorm:\"size:128;comment:task name\""];
-  // task type
-  string task_type = 7 [(gogoproto.moretags) = "gorm:\"index;size:50;comment:task type\""];
   // cover
-  string cover = 8 [(gogoproto.moretags) = "gorm:\"comment:cover\""];
+  string cover = 6 [(gogoproto.moretags) = "gorm:\"comment:cover\""];
+  // task name
+  string task_name = 7 [(gogoproto.moretags) = "gorm:\"size:128;comment:task name\""];
+  // other type
+  int32 other_type = 9 [(gogoproto.moretags) = "gorm:\"index;size:4;comment:other type\""];
+  // other tag
+  int32 other_tag = 10 [(gogoproto.moretags) = "gorm:\"index;size:4;comment:other tag\""];
+  // other form
+  int32 other_form = 11 [(gogoproto.moretags) = "gorm:\"index;size:4;comment:other form\""];
+  // other sort
+  int32 other_sort = 12 [(gogoproto.moretags) = "gorm:\"index;size:4;comment:other sort\""];
+  // task type
+  string task_type = 13 [(gogoproto.moretags) = "gorm:\"index;size:50;comment:task type\""];
   // raw
-  bytes raw = 10 [(gogoproto.moretags) = "gorm:\"comment:raw\""];
+  bytes raw = 21[(gogoproto.moretags) = "gorm:\"comment:raw\""];
   // message
-  bytes message = 11 [(gogoproto.moretags) = "gorm:\"comment:message\""];
+  bytes message = 22 [(gogoproto.moretags) = "gorm:\"comment:message\""];
   // message
-  bytes statistics = 12 [(gogoproto.moretags) = "gorm:\"comment:statistics\""];
+  bytes statistics = 23 [(gogoproto.moretags) = "gorm:\"comment:statistics\""];
   // status
-  int32 status = 19 [(gogoproto.moretags) = "gorm:\"default:1;size:2;comment:status 1 normal\""];
+  int32 status = 24 [(gogoproto.moretags) = "gorm:\"default:1;size:2;comment:status 1 normal\""];
   // created_at
-  int64 created_at = 20 [(gogoproto.moretags) = "gorm:\"index;comment:created at\""];
+  int64 created_at = 25 [(gogoproto.moretags) = "gorm:\"index;comment:created at\""];
   // updated_at
-  int64 updated_at = 21 [(gogoproto.moretags) = "gorm:\"comment:updated at\""];
+  int64 updated_at = 26 [(gogoproto.moretags) = "gorm:\"comment:updated at\""];
   // deleted_at
-  int64 deleted_at = 22 [(gogoproto.moretags) = "gorm:\"comment:deleted at\""];
+  int64 deleted_at = 27 [(gogoproto.moretags) = "gorm:\"comment:deleted at\""];
 }

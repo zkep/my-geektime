@@ -1,13 +1,11 @@
 package v2
 
 import (
-	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"os"
@@ -24,10 +22,13 @@ import (
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/types/base"
 	"github.com/zkep/mygeektime/internal/types/geek"
+	"github.com/zkep/mygeektime/internal/types/user"
 	"github.com/zkep/mygeektime/lib/browser"
 	"github.com/zkep/mygeektime/lib/color"
+	"github.com/zkep/mygeektime/lib/utils"
 	"github.com/zkep/mygeektime/lib/zhttp"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type Base struct{}
@@ -45,18 +46,36 @@ func (b *Base) Login(c *gin.Context) {
 		})
 		return
 	}
-
-	var user model.User
+	var info model.User
 	switch r.Type {
-	case geek.LoginWithUser:
-		if err := loginWithAccount(r); err != nil {
+	case geek.AuthWithUser:
+		if err := global.DB.
+			Where(&model.User{
+				UserName: r.Account,
+				Status:   user.UserStatusActive,
+			}).
+			First(&info).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				c.JSON(http.StatusOK, gin.H{
+					"status": http.StatusBadRequest,
+					"msg":    "错误的用户名或密码",
+				})
+			} else {
+				c.JSON(http.StatusOK, gin.H{
+					"status": http.StatusBadRequest,
+					"msg":    err.Error(),
+				})
+			}
+			return
+		}
+		if !utils.BcryptCheck(r.Password, info.Password) {
 			c.JSON(http.StatusOK, gin.H{
 				"status": http.StatusBadRequest,
-				"msg":    err.Error(),
+				"msg":    "错误的用户名或密码",
 			})
 			return
 		}
-	case geek.LoginWithCookie:
+	case geek.AuthWithCookie:
 		var auth geek.AuthResponse
 		if err := authority(r.Account, saveCookie(r.Account, &auth)); err != nil {
 			c.JSON(http.StatusOK, gin.H{
@@ -65,11 +84,11 @@ func (b *Base) Login(c *gin.Context) {
 			})
 			return
 		}
-		user.Phone = auth.Data.Cellphone
-		user.Avatar = auth.Data.Avatar
-		user.NikeName = auth.Data.Nick
-		user.Uid = fmt.Sprintf("%d", auth.Data.UID)
-		user.AccessToken = r.Account
+		info.Phone = auth.Data.Cellphone
+		info.Avatar = auth.Data.Avatar
+		info.NikeName = auth.Data.Nick
+		info.Uid = fmt.Sprintf("%d", auth.Data.UID)
+		info.AccessToken = r.Account
 	default:
 		if err := docterChromedriver(""); err != nil {
 			c.JSON(http.StatusOK, gin.H{
@@ -92,8 +111,9 @@ func (b *Base) Login(c *gin.Context) {
 	token, expire, err := global.JWT.DefaultTokenGenerator(
 		func() (jwt.MapClaims, error) {
 			claims := jwt.MapClaims{}
-			claims[global.Identity] = user.Uid
-			claims[global.AccessToken] = user.AccessToken
+			claims[global.Identity] = info.Uid
+			claims[global.Role] = info.RoleId
+			claims[global.AccessToken] = info.AccessToken
 			return claims, nil
 		})
 	if err != nil {
@@ -107,10 +127,75 @@ func (b *Base) Login(c *gin.Context) {
 		"status": 0,
 		"msg":    "OK",
 		"token":  token,
-		"user":   user,
+		"user":   info,
+		"role":   info.RoleId,
 		"expire": expire.Format(time.RFC3339),
 	})
 	c.SetCookie(global.Analogjwt, token, int(expire.Unix()), "/", "", false, false)
+}
+
+func (b *Base) Register(c *gin.Context) {
+	var r base.RegisterRequest
+	if err := c.ShouldBindJSON(&r); err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": http.StatusBadRequest,
+			"msg":    "Register Fail",
+		})
+		return
+	}
+	switch r.Type {
+	case geek.AuthWithUser:
+		var info model.User
+		if err := global.DB.
+			Where(&model.User{
+				UserName: r.Account,
+				Status:   user.UserStatusActive,
+			}).
+			First(&info).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusOK, gin.H{
+				"status": http.StatusBadRequest,
+				"msg":    err.Error(),
+			})
+			return
+		}
+		if len(info.UserName) > 0 {
+			c.JSON(http.StatusOK, gin.H{
+				"status": http.StatusBadRequest,
+				"msg":    "当前账号已存在，请登录",
+			})
+			return
+		}
+		var count int64
+		if err := global.DB.Model(&model.User{}).Count(&count).Error; err != nil {
+			c.JSON(http.StatusOK, gin.H{
+				"status": http.StatusBadRequest,
+				"msg":    err.Error(),
+			})
+			return
+		}
+		// first user is admin
+		if count == 0 {
+			info.RoleId = 1
+		}
+		info.Uid = utils.HalfUUID()
+		info.UserName = r.Account
+		info.NikeName = r.Account
+		info.Password = utils.BcryptHash(r.Password)
+		if err := global.DB.Create(&info).Error; err != nil {
+			c.JSON(http.StatusOK, gin.H{
+				"status": http.StatusBadRequest,
+				"msg":    err.Error(),
+			})
+			return
+		}
+	default:
+		c.JSON(http.StatusOK, gin.H{
+			"status": http.StatusBadRequest,
+			"msg":    "Unsupported registration type",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK"})
 }
 
 func (b *Base) Redirect(c *gin.Context) {
@@ -158,11 +243,10 @@ func (b *Base) Redirect(c *gin.Context) {
 }
 
 const (
-	ticketLoginURL = "https://account.geekbang.org/account/ticket/login"
-	loginURL       = "https://account.geekbang.org/login"
-	authURL        = "https://account.geekbang.org/serv/v1/user/auth"
-	refererURL     = "https://time.geekbang.org/dashboard/usercenter"
-	geekTimeURL    = "https://time.geekbang.org"
+	loginURL    = "https://account.geekbang.org/login"
+	authURL     = "https://account.geekbang.org/serv/v1/user/auth"
+	refererURL  = "https://time.geekbang.org/dashboard/usercenter"
+	geekTimeURL = "https://time.geekbang.org"
 )
 
 func saveCookie(cookies string, auth *geek.AuthResponse) func(r *http.Response) error {
@@ -312,40 +396,6 @@ func loginWithSimulate() error {
 	}
 
 	if err = wd.WaitWithTimeout(getCookiesCondition, time.Minute*5); nil != err {
-		return err
-	}
-	return nil
-}
-
-func loginWithAccount(r base.LoginRequest) error {
-	geek.DefaultLoginRequest.Cellphone = r.Account
-	geek.DefaultLoginRequest.Password = r.Password
-	loginData, _ := json.Marshal(geek.DefaultLoginRequest)
-	err := zhttp.R.
-		Before(func(r *http.Request) {
-			r.Header.Set("Accept", "application/json, text/plain, */*")
-			r.Header.Set("Referer", refererURL)
-			r.Header.Set("Sec-Ch-Ua", `"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"`)
-			r.Header.Set("User-Agent", zhttp.RandomUserAgent())
-			r.Header.Set("Accept", "application/json, text/plain, */*")
-			r.Header.Set("Content-Type", "application/json")
-			r.Header.Set("Origin", "https://account.geekbang.org")
-		}).
-		After(func(r *http.Response) error {
-			raw, _ := io.ReadAll(r.Body)
-			fmt.Println(string(raw))
-			r.Body = io.NopCloser(bytes.NewBuffer(raw))
-			var l geek.LoginResponse
-			if err := json.NewDecoder(r.Body).Decode(&l); err != nil {
-				return err
-			}
-			if l.Error.Msg != "" {
-				return zhttp.BreakRetryError(errors.New(l.Error.Msg))
-			}
-			return nil
-		}).
-		DoWithRetry(context.Background(), http.MethodPost, ticketLoginURL, bytes.NewBuffer(loginData))
-	if err != nil {
 		return err
 	}
 	return nil

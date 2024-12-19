@@ -482,6 +482,8 @@
               {
                 "type": "button",
                 "icon": "fa fa-eye",
+                "label": "详情",
+                "level": "light",
                 "loading": true,
                 "actionType": "drawer",
                 "drawer": {
@@ -567,7 +569,7 @@
                           {
                             "type": "tpl",
                             "label": "",
-                            "classname": "word-break",
+                            "className": "word-break",
                             "tpl": "$article_summary"
                           },
                           {
@@ -597,6 +599,8 @@
                           {
                             "type": "button",
                             "icon": "fa fa-eye",
+                            "label": "详情",
+                            "level": "light",
                             "actionType": "drawer",
                             "loading": true,
                             "drawer": {
@@ -665,7 +669,7 @@
                                     },
                                     {
                                       "type": "html",
-                                      "classname": "word-break",
+                                      "className": "word-break",
                                       "name": "content",
                                       "label": "附件"
                                     }
@@ -677,6 +681,8 @@
                           {
                             "type": "button",
                             "loading": true,
+                            "label": "下载",
+                            "level": "info",
                             "icon": "fa fa-download",
                             "actionType": "ajax",
                             "api": {
@@ -687,7 +693,7 @@
                                 "ids": "${id | trim}"
                               }
                             },
-                            "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在任务列表查看下载情况"
+                            "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在[任务管理]查看下载情况"
                           }
                         ]
                       },
@@ -696,6 +702,7 @@
                         {
                           "label": "批量下载",
                           "loading": true,
+                          "level": "info",
                           "actionType": "ajax",
                           "api": {
                             "url": "/v2/product/download",
@@ -705,7 +712,7 @@
                               "ids": "${ids|raw}"
                             }
                           },
-                          "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在任务列表查看下载情况"
+                          "confirmText": "下载 [${share.title}]会提交异步下载任务，\n 请在[任务管理]查看下载情况"
                         }
                       ],
                       "headerToolbar": [
@@ -740,9 +747,11 @@
               {
                 "type": "button",
                 "loading": true,
+                "label": "下载",
+                "level": "info",
                 "icon": "fa fa-download",
                 "actionType": "ajax",
-                "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在任务列表查看下载情况",
+                "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在 [任务管理] 查看下载情况",
                 "api": {
                   "url": "/v2/product/download",
                   "method":"post",

@@ -3,10 +3,14 @@ package task
 import "github.com/zkep/mygeektime/internal/types/geek"
 
 type TaskListRequest struct {
-	TaskPid string `json:"task_pid"  form:"task_pid"`
-	Xstatus int32  `json:"xstatus" form:"xstatus"`
-	Page    int    `json:"page" form:"page"`
-	PerPage int    `json:"perPage"  form:"perPage"`
+	TaskPid     string `json:"task_pid"  form:"task_pid"`
+	Xstatus     int32  `json:"xstatus" form:"xstatus"`
+	Tag         int32  `json:"tag"  form:"tag"`
+	Sort        int32  `json:"sort"  form:"sort"`
+	ProductType int32  `json:"product_type"  form:"product_type"`
+	ProductForm int32  `json:"product_form"  form:"product_form"`
+	Page        int    `json:"page" form:"page"`
+	PerPage     int    `json:"perPage"  form:"perPage"`
 }
 
 type TaskListResponse struct {
@@ -31,6 +35,24 @@ type Task struct {
 	Status int32 `json:"status,omitempty"`
 	// statistics
 	Statistics TaskStatistics `json:"statistics,omitempty"`
+	// Subtitle
+	Subtitle string `json:"subtitle,omitempty"`
+	// IntroHTML
+	IntroHTML string `json:"intro_html,omitempty"`
+	// IsVideo
+	IsVideo bool `json:"is_video,omitempty"`
+	// IsAudio
+	IsAudio bool `json:"is_audio,omitempty"`
+	// sale
+	Sale int `json:"sale,omitempty"`
+	// SaleType
+	SaleType int `json:"sale_type,omitempty"`
+	// Share
+	Share geek.ProductShare `json:"share,omitempty"`
+	// Author
+	Author geek.ProductAuthor `json:"author,omitempty"`
+	// Article
+	Article geek.ProductArticle `json:"article,omitempty"`
 	// created_at
 	CreatedAt int64 `json:"created_at,omitempty"`
 	// updated_at

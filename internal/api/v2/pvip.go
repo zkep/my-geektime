@@ -16,7 +16,7 @@ func (p *Product) PvipProductList(c *gin.Context) {
 		return
 	}
 	if req.Tag > 0 {
-		req.TagIds = []int{req.Tag}
+		req.TagIds = []int32{req.Tag}
 	}
 	req.Size = req.PerPage
 	req.Prev = req.Page

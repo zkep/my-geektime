@@ -148,7 +148,7 @@ func worker(ctx context.Context, x *model.Task) error {
 		}
 		x.Raw, _ = json.Marshal(article)
 		m.Raw = x.Raw
-		if err := global.DB.Where(&model.Task{Id: x.Id}).Updates(m).Error; err != nil {
+		if err = global.DB.Where(&model.Task{Id: x.Id}).Updates(m).Error; err != nil {
 			global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}

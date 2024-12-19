@@ -1,0 +1,160 @@
+{
+  "status": 0,
+  "msg": "",
+  "data": {
+    "type": "page",
+    "title": " ",
+    "name": "user",
+    "toolbar": [],
+    "body": [
+      {
+        "type": "crud",
+        "name": "user-list",
+        "parsePrimitiveQuery": {
+          "enable": true,
+          "types": [
+            "boolean",
+            "number"
+          ]
+        },
+        "syncLocation": true,
+        "filterTogglable": {
+          "label": "更多搜索",
+          "activeLabel": "收起搜索",
+          "icon": "fa fa-arrow-down mr-1",
+          "activeIcon": "fa fa-arrow-up mr-1"
+        },
+        "headerToolbar": [
+          "filter-toggler"
+        ],
+        "filter": {
+          "title": "条件搜索",
+          "body": [
+            {
+              "type": "group",
+              "body": [
+                {
+                  "type": "select",
+                  "label": "状态",
+                  "name": "status",
+                  "value": 0,
+                  "options": [
+                    {
+                      "label": "全部",
+                      "value": 0
+                    },
+                    {
+                      "label": "正常",
+                      "value": 1
+                    },
+                    {
+                      "label": "禁用",
+                      "value": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": "reset",
+              "label": "重置"
+            },
+            {
+              "type": "submit",
+              "level": "primary",
+              "label": "搜索"
+            }
+          ]
+        },
+        "api": {
+          "method": "get",
+          "url": "/v2/user/list"
+        },
+        "defaultParams": {
+          "perPage": 10
+        },
+        "autoFillHeight": false,
+        "keepItemSelectionOnPageChange": true,
+        "bulkActions": [],
+        "footerToolbar": [
+          "switch-per-page",
+          "pagination"
+        ],
+        "columns": [
+          {
+            "name": "uid",
+            "type": "static",
+            "label": "UID",
+            "copyable": true
+          },
+          {
+            "name": "user_name",
+            "type": "static",
+            "label": "用户名"
+          },
+          {
+            "name": "nick_name",
+            "type": "static",
+            "label": "昵称"
+          },
+          {
+            "name": "status",
+            "type": "static-mapping",
+            "label": "状态",
+            "map": {
+              "1": "正常",
+              "2": "禁用"
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "date",
+            "format": "YYYY-MM-DD HH:mm:ss",
+            "label": "创建时间: "
+          },
+          {
+            "name": "updated_at",
+            "type": "date",
+            "format": "YYYY-MM-DD HH:mm:ss",
+            "label": "更新时间: "
+          },
+          {
+            "type": "operation",
+            "label": "操作",
+            "buttons": [
+              {
+                "type": "button",
+                "loading": true,
+                "label": "${status === 1?'禁用':'启用'}",
+                "actionType": "ajax",
+                "level": "${status === 1?'warning':'success'}",
+                "confirmText": "确定要${status === 1?'禁用':'启用'}该用户么？",
+                "api": {
+                  "url": "/v2/user/status",
+                  "method":"post",
+                  "data": {
+                    "uid": "${uid}",
+                    "status": "${ status === 1 ? 2: 1 }"
+                  }
+                }
+              }
+            ],
+            "placeholder": "-",
+            "fixed": "right"
+          }
+        ],
+        "affixHeader": true,
+        "columnsTogglable": "auto",
+        "placeholder": "暂无数据",
+        "tableClassName": "table-db table-striped",
+        "headerClassName": "crud-table-header",
+        "footerClassName": "crud-table-footer",
+        "toolbarClassName": "crud-table-toolbar",
+        "combineNum": 0,
+        "bodyClassName": "panel-default"
+      }
+    ]
+  }
+}

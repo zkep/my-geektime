@@ -14,7 +14,6 @@ import (
 )
 
 const (
-	LearnProductURL    = "https://time.geekbang.org/serv/v3/learn/product"
 	ArticlesURL        = "https://time.geekbang.com/serv/v1/column/articles"
 	ArticleInfoURL     = "https://time.geekbang.org/serv/v3/article/info"
 	ProductListURL     = "https://time.geekbang.org/serv/v3/product/list"
@@ -54,7 +53,6 @@ func GetArticleInfo(ctx context.Context, uid, accessToken string,
 					Model(&model.Article{}).
 					Where(&model.Article{
 						Aid: aid,
-						Uid: uid,
 					}).
 					Assign(&article).
 					FirstOrCreate(&article).Error; err != nil {
@@ -106,61 +104,10 @@ func GetArticles(ctx context.Context, uid, accessToken string,
 						Model(&model.ArticleSimple{}).
 						Where(&model.ArticleSimple{
 							Aid: article.Aid,
-							Uid: uid,
 						}).
 						Assign(&article).
 						FirstOrCreate(&article).Error; err != nil {
 						global.LOG.Error("GetArticles.AutoSync", zap.Error(err))
-					}
-				}
-			}()
-			return nil
-		})
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
-}
-
-func GetLearnProduct(ctx context.Context, uid, accessToken string,
-	req geek.ProductListRequest) (*geek.ProductResponse, error) {
-	raw, _ := json.Marshal(req)
-	var resp geek.ProductResponse
-	err := Request(ctx, http.MethodPost, LearnProductURL,
-		bytes.NewBuffer(raw), accessToken,
-		func(raw []byte) error {
-			// auto sync to db
-			if !global.CONF.Geektime.AutoSync {
-				return nil
-			}
-			if err := json.Unmarshal(raw, &resp); err != nil {
-				global.LOG.Error("GetLearnProduct", zap.Error(err))
-				return err
-			}
-			if resp.Code != 0 {
-				global.LOG.Warn("GetLearnProduct", zap.Any("error", resp.Error))
-				return nil
-			}
-			go func() {
-				for _, value := range resp.Data.Products {
-					itemRaw, _ := json.Marshal(value)
-					product := model.Product{
-						Pid:    fmt.Sprintf("%d", value.ID),
-						Uid:    uid,
-						Title:  value.Share.Title,
-						Cover:  value.Share.Cover,
-						Raw:    itemRaw,
-						Source: value.Type,
-					}
-					if err := global.DB.
-						Model(&model.Product{}).
-						Where(&model.Product{
-							Uid: uid,
-							Pid: product.Pid,
-						}).
-						Assign(&product).
-						FirstOrCreate(&product).Error; err != nil {
-						global.LOG.Error("GetLearnProduct.AutoSync", zap.Error(err))
 					}
 				}
 			}()
@@ -194,18 +141,21 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 				for _, value := range resp.Data.Products {
 					itemRaw, _ := json.Marshal(value)
 					product := model.Product{
-						Pid:    fmt.Sprintf("%d", value.ID),
-						Uid:    uid,
-						Title:  value.Share.Title,
-						Cover:  value.Share.Cover,
-						Raw:    itemRaw,
-						Source: value.Type,
+						Pid:       fmt.Sprintf("%d", value.ID),
+						Uid:       uid,
+						Title:     value.Share.Title,
+						Cover:     value.Share.Cover,
+						Raw:       itemRaw,
+						Source:    value.Type,
+						OtherType: req.ProductType,
+						OtherForm: req.ProductForm,
+						OtherSort: req.Sort,
+						OtherTag:  req.Tag,
 					}
 					if err := global.DB.
 						Model(&model.Product{}).
 						Where(&model.Product{
 							Pid: product.Pid,
-							Uid: uid,
 						}).
 						Assign(product).
 						FirstOrCreate(&product).Error; err != nil {
@@ -254,7 +204,6 @@ func GetDailyProduct(ctx context.Context, uid, accessToken string,
 						Model(&model.Product{}).
 						Where(&model.Product{
 							Pid: product.Pid,
-							Uid: uid,
 						}).
 						Assign(product).
 						FirstOrCreate(&product).Error; err != nil {

@@ -4,7 +4,7 @@
   "msg": "",
   "data": {
       "type": "page",
-      "title": "任务列表",
+      "title": "",
       "toolbar": [],
       "body": [
         {
@@ -31,10 +31,355 @@
             "title": "条件搜索",
             "body": [
               {
+                "type": "list-select",
+                "name": "direction",
+                "label": "方向",
+                "clearable": true,
+                "value": 3,
+                "options":[
+                  {
+                    "label": "后端/架构",
+                    "value": 3
+                  },
+                  {
+                    "label": "前端/移动",
+                    "value": 5
+                  },
+                  {
+                    "label": "计算机基础",
+                    "value": 9
+                  },
+                  {
+                    "label": "AI/大数据",
+                    "value": 8
+                  },
+                  {
+                    "label": "运维/测试",
+                    "value": 6
+                  },
+                  {
+                    "label": "产品/运营",
+                    "value": 7
+                  },
+                  {
+                    "label": "管理/成长",
+                    "value": 4
+                  }
+                ],
+                "onEvent": {
+                  "change": {
+                    "actions": [
+                      {
+                        "actionType": "setValue",
+                        "componentId": "pvip-tag",
+                        "args": {
+                          "msg": "${event.data.value}"
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "list-select",
+                "id": "pvip-tag",
+                "name": "tag",
+                "label": "分类",
+                "clearable": true,
+                "value": 3,
+                "options":[
+                  {
+                    "label": "全部",
+                    "value": 3
+                  },
+                  {
+                    "label": "Java",
+                    "value": 10
+                  },
+                  {
+                    "label": "Go",
+                    "value": 11
+                  },
+                  {
+                    "label": "Python",
+                    "value": 12
+                  },
+                  {
+                    "label": ".Net",
+                    "value": 65
+                  },
+                  {
+                    "label": "C语言",
+                    "value": 64
+                  },
+                  {
+                    "label": "基本功",
+                    "value": 22
+                  },
+                  {
+                    "label": "分布式",
+                    "value": 20
+                  },
+                  {
+                    "label": "中间件",
+                    "value": 17
+                  },
+                  {
+                    "label": "区块链",
+                    "value": 23
+                  },
+                  {
+                    "label": "全栈",
+                    "value": 21
+                  },
+                  {
+                    "label": "C++",
+                    "value": 61
+                  },
+                  {
+                    "label": "中台",
+                    "value": 19
+                  },
+                  {
+                    "label": "DDD",
+                    "value": 18
+                  },
+                  {
+                    "label": "案例",
+                    "value": 16
+                  },
+                  {
+                    "label": "微服务",
+                    "value": 14
+                  },
+                  {
+                    "label": "数据库",
+                    "value": 13
+                  },
+                  {
+                    "label": "Rust",
+                    "value": 98
+                  }
+                ],
+                "visibleOn": "${ direction == 3 }"
+              },
+              {
+                "type": "list-select",
+                "id": "pvip-tag",
+                "name": "tag",
+                "label": "分类",
+                "clearable": true,
+                "value": 5,
+                "options": [
+                  {
+                    "label": "全部",
+                    "value": 5
+                  },
+                  {
+                    "label": "JavaScript",
+                    "value": 30
+                  },
+                  {
+                    "label": "iOS",
+                    "value": 34
+                  },
+                  {
+                    "label": "Android",
+                    "value": 33
+                  },
+                  {
+                    "label": "Node.js",
+                    "value": 41
+                  },
+                  {
+                    "label": "网络",
+                    "value": 40
+                  },
+                  {
+                    "label": "webpack",
+                    "value": 39
+                  },
+                  {
+                    "label": "音视频",
+                    "value": 38
+                  },
+                  {
+                    "label": "浏览器",
+                    "value": 37
+                  },
+                  {
+                    "label": "Swift",
+                    "value": 36
+                  },
+                  {
+                    "label": "Kotlin",
+                    "value": 35
+                  },
+                  {
+                    "label": "框架",
+                    "value": 32
+                  },
+                  {
+                    "label": "TypeScript",
+                    "value": 31
+                  },
+                  {
+                    "label": "可视化",
+                    "value": 70
+                  }
+                ],
+                "visibleOn": "${ direction == 5 }"
+              },
+              {
+                "type": "list-select",
+                "name": "tag",
+                "id": "pvip-tag",
+                "label": "分类",
+                "clearable": true,
+                "value": 9,
+                "options":[
+                  {
+                    "label": "全部",
+                    "value": 9
+                  }
+                ],
+                "visibleOn": "${ direction == 9 }"
+              },
+              {
+                "type": "list-select",
+                "name": "tag",
+                "id": "pvip-tag",
+                "label": "分类",
+                "clearable": true,
+                "value": 8,
+                "options":[
+                  {
+                    "label": "全部",
+                    "value": 8
+                  }
+                ],
+                "visibleOn": "${ direction == 8 }"
+              },
+              {
+                "type": "list-select",
+                "name": "tag",
+                "id": "pvip-tag",
+                "label": "分类",
+                "clearable": true,
+                "value": 6,
+                "options":[
+                  {
+                    "label": "全部",
+                    "value": 6
+                  }
+                ],
+                "visibleOn": "${ direction == 6 }"
+              },
+              {
+                "type": "list-select",
+                "name": "tag",
+                "id": "pvip-tag",
+                "label": "分类",
+                "clearable": true,
+                "value": 7,
+                "options":[
+                  {
+                    "label": "全部",
+                    "value": 7
+                  }
+                ],
+                "visibleOn": "${ direction == 7 }"
+              },
+              {
+                "type": "list-select",
+                "name": "tag",
+                "id": "pvip-tag",
+                "label": "分类",
+                "clearable": true,
+                "value": 4,
+                "options":[
+                  {
+                    "label": "全部",
+                    "value": 4
+                  }
+                ],
+                "visibleOn": "${ direction == 4 }"
+              },
+              {
                 "type": "group",
                 "body": [
                   {
+                    "type": "list-select",
+                    "clearable": true,
+                    "label": "最新/热度",
+                    "name": "sort",
+                    "value": 8,
+                    "options": [
+                      {
+                        "label": "综合",
+                        "value": 8
+                      },
+                      {
+                        "label": "最新",
+                        "value": 1
+                      },
+                      {
+                        "label": "最热",
+                        "value": 4
+                      }
+                    ]
+                  },
+                  {
                     "type": "select",
+                    "label": "课程类型",
+                    "name": "product_type",
+                    "value": 0,
+                    "options": [
+                      {
+                        "label": "全部类型",
+                        "value": 0
+                      },
+                      {
+                        "label": "体系课",
+                        "value": 1
+                      },
+                      {
+                        "label": "公开课",
+                        "value": 4
+                      },
+                      {
+                        "label": "线下大会",
+                        "value": 5
+                      },
+                      {
+                        "label": "严选课",
+                        "value": 6
+                      }
+                    ]
+                  },
+                  {
+                    "type": "select",
+                    "label": "课程形式",
+                    "name": "product_form",
+                    "value": 0,
+                    "options": [
+                      {
+                        "label": "全部形式",
+                        "value": 0
+                      },
+                      {
+                        "label": "图文+音频",
+                        "value": 1
+                      },
+                      {
+                        "label": "视频",
+                        "value": 2
+                      }
+                    ]
+                  },
+                  {
+                    "type": "select",
+                    "label": "课程状态",
                     "name": "xstatus",
                     "value": 0,
                     "options": [
@@ -96,9 +441,9 @@
           "card": {
             "header": {
               "className": "word-break",
-              "title": "",
-              "subTitle": "",
-              "description": "$task_name",
+              "title": "$task_name",
+              "subTitle": "$subtitle",
+              "description": "",
               "avatar": "${cover | raw}",
               "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
             },
@@ -111,30 +456,70 @@
                 "separator": "：",
                 "items": [
                   {
-                    "label": "任务ID",
-                    "content": "${task_id}",
-                    "span": 3
+                    "label": "ID",
+                    "content": "${other_id}"
                   },
                   {
-                    "label": "业务ID",
-                    "content": "${other_id}",
-                    "span": 3
+                    "label": "课程数",
+                    "content": "${article.count} 讲",
+                    "span": 2
                   },
                   {
-                    "label": "任务数",
-                    "content": "${statistics.count}"
+                    "label": "类型",
+                    "content": "${ is_audio === true ? '音频': '视频'}",
+                    "visibleOn": "${ is_audio !== undefined }"
+                  },
+                  {
+                    "label": "类型",
+                    "content": "${ is_video === true ? '视频': '音频'}",
+                    "visibleOn": "${ is_video !== undefined }"
+                  },
+                  {
+                    "label": "完结",
+                    "content": "${ is_finish === true ? '是': '否'}",
+                    "span": 2
+                  },
+                  {
+                    "label": "价格",
+                    "content": "免费",
+                    "span": 2,
+                    "visibleOn": "${ sale_type === 6 ||  sale_type === 7 }"
+                  },
+                  {
+                    "label": "价格",
+                    "content": "¥${ROUND(sale/100,2)}",
+                    "span": 2,
+                    "visibleOn": "${ sale_type !== 6 &&  sale_type !== 7 }"
+                  },
+                  {
+                    "label": "作者",
+                    "content": "${author.name}"
+                  },
+                  {
+                    "label": "作者简介",
+                    "content": "${author.intro}",
+                    "span": 3
                   }
                 ]
               },
               {
+                "type": "divider"
+              },
+              {
                 "type": "tpl",
                 "label": "任务统计: ",
-                "tpl": "<div>排队中: ${statistics.items.1}<br/>处理中: ${statistics.items.2}<br/>已完成: ${statistics.items.3}<br/>异常: ${statistics.items.4}<div>"
+                "tpl": "<div>${statistics.items.1>0?'排队中: '+ statistics.items.1 + '<br/>':''} ${statistics.items.2>0?'处理中: '+ statistics.items.2 +'<br/>':''} ${statistics.items.3 >0 ?'已完成: '+ statistics.items.3 +'<br/>':''} ${statistics.items.4 >0 ?'异常: '+ statistics.items.4 +'<br/>':''}<div>",
+                "visibleOn": "${ ls:role_id === 1 }"
+              },
+              {
+                "type": "divider",
+                "visibleOn": "${ ls:role_id === 1 }"
               },
               {
                 "name": "status",
                 "type": "static-mapping",
-                "label": "状态: ",
+                "visibleOn": "${ ls:role_id === 1 }",
+                "label": "任务状态: ",
                 "map": {
                   "1": "排队中",
                   "2": "处理中",
@@ -143,22 +528,34 @@
                 }
               },
               {
+                "type": "divider",
+                "visibleOn": "${ ls:role_id === 1 }"
+              },
+              {
                 "name": "created_at",
                 "type": "date",
                 "format": "YYYY-MM-DD HH:mm:ss",
-                "label": "创建时间: "
+                "label": "创建时间: ",
+                "visibleOn": "${ ls:role_id === 1 }"
+              },
+              {
+                "type": "divider",
+                "visibleOn": "${ ls:role_id === 1 }"
               },
               {
                 "name": "updated_at",
                 "type": "date",
                 "format": "YYYY-MM-DD HH:mm:ss",
-                "label": "更新时间: "
+                "label": "更新时间: ",
+                "visibleOn": "${ ls:role_id === 1 }"
               }
             ],
             "actions": [
               {
                 "type": "button",
                 "icon": "fa fa-eye",
+                "label": "学习",
+                "level": "light",
                 "loading": true,
                 "actionType": "drawer",
                 "drawer": {
@@ -167,8 +564,26 @@
                   "actions": [],
                   "size": "xl",
                   "position": "left",
-                  "title": "任务详情",
+                  "title": "详情",
                   "body": [
+                    {
+                      "type": "card",
+                      "header": {
+                        "className": "word-break",
+                        "title": "$task_name",
+                        "subTitle": "$subtitle",
+                        "description": "共 ${article.count} 讲",
+                        "avatar": "${cover | raw}",
+                        "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
+                      },
+                      "body": []
+                    },
+                    {
+                      "type": "html",
+                      "wrapperComponent": "pre",
+                      "name": "intro_html",
+                      "label": "课程介绍"
+                    },
                     {
                       "type": "crud",
                       "name": "product-list-items",
@@ -253,8 +668,9 @@
                       "keepItemSelectionOnPageChange": true,
                       "bulkActions": [
                         {
-                          "label": "批量下载",
+                          "label": "批量重试",
                           "actionType": "ajax",
+                          "visibleOn": "${ ls:role_id === 1 }",
                           "api": {
                             "url": "/v2/task/retry",
                             "method":"post",
@@ -267,6 +683,7 @@
                         },
                         {
                           "label": "批量删除",
+                          "visibleOn": "${ ls:role_id === 1 }",
                           "actionType": "ajax",
                           "api": {
                             "url": "/v2/task/delete",
@@ -300,14 +717,18 @@
                           {
                             "name": "task_id",
                             "type": "static",
-                            "label": "任务ID: ",
-                            "copyable": true
+                            "label": "任务ID: "
+                          },
+                          {
+                            "type": "divider"
                           },
                           {
                             "name": "other_id",
                             "type": "static",
-                            "label": "业务ID: ",
-                            "copyable": true
+                            "label": "业务ID: "
+                          },
+                          {
+                            "type": "divider"
                           },
                           {
                             "name": "status",
@@ -323,10 +744,16 @@
                             }
                           },
                           {
+                            "type": "divider"
+                          },
+                          {
                             "name": "created_at",
                             "type": "date",
                             "format": "YYYY-MM-DD HH:mm:ss",
                             "label": "创建时间: "
+                          },
+                          {
+                            "type": "divider"
                           },
                           {
                             "name": "updated_at",
@@ -339,6 +766,8 @@
                           {
                             "type": "button",
                             "icon": "fa fa-eye",
+                            "label": "学习",
+                            "level": "light",
                             "actionType": "drawer",
                             "visibleOn": "${status !='1'}",
                             "loading": true,
@@ -347,7 +776,7 @@
                               "closeOnOutside": true,
                               "actions": [],
                               "size": "xl",
-                              "title": "任务详情",
+                              "title": "",
                               "body": [
                                 {
                                   "type": "service",
@@ -457,6 +886,9 @@
                           {
                             "type": "button",
                             "icon": "fa-solid fa-repeat",
+                            "visibleOn": "${ ls:role_id === 1 }",
+                            "label": "重试",
+                            "level": "info",
                             "actionType": "ajax",
                             "api": {
                               "url": "/v2/task/retry",
@@ -471,6 +903,9 @@
                           {
                             "type": "button",
                             "icon": "fa-solid fa-trash",
+                            "label": "删除",
+                            "visibleOn": "${ ls:role_id === 1 }",
+                            "level": "danger",
                             "actionType": "ajax",
                             "api": {
                               "url": "/v2/task/delete",
@@ -479,7 +914,7 @@
                                 "ids": "${task_id}"
                               }
                             },
-                            "confirmText": "确定要删除 [${task_name}] 任务吗？"
+                            "confirmText": "确定要删除 [${task_name}] 课程吗？"
                           }
                         ]
                       },
@@ -499,6 +934,8 @@
               {
                 "type": "button",
                 "icon": "fa-solid fa-trash",
+                "visibleOn": "${ ls:role_id === 1 }",
+                "label": "删除",
                 "actionType": "ajax",
                 "loading": true,
                 "api": {
@@ -508,7 +945,7 @@
                     "pid": "${task_id}"
                   }
                 },
-                "confirmText": "确定要删除 [${task_name}] 任务吗？"
+                "confirmText": "确定要删除 [${task_name}] 课程吗？"
               }
             ]
           },

@@ -56,8 +56,9 @@
 
         let login_tabs = []
 
+
         login_tabs.push({
-            title: "cookie登录",
+            title: "账号登录",
             body: {
                 type: "form",
                 title: "",
@@ -68,14 +69,15 @@
                     method: "post",
                     data: {
                         account: "${account}",
-                        password: "cookie",
-                        type: "cookie"
+                        password: "${password}",
+                        type: "${type}"
                     },
                     adaptor: function (payload, response, api, context) {
                         if (payload.status === 0 && payload.token !== undefined) {
                             localStorage.setItem("token", payload.token);
-                            localStorage.setItem("uname", payload.user.nike_name);
+                            localStorage.setItem("uname", payload.user.user_name);
                             localStorage.setItem("uid", payload.user.uid);
+                            localStorage.setItem("role_id", payload.user.role_id);
                             localStorage.setItem("avatar", payload.user.avatar);
                             location.href="/";
                         }
@@ -84,23 +86,43 @@
                 },
                 body: [
                     {
-                        label: "Cookie｜登录凭据",
-                        type: "textarea",
-                        showCounter: true,
-                        clearable: true,
+                        label: "账 号｜Account",
+                        type: "input-text",
                         required: true,
-                        placeholder: "请输入极客时间Cookie",
+                        placeholder: "请输入账号",
                         name: "account",
                         validations: {
-                            minLength: 50
+                            minLength: 5
                         },
                         validationErrors: {
-                            minLength: "Cookie不少于$1个字符"
+                            minLength: "账号不少于$1个字符"
                         },
                         borderMode: "half",
                         style: {
                             margin: 20
                         },
+                    },
+                    {
+                        label: "密 码｜Password",
+                        type: "input-password",
+                        required: true,
+                        placeholder: "请输入密码",
+                        name: "password",
+                        validations: {
+                            minLength: 6
+                        },
+                        validationErrors: {
+                            minLength: "密码不少于$1个字符"
+                        },
+                        borderMode: "half",
+                        style: {
+                            margin: 20
+                        },
+                    },
+                    {
+                        type: "hidden",
+                        name: "type",
+                        value: "user"
                     },
                     {
                         type: "flex",
@@ -125,38 +147,79 @@
             }
         })
 
-
         login_tabs.push({
-            title: "浏览器模拟器登录",
-            body:  {
+            title: "账号注册",
+            body: {
                 type: "form",
                 title: "",
                 actions: [],
                 wrapWithPanel: false,
                 api: {
-                    url: "/v2/base/login?waitSeconds=3",
+                    url: "/v2/base/register?waitSeconds=3",
                     method: "post",
                     data: {
-                        account: "simulate",
-                        password: "simulate",
+                        account: "${account}",
+                        password: "${password}",
+                        confirm_password: "${confirm_password}",
                         type: "${type}"
-                    },
-                    adaptor: function (payload, response, api, context) {
-                        if (payload.status === 0 && payload.token !== undefined) {
-                            localStorage.setItem("token", payload.token);
-                            localStorage.setItem("uname", payload.user.nike_name);
-                            localStorage.setItem("uid", payload.user.uid);
-                            localStorage.setItem("avatar", payload.user.avatar);
-                            location.href="/";
-                        }
-                        return payload;
                     }
                 },
                 body: [
                     {
+                        label: "账 号｜Account",
+                        type: "input-text",
+                        required: true,
+                        placeholder: "请输入账号",
+                        name: "account",
+                        validations: {
+                            minLength: 5
+                        },
+                        validationErrors: {
+                            minLength: "账号不少于$1个字符"
+                        },
+                        borderMode: "half",
+                        style: {
+                            margin: 5
+                        },
+                    },
+                    {
+                        label: "密 码｜Password",
+                        type: "input-password",
+                        required: true,
+                        placeholder: "请输入密码",
+                        name: "password",
+                        validations: {
+                            minLength: 6
+                        },
+                        validationErrors: {
+                            minLength: "密码不少于$1个字符"
+                        },
+                        borderMode: "half",
+                        style: {
+                            margin: 5
+                        },
+                    },
+                    {
+                        label: "确 认｜Confirm",
+                        type: "input-password",
+                        required: true,
+                        placeholder: "请输入确认密码",
+                        name: "confirm_password",
+                        validations: {
+                            minLength: 6
+                        },
+                        validationErrors: {
+                            minLength: "密码不少于$1个字符"
+                        },
+                        borderMode: "half",
+                        style: {
+                            margin: 5
+                        },
+                    },
+                    {
                         type: "hidden",
                         name: "type",
-                        value: "simulate"
+                        value: "user"
                     },
                     {
                         type: "flex",
@@ -167,12 +230,12 @@
                         },
                         items: [
                             {
-                                label: "浏览器模拟器登录｜Open Browser Simulate",
+                                label: "注 册｜Register",
                                 level: "light",
                                 size: "lg",
                                 type: "submit",
                                 style: {
-                                    margin: 20,
+                                    margin: 10,
                                 },
                             }
                         ]
@@ -180,95 +243,6 @@
                 ]
             }
         })
-
-        // login_tabs.push({
-        //     title: "账号密码登录",
-        //     body: {
-        //         type: "form",
-        //         title: "",
-        //         actions: [],
-        //         wrapWithPanel: false,
-        //         api: {
-        //             url: "/v2/base/login?waitSeconds=3",
-        //             method: "post",
-        //             data: {
-        //                 account: "${account}",
-        //                 password: "${password}",
-        //                 type: "${type}"
-        //             },
-        //             adaptor: function (payload, response, api, context) {
-        //                 if (payload.status === 0 && payload.token !== undefined) {
-        //                     localStorage.setItem("token", payload.token);
-        //                     localStorage.setItem("uname", payload.user.nike_name);
-        //                     localStorage.setItem("uid", payload.user.uid);
-        //                     localStorage.setItem("avatar", payload.user.avatar);
-        //                     location.href="/";
-        //                 }
-        //                 return payload;
-        //             }
-        //         },
-        //         body: [
-        //             {
-        //                 label: "账 号｜Account",
-        //                 type: "input-text",
-        //                 required: true,
-        //                 placeholder: "请输入极客时间账号",
-        //                 name: "account",
-        //                 validations: {
-        //                     minLength: 5
-        //                 },
-        //                 validationErrors: {
-        //                     minLength: "账号不少于$1个字符"
-        //                 },
-        //                 borderMode: "half",
-        //                 style: {
-        //                     margin: 20
-        //                 },
-        //             },
-        //             {
-        //                 label: "密 码｜Password",
-        //                 type: "input-password",
-        //                 required: true,
-        //                 placeholder: "请输入极客时间密码",
-        //                 name: "password",
-        //                 validations: {
-        //                     minLength: 6
-        //                 },
-        //                 validationErrors: {
-        //                     minLength: "密码不少于$1个字符"
-        //                 },
-        //                 borderMode: "half",
-        //                 style: {
-        //                     margin: 20
-        //                 },
-        //             },
-        //             {
-        //                 type: "hidden",
-        //                 name: "type",
-        //                 value: "user"
-        //             },
-        //             {
-        //                 type: "flex",
-        //                 alignItems: "center",
-        //                 style: {
-        //                     height: "100%",
-        //                     backgroundColor: "#fff"
-        //                 },
-        //                 items: [
-        //                     {
-        //                         label: "登 录｜Login，开发中。。。。 ",
-        //                         level: "light",
-        //                         size: "lg",
-        //                         type: "submit",
-        //                         style: {
-        //                             margin: 20,
-        //                         },
-        //                     }
-        //                 ]
-        //             },
-        //         ]
-        //     }
-        // })
 
         const login = {
             type: "page",
@@ -346,6 +320,79 @@
                                     level: "link",
                                     label: "${ls:uname}",
                                     buttons: [
+                                        {
+                                            type: "button",
+                                            level: "secondary",
+                                            label: "刷新凭据",
+                                            size: "sm",
+                                            actionType: "drawer",
+                                            visibleOn: "${ ls:role_id === 1 }",
+                                            drawer: {
+                                                resizable: true,
+                                                closeOnOutside: true,
+                                                actions: [],
+                                                size: "md",
+                                                title: "cookie登录",
+                                                body: [
+                                                    "极客时间登录凭据失效后，课程列表就刷新不出来数据了，需要重新刷新cookie, 才能获取极客时间课程",
+                                                    {
+                                                        type: "form",
+                                                        title: "",
+                                                        actions: [],
+                                                        wrapWithPanel: false,
+                                                        api: {
+                                                            url: "/v2/base/login?waitSeconds=3",
+                                                            method: "post",
+                                                            data: {
+                                                                account: "${cookie}",
+                                                                password: "cookie",
+                                                                type: "cookie"
+                                                            }
+                                                        },
+                                                        body: [
+                                                            {
+                                                                label: "Cookie",
+                                                                type: "textarea",
+                                                                showCounter: true,
+                                                                clearable: true,
+                                                                required: true,
+                                                                placeholder: "请输入极客时间Cookie",
+                                                                name: "cookie",
+                                                                validations: {
+                                                                    minLength: 50
+                                                                },
+                                                                validationErrors: {
+                                                                    minLength: "Cookie不少于$1个字符"
+                                                                },
+                                                                borderMode: "half",
+                                                                style: {
+                                                                    margin: 20
+                                                                },
+                                                            },
+                                                            {
+                                                                type: "flex",
+                                                                alignItems: "center",
+                                                                style: {
+                                                                    height: "100%",
+                                                                    backgroundColor: "#fff"
+                                                                },
+                                                                items: [
+                                                                    {
+                                                                        label: "刷 新｜Refresh",
+                                                                        level: "light",
+                                                                        size: "lg",
+                                                                        type: "submit",
+                                                                        style: {
+                                                                            margin: 20,
+                                                                        },
+                                                                    }
+                                                                ]
+                                                            },
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        },
                                         {
                                             type: "button",
                                             level: "secondary",
@@ -436,7 +483,6 @@
         }
 
         const token =  localStorage.getItem("token") ||  getCookie("analogjwt");
-
 
         let amisInstance = amis.embed(
             '#root',

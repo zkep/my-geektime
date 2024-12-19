@@ -35,7 +35,6 @@ func (t *Task) List(c *gin.Context) {
 	if req.Page <= 0 {
 		req.Page = 1
 	}
-	identity := c.GetString(global.Identity)
 	ret := task.TaskListResponse{
 		Rows: make([]task.Task, 0, 10),
 	}
@@ -44,7 +43,18 @@ func (t *Task) List(c *gin.Context) {
 	if req.Xstatus > 0 {
 		tx = tx.Where("status = ?", req.Xstatus)
 	}
-	tx = tx.Where("uid = ?", identity)
+	if req.Sort > 0 {
+		tx = tx.Where("other_sort = ?", req.Sort)
+	}
+	if req.ProductForm > 0 {
+		tx = tx.Where("other_form = ?", req.ProductForm)
+	}
+	if req.ProductType > 0 {
+		tx = tx.Where("other_type = ?", req.ProductType)
+	}
+	if req.Tag > 0 {
+		tx = tx.Where("other_tag = ?", req.Tag)
+	}
 	tx = tx.Where("task_pid = ?", req.TaskPid)
 	tx = tx.Where("deleted_at = ?", 0)
 	if req.TaskPid != "" {
@@ -64,7 +74,7 @@ func (t *Task) List(c *gin.Context) {
 		if len(l.Statistics) > 0 {
 			_ = json.Unmarshal(l.Statistics, &statistics)
 		}
-		ret.Rows = append(ret.Rows, task.Task{
+		row := task.Task{
 			TaskId:     l.TaskId,
 			TaskPid:    l.TaskPid,
 			OtherId:    l.OtherId,
@@ -75,7 +85,25 @@ func (t *Task) List(c *gin.Context) {
 			Cover:      l.Cover,
 			CreatedAt:  l.CreatedAt,
 			UpdatedAt:  l.UpdatedAt,
-		})
+		}
+		switch l.TaskType {
+		case service.TASK_TYPE_PRODUCT:
+			var product geek.ProductBase
+			if len(l.Raw) > 0 {
+				_ = json.Unmarshal(l.Raw, &product)
+			}
+			row.Author = product.Author
+			row.Share = product.Share
+			row.Article = product.Article
+			row.Subtitle = product.Subtitle
+			row.IntroHTML = product.IntroHTML
+			row.IsVideo = product.IsVideo
+			row.IsAudio = product.IsAudio
+			row.Sale = product.Price.Sale
+			row.SaleType = product.Price.SaleType
+			row.IsAudio = product.IsAudio
+		}
+		ret.Rows = append(ret.Rows, row)
 	}
 	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": ret})
 }

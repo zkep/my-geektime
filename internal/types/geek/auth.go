@@ -1,8 +1,8 @@
 package geek
 
 const (
-	LoginWithUser   = "user"
-	LoginWithCookie = "cookie"
+	AuthWithUser   = "user"
+	AuthWithCookie = "cookie"
 )
 
 type AuthResponse struct {

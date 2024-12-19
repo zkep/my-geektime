@@ -105,280 +105,282 @@ type ProductResponse struct {
 			LastLearnedTime int    `json:"last_learned_time,omitempty"`
 			IsTop           bool   `json:"is_top,omitempty"`
 		} `json:"list,omitempty"`
-		Articles []any `json:"articles,omitempty"`
-		Products []struct {
-			ID        int `json:"id,omitempty"`
-			Spu       int `json:"spu,omitempty"`
-			Ctime     int `json:"ctime,omitempty"`
-			Utime     int `json:"utime,omitempty"`
-			BeginTime int `json:"begin_time,omitempty"`
-			EndTime   int `json:"end_time,omitempty"`
-			Price     struct {
-				Market    int `json:"market,omitempty"`
-				Sale      int `json:"sale,omitempty"`
-				SaleType  int `json:"sale_type,omitempty"`
-				StartTime int `json:"start_time,omitempty"`
-				EndTime   int `json:"end_time,omitempty"`
-			} `json:"price,omitempty"`
-			IsSale        bool           `json:"is_sale,omitempty"`
-			IsGroupbuy    bool           `json:"is_groupbuy,omitempty"`
-			IsPromo       bool           `json:"is_promo,omitempty"`
-			IsShareget    bool           `json:"is_shareget,omitempty"`
-			IsSharesale   bool           `json:"is_sharesale,omitempty"`
-			OnlySellInVip bool           `json:"only_sell_in_vip,omitempty"`
-			Type          string         `json:"type,omitempty"`
-			IsColumn      bool           `json:"is_column,omitempty"`
-			IsCore        bool           `json:"is_core,omitempty"`
-			IsVideo       bool           `json:"is_video,omitempty"`
-			IsAudio       bool           `json:"is_audio,omitempty"`
-			IsDailylesson bool           `json:"is_dailylesson,omitempty"`
-			IsUniversity  bool           `json:"is_university,omitempty"`
-			IsOpencourse  bool           `json:"is_opencourse,omitempty"`
-			IsQconp       bool           `json:"is_qconp,omitempty"`
-			IsMentor      bool           `json:"is_mentor,omitempty"`
-			NavID         int            `json:"nav_id,omitempty"`
-			TimeNotSale   int            `json:"time_not_sale,omitempty"`
-			Title         string         `json:"title,omitempty"`
-			Subtitle      string         `json:"subtitle,omitempty"`
-			Intro         string         `json:"intro,omitempty"`
-			IntroHTML     string         `json:"intro_html,omitempty"`
-			Ucode         string         `json:"ucode,omitempty"`
-			IsFinish      bool           `json:"is_finish,omitempty"`
-			Share         ProductShare   `json:"share,omitempty"`
-			Author        ProductAuthor  `json:"author,omitempty"`
-			Cover         ProductCover   `json:"cover,omitempty"`
-			Article       ProductArticle `json:"article,omitempty"`
-			Seo           struct {
-				Keywords []string `json:"keywords,omitempty"`
-			} `json:"seo,omitempty"`
-			Labels     []int  `json:"labels,omitempty"`
-			Unit       string `json:"unit,omitempty"`
-			ColumnType int    `json:"column_type,omitempty"`
-			Column     struct {
-				Unit             string `json:"unit,omitempty"`
-				Bgcolor          string `json:"bgcolor,omitempty"`
-				UpdateFrequency  string `json:"update_frequency,omitempty"`
-				IsPreorder       bool   `json:"is_preorder,omitempty"`
-				IsFinish         bool   `json:"is_finish,omitempty"`
-				IsIncludePreview bool   `json:"is_include_preview,omitempty"`
-				ShowChapter      bool   `json:"show_chapter,omitempty"`
-				IsSaleProduct    bool   `json:"is_sale_product,omitempty"`
-				StudyService     []int  `json:"study_service,omitempty"`
-				Path             struct {
-					Desc     string `json:"desc,omitempty"`
-					DescHTML string `json:"desc_html,omitempty"`
-				} `json:"path,omitempty"`
-				IsCamp                   bool   `json:"is_camp,omitempty"`
-				CatalogPicURL            string `json:"catalog_pic_url,omitempty"`
-				RecommendArticles        any    `json:"recommend_articles,omitempty"`
-				RecommendComments        []any  `json:"recommend_comments,omitempty"`
-				Ranks                    any    `json:"ranks,omitempty"`
-				HotComments              any    `json:"hot_comments,omitempty"`
-				HotLines                 any    `json:"hot_lines,omitempty"`
-				DisplayType              int    `json:"display_type,omitempty"`
-				IntroBgStyle             int    `json:"intro_bg_style,omitempty"`
-				CommentTopAds            string `json:"comment_top_ads,omitempty"`
-				ArticleFloatQrcodeURL    string `json:"article_float_qrcode_url,omitempty"`
-				ArticleFloatAppQrcodeURL string `json:"article_float_app_qrcode_url,omitempty"`
-				ArticleFloatQrcodeJump   string `json:"article_float_qrcode_jump,omitempty"`
-				InRank                   bool   `json:"in_rank,omitempty"`
-			} `json:"column,omitempty"`
-			Dl struct {
-				Article struct {
-					ID            int    `json:"id,omitempty"`
-					VideoDuration string `json:"video_duration,omitempty"`
-					VideoHot      int    `json:"video_hot,omitempty"`
-					CouldPreview  bool   `json:"could_preview,omitempty"`
-				} `json:"article,omitempty"`
-				TopicIds []any `json:"topic_ids,omitempty"`
-			} `json:"dl,omitempty"`
-			University struct {
-				TotalHour       int    `json:"total_hour,omitempty"`
-				Term            int    `json:"term,omitempty"`
-				RedirectType    string `json:"redirect_type,omitempty"`
-				RedirectParam   string `json:"redirect_param,omitempty"`
-				WxQrcode        string `json:"wx_qrcode,omitempty"`
-				WxRule          string `json:"wx_rule,omitempty"`
-				ServerStartTime int    `json:"server_start_time,omitempty"`
-				LecturerHCover  string `json:"lecturer_h_cover,omitempty"`
-				Keywords        string `json:"keywords,omitempty"`
-			} `json:"university,omitempty"`
-			Opencourse struct {
-				VideoBg string `json:"video_bg,omitempty"`
-				Ad      struct {
-					Cover         string `json:"cover,omitempty"`
-					CoverWeb      string `json:"cover_web,omitempty"`
-					RedirectType  string `json:"redirect_type,omitempty"`
-					RedirectParam string `json:"redirect_param,omitempty"`
-				} `json:"ad,omitempty"`
-				ArticleFav struct {
-					Aid     int  `json:"aid,omitempty"`
-					HadDone bool `json:"had_done,omitempty"`
-					Count   int  `json:"count,omitempty"`
-				} `json:"article_fav,omitempty"`
-				AuthorHCover string `json:"author_h_cover,omitempty"`
-			} `json:"opencourse,omitempty"`
-			Qconp struct {
-				TopicID      int    `json:"topic_id,omitempty"`
-				CoverAppoint string `json:"cover_appoint,omitempty"`
-				Article      struct {
-					ID            int    `json:"id,omitempty"`
-					Cover         string `json:"cover,omitempty"`
-					VideoDuration string `json:"video_duration,omitempty"`
-					VideoHot      int    `json:"video_hot,omitempty"`
-				} `json:"article,omitempty"`
-			} `json:"qconp,omitempty"`
-			FavQrcode string `json:"fav_qrcode,omitempty"`
-			Extra     struct {
-				Sub struct {
-					Count      int  `json:"count,omitempty"`
-					HadDone    bool `json:"had_done,omitempty"`
-					CouldOrder bool `json:"could_order,omitempty"`
-					AccessMask int  `json:"access_mask,omitempty"`
-				} `json:"sub,omitempty"`
-				Fav struct {
-					Count   int  `json:"count,omitempty"`
-					HadDone bool `json:"had_done,omitempty"`
-				} `json:"fav,omitempty"`
-				Rate struct {
-					ArticleCount    int  `json:"article_count,omitempty"`
-					ArticleCountReq int  `json:"article_count_req,omitempty"`
-					IsFinished      bool `json:"is_finished,omitempty"`
-					RatePercent     int  `json:"rate_percent,omitempty"`
-					VideoSeconds    int  `json:"video_seconds,omitempty"`
-					LastArticleID   int  `json:"last_article_id,omitempty"`
-					LastChapterID   int  `json:"last_chapter_id,omitempty"`
-					HasLearn        bool `json:"has_learn,omitempty"`
-				} `json:"rate,omitempty"`
-				Cert struct {
-					ID   string `json:"id,omitempty"`
-					Type int    `json:"type,omitempty"`
-				} `json:"cert,omitempty"`
-				Nps struct {
-					Min    int    `json:"min,omitempty"`
-					Status int    `json:"status,omitempty"`
-					URL    string `json:"url,omitempty"`
-				} `json:"nps,omitempty"`
-				AnyRead struct {
-					Total int `json:"total,omitempty"`
-					Count int `json:"count,omitempty"`
-				} `json:"any_read,omitempty"`
-				University struct {
-					Status               int    `json:"status,omitempty"`
-					ViewStatus           int    `json:"view_status,omitempty"`
-					ChargeStatus         int    `json:"charge_status,omitempty"`
-					ShareRenewalStatus   int    `json:"share_renewal_status,omitempty"`
-					UnlockedStatus       int    `json:"unlocked_status,omitempty"`
-					UnlockedChapterIds   []any  `json:"unlocked_chapter_ids,omitempty"`
-					UnlockedChapterID    int    `json:"unlocked_chapter_id,omitempty"`
-					UnlockedChapterTitle string `json:"unlocked_chapter_title,omitempty"`
-					UnlockedArticleCount int    `json:"unlocked_article_count,omitempty"`
-					UnlockedNextTime     int    `json:"unlocked_next_time,omitempty"`
-					ExpireTime           int    `json:"expire_time,omitempty"`
-					IsExpired            bool   `json:"is_expired,omitempty"`
-					IsGraduated          bool   `json:"is_graduated,omitempty"`
-					HadSub               bool   `json:"had_sub,omitempty"`
-					Timeline             []any  `json:"timeline,omitempty"`
-					HasWxFriend          bool   `json:"has_wx_friend,omitempty"`
-					StartTime            int    `json:"start_time,omitempty"`
-					SubTermTitle         string `json:"sub_term_title,omitempty"`
-					SubSku               int    `json:"sub_sku,omitempty"`
-				} `json:"university,omitempty"`
-				Vip struct {
-					IsYearCard bool `json:"is_year_card,omitempty"`
-					Show       bool `json:"show,omitempty"`
-					EndTime    int  `json:"end_time,omitempty"`
-				} `json:"vip,omitempty"`
-				Appoint struct {
-					CouldDo bool `json:"could_do,omitempty"`
-					HadDone bool `json:"had_done,omitempty"`
-					Count   int  `json:"count,omitempty"`
-				} `json:"appoint,omitempty"`
-				GroupBuy struct {
-					SuccessUcount int    `json:"success_ucount,omitempty"`
-					JoinCode      string `json:"join_code,omitempty"`
-					CouldGroupbuy bool   `json:"could_groupbuy,omitempty"`
-					HadJoin       bool   `json:"had_join,omitempty"`
-					Price         int    `json:"price,omitempty"`
-					List          []any  `json:"list,omitempty"`
-				} `json:"group_buy,omitempty"`
-				Sharesale struct {
-					OriginalPicColor    string `json:"original_pic_color,omitempty"`
-					OriginalPicURL      string `json:"original_pic_url,omitempty"`
-					PromoPicColor       string `json:"promo_pic_color,omitempty"`
-					PromoPicURL         string `json:"promo_pic_url,omitempty"`
-					ShareSalePrice      int    `json:"share_sale_price,omitempty"`
-					ShareSaleGuestPrice int    `json:"share_sale_guest_price,omitempty"`
-				} `json:"sharesale,omitempty"`
-				Promo struct {
-					EntTime int `json:"ent_time,omitempty"`
-				} `json:"promo,omitempty"`
-				Channel struct {
-					Is         bool `json:"is,omitempty"`
-					BackAmount int  `json:"back_amount,omitempty"`
-				} `json:"channel,omitempty"`
-				FirstPromo struct {
-					Price     int  `json:"price,omitempty"`
-					CouldJoin bool `json:"could_join,omitempty"`
-				} `json:"first_promo,omitempty"`
-				CouponPromo struct {
-					CouldJoin bool `json:"could_join,omitempty"`
-					Price     int  `json:"price,omitempty"`
-				} `json:"coupon_promo,omitempty"`
-				Helper []any `json:"helper,omitempty"`
-				Tab    struct {
-					Comment bool `json:"comment,omitempty"`
-					Package bool `json:"package,omitempty"`
-				} `json:"tab,omitempty"`
-				Modules   []any `json:"modules,omitempty"`
-				Cid       int   `json:"cid,omitempty"`
-				FirstAids []any `json:"first_aids,omitempty"`
-				StudyPlan struct {
-					ID              int `json:"id,omitempty"`
-					DayNums         int `json:"day_nums,omitempty"`
-					ArticleNums     int `json:"article_nums,omitempty"`
-					LearnedWeekNums int `json:"learned_week_nums,omitempty"`
-					Status          int `json:"status,omitempty"`
-				} `json:"study_plan,omitempty"`
-				CateID   int    `json:"cate_id,omitempty"`
-				CateName string `json:"cate_name,omitempty"`
-				GroupTag struct {
-					IsRecommend     bool `json:"is_recommend,omitempty"`
-					IsRecentlyLearn bool `json:"is_recently_learn,omitempty"`
-					IsTop           bool `json:"is_top,omitempty"`
-				} `json:"group_tag,omitempty"`
-				FirstAward struct {
-					Show          bool   `json:"show,omitempty"`
-					Talks         int    `json:"talks,omitempty"`
-					Reads         int    `json:"reads,omitempty"`
-					Amount        int    `json:"amount,omitempty"`
-					ExpireTime    int    `json:"expire_time,omitempty"`
-					RedirectType  string `json:"redirect_type,omitempty"`
-					RedirectParam string `json:"redirect_param,omitempty"`
-				} `json:"first_award,omitempty"`
-				VipPromo struct {
-					DiscountLevel int `json:"discount_level,omitempty"`
-					DiscountPrice int `json:"discount_price,omitempty"`
-					MinLevel      int `json:"min_level,omitempty"`
-					Rules         any `json:"rules,omitempty"`
-				} `json:"vip_promo,omitempty"`
-				IsTgoTicket bool `json:"is_tgo_ticket,omitempty"`
-				BPack       any  `json:"b_pack,omitempty"`
-				PSkus       any  `json:"p_skus,omitempty"`
-			} `json:"extra,omitempty"`
-			AvailableCoupons any    `json:"available_coupons,omitempty"`
-			InPvip           int    `json:"in_pvip,omitempty"`
-			IsJoinCvip       int    `json:"is_join_cvip,omitempty"`
-			ColumnBadge      string `json:"column_badge,omitempty"`
-			HideCopyright    bool   `json:"hide_copyright,omitempty"`
-		} `json:"products,omitempty"`
-		Page struct {
+		Articles []any         `json:"articles,omitempty"`
+		Products []ProductBase `json:"products,omitempty"`
+		Page     struct {
 			More   bool `json:"more,omitempty"`
 			Total  int  `json:"total,omitempty"`
 			Score  int  `json:"score,omitempty"`
 			Score0 int  `json:"score0,omitempty"`
 		} `json:"page,omitempty"`
 	} `json:"data,omitempty"`
+}
+
+type ProductBase struct {
+	ID        int `json:"id,omitempty"`
+	Spu       int `json:"spu,omitempty"`
+	Ctime     int `json:"ctime,omitempty"`
+	Utime     int `json:"utime,omitempty"`
+	BeginTime int `json:"begin_time,omitempty"`
+	EndTime   int `json:"end_time,omitempty"`
+	Price     struct {
+		Market    int `json:"market,omitempty"`
+		Sale      int `json:"sale,omitempty"`
+		SaleType  int `json:"sale_type,omitempty"`
+		StartTime int `json:"start_time,omitempty"`
+		EndTime   int `json:"end_time,omitempty"`
+	} `json:"price,omitempty"`
+	IsSale        bool           `json:"is_sale,omitempty"`
+	IsGroupbuy    bool           `json:"is_groupbuy,omitempty"`
+	IsPromo       bool           `json:"is_promo,omitempty"`
+	IsShareget    bool           `json:"is_shareget,omitempty"`
+	IsSharesale   bool           `json:"is_sharesale,omitempty"`
+	OnlySellInVip bool           `json:"only_sell_in_vip,omitempty"`
+	Type          string         `json:"type,omitempty"`
+	IsColumn      bool           `json:"is_column,omitempty"`
+	IsCore        bool           `json:"is_core,omitempty"`
+	IsVideo       bool           `json:"is_video,omitempty"`
+	IsAudio       bool           `json:"is_audio,omitempty"`
+	IsDailylesson bool           `json:"is_dailylesson,omitempty"`
+	IsUniversity  bool           `json:"is_university,omitempty"`
+	IsOpencourse  bool           `json:"is_opencourse,omitempty"`
+	IsQconp       bool           `json:"is_qconp,omitempty"`
+	IsMentor      bool           `json:"is_mentor,omitempty"`
+	NavID         int            `json:"nav_id,omitempty"`
+	TimeNotSale   int            `json:"time_not_sale,omitempty"`
+	Title         string         `json:"title,omitempty"`
+	Subtitle      string         `json:"subtitle,omitempty"`
+	Intro         string         `json:"intro,omitempty"`
+	IntroHTML     string         `json:"intro_html,omitempty"`
+	Ucode         string         `json:"ucode,omitempty"`
+	IsFinish      bool           `json:"is_finish,omitempty"`
+	Share         ProductShare   `json:"share,omitempty"`
+	Author        ProductAuthor  `json:"author,omitempty"`
+	Cover         ProductCover   `json:"cover,omitempty"`
+	Article       ProductArticle `json:"article,omitempty"`
+	Seo           struct {
+		Keywords []string `json:"keywords,omitempty"`
+	} `json:"seo,omitempty"`
+	Labels     []int  `json:"labels,omitempty"`
+	Unit       string `json:"unit,omitempty"`
+	ColumnType int    `json:"column_type,omitempty"`
+	Column     struct {
+		Unit             string `json:"unit,omitempty"`
+		Bgcolor          string `json:"bgcolor,omitempty"`
+		UpdateFrequency  string `json:"update_frequency,omitempty"`
+		IsPreorder       bool   `json:"is_preorder,omitempty"`
+		IsFinish         bool   `json:"is_finish,omitempty"`
+		IsIncludePreview bool   `json:"is_include_preview,omitempty"`
+		ShowChapter      bool   `json:"show_chapter,omitempty"`
+		IsSaleProduct    bool   `json:"is_sale_product,omitempty"`
+		StudyService     []int  `json:"study_service,omitempty"`
+		Path             struct {
+			Desc     string `json:"desc,omitempty"`
+			DescHTML string `json:"desc_html,omitempty"`
+		} `json:"path,omitempty"`
+		IsCamp                   bool   `json:"is_camp,omitempty"`
+		CatalogPicURL            string `json:"catalog_pic_url,omitempty"`
+		RecommendArticles        any    `json:"recommend_articles,omitempty"`
+		RecommendComments        []any  `json:"recommend_comments,omitempty"`
+		Ranks                    any    `json:"ranks,omitempty"`
+		HotComments              any    `json:"hot_comments,omitempty"`
+		HotLines                 any    `json:"hot_lines,omitempty"`
+		DisplayType              int    `json:"display_type,omitempty"`
+		IntroBgStyle             int    `json:"intro_bg_style,omitempty"`
+		CommentTopAds            string `json:"comment_top_ads,omitempty"`
+		ArticleFloatQrcodeURL    string `json:"article_float_qrcode_url,omitempty"`
+		ArticleFloatAppQrcodeURL string `json:"article_float_app_qrcode_url,omitempty"`
+		ArticleFloatQrcodeJump   string `json:"article_float_qrcode_jump,omitempty"`
+		InRank                   bool   `json:"in_rank,omitempty"`
+	} `json:"column,omitempty"`
+	Dl struct {
+		Article struct {
+			ID            int    `json:"id,omitempty"`
+			VideoDuration string `json:"video_duration,omitempty"`
+			VideoHot      int    `json:"video_hot,omitempty"`
+			CouldPreview  bool   `json:"could_preview,omitempty"`
+		} `json:"article,omitempty"`
+		TopicIds []any `json:"topic_ids,omitempty"`
+	} `json:"dl,omitempty"`
+	University struct {
+		TotalHour       int    `json:"total_hour,omitempty"`
+		Term            int    `json:"term,omitempty"`
+		RedirectType    string `json:"redirect_type,omitempty"`
+		RedirectParam   string `json:"redirect_param,omitempty"`
+		WxQrcode        string `json:"wx_qrcode,omitempty"`
+		WxRule          string `json:"wx_rule,omitempty"`
+		ServerStartTime int    `json:"server_start_time,omitempty"`
+		LecturerHCover  string `json:"lecturer_h_cover,omitempty"`
+		Keywords        string `json:"keywords,omitempty"`
+	} `json:"university,omitempty"`
+	Opencourse struct {
+		VideoBg string `json:"video_bg,omitempty"`
+		Ad      struct {
+			Cover         string `json:"cover,omitempty"`
+			CoverWeb      string `json:"cover_web,omitempty"`
+			RedirectType  string `json:"redirect_type,omitempty"`
+			RedirectParam string `json:"redirect_param,omitempty"`
+		} `json:"ad,omitempty"`
+		ArticleFav struct {
+			Aid     int  `json:"aid,omitempty"`
+			HadDone bool `json:"had_done,omitempty"`
+			Count   int  `json:"count,omitempty"`
+		} `json:"article_fav,omitempty"`
+		AuthorHCover string `json:"author_h_cover,omitempty"`
+	} `json:"opencourse,omitempty"`
+	Qconp struct {
+		TopicID      int    `json:"topic_id,omitempty"`
+		CoverAppoint string `json:"cover_appoint,omitempty"`
+		Article      struct {
+			ID            int    `json:"id,omitempty"`
+			Cover         string `json:"cover,omitempty"`
+			VideoDuration string `json:"video_duration,omitempty"`
+			VideoHot      int    `json:"video_hot,omitempty"`
+		} `json:"article,omitempty"`
+	} `json:"qconp,omitempty"`
+	FavQrcode string `json:"fav_qrcode,omitempty"`
+	Extra     struct {
+		Sub struct {
+			Count      int  `json:"count,omitempty"`
+			HadDone    bool `json:"had_done,omitempty"`
+			CouldOrder bool `json:"could_order,omitempty"`
+			AccessMask int  `json:"access_mask,omitempty"`
+		} `json:"sub,omitempty"`
+		Fav struct {
+			Count   int  `json:"count,omitempty"`
+			HadDone bool `json:"had_done,omitempty"`
+		} `json:"fav,omitempty"`
+		Rate struct {
+			ArticleCount    int  `json:"article_count,omitempty"`
+			ArticleCountReq int  `json:"article_count_req,omitempty"`
+			IsFinished      bool `json:"is_finished,omitempty"`
+			RatePercent     int  `json:"rate_percent,omitempty"`
+			VideoSeconds    int  `json:"video_seconds,omitempty"`
+			LastArticleID   int  `json:"last_article_id,omitempty"`
+			LastChapterID   int  `json:"last_chapter_id,omitempty"`
+			HasLearn        bool `json:"has_learn,omitempty"`
+		} `json:"rate,omitempty"`
+		Cert struct {
+			ID   string `json:"id,omitempty"`
+			Type int    `json:"type,omitempty"`
+		} `json:"cert,omitempty"`
+		Nps struct {
+			Min    int    `json:"min,omitempty"`
+			Status int    `json:"status,omitempty"`
+			URL    string `json:"url,omitempty"`
+		} `json:"nps,omitempty"`
+		AnyRead struct {
+			Total int `json:"total,omitempty"`
+			Count int `json:"count,omitempty"`
+		} `json:"any_read,omitempty"`
+		University struct {
+			Status               int    `json:"status,omitempty"`
+			ViewStatus           int    `json:"view_status,omitempty"`
+			ChargeStatus         int    `json:"charge_status,omitempty"`
+			ShareRenewalStatus   int    `json:"share_renewal_status,omitempty"`
+			UnlockedStatus       int    `json:"unlocked_status,omitempty"`
+			UnlockedChapterIds   []any  `json:"unlocked_chapter_ids,omitempty"`
+			UnlockedChapterID    int    `json:"unlocked_chapter_id,omitempty"`
+			UnlockedChapterTitle string `json:"unlocked_chapter_title,omitempty"`
+			UnlockedArticleCount int    `json:"unlocked_article_count,omitempty"`
+			UnlockedNextTime     int    `json:"unlocked_next_time,omitempty"`
+			ExpireTime           int    `json:"expire_time,omitempty"`
+			IsExpired            bool   `json:"is_expired,omitempty"`
+			IsGraduated          bool   `json:"is_graduated,omitempty"`
+			HadSub               bool   `json:"had_sub,omitempty"`
+			Timeline             []any  `json:"timeline,omitempty"`
+			HasWxFriend          bool   `json:"has_wx_friend,omitempty"`
+			StartTime            int    `json:"start_time,omitempty"`
+			SubTermTitle         string `json:"sub_term_title,omitempty"`
+			SubSku               int    `json:"sub_sku,omitempty"`
+		} `json:"university,omitempty"`
+		Vip struct {
+			IsYearCard bool `json:"is_year_card,omitempty"`
+			Show       bool `json:"show,omitempty"`
+			EndTime    int  `json:"end_time,omitempty"`
+		} `json:"vip,omitempty"`
+		Appoint struct {
+			CouldDo bool `json:"could_do,omitempty"`
+			HadDone bool `json:"had_done,omitempty"`
+			Count   int  `json:"count,omitempty"`
+		} `json:"appoint,omitempty"`
+		GroupBuy struct {
+			SuccessUcount int    `json:"success_ucount,omitempty"`
+			JoinCode      string `json:"join_code,omitempty"`
+			CouldGroupbuy bool   `json:"could_groupbuy,omitempty"`
+			HadJoin       bool   `json:"had_join,omitempty"`
+			Price         int    `json:"price,omitempty"`
+			List          []any  `json:"list,omitempty"`
+		} `json:"group_buy,omitempty"`
+		Sharesale struct {
+			OriginalPicColor    string `json:"original_pic_color,omitempty"`
+			OriginalPicURL      string `json:"original_pic_url,omitempty"`
+			PromoPicColor       string `json:"promo_pic_color,omitempty"`
+			PromoPicURL         string `json:"promo_pic_url,omitempty"`
+			ShareSalePrice      int    `json:"share_sale_price,omitempty"`
+			ShareSaleGuestPrice int    `json:"share_sale_guest_price,omitempty"`
+		} `json:"sharesale,omitempty"`
+		Promo struct {
+			EntTime int `json:"ent_time,omitempty"`
+		} `json:"promo,omitempty"`
+		Channel struct {
+			Is         bool `json:"is,omitempty"`
+			BackAmount int  `json:"back_amount,omitempty"`
+		} `json:"channel,omitempty"`
+		FirstPromo struct {
+			Price     int  `json:"price,omitempty"`
+			CouldJoin bool `json:"could_join,omitempty"`
+		} `json:"first_promo,omitempty"`
+		CouponPromo struct {
+			CouldJoin bool `json:"could_join,omitempty"`
+			Price     int  `json:"price,omitempty"`
+		} `json:"coupon_promo,omitempty"`
+		Helper []any `json:"helper,omitempty"`
+		Tab    struct {
+			Comment bool `json:"comment,omitempty"`
+			Package bool `json:"package,omitempty"`
+		} `json:"tab,omitempty"`
+		Modules   []any `json:"modules,omitempty"`
+		Cid       int   `json:"cid,omitempty"`
+		FirstAids []any `json:"first_aids,omitempty"`
+		StudyPlan struct {
+			ID              int `json:"id,omitempty"`
+			DayNums         int `json:"day_nums,omitempty"`
+			ArticleNums     int `json:"article_nums,omitempty"`
+			LearnedWeekNums int `json:"learned_week_nums,omitempty"`
+			Status          int `json:"status,omitempty"`
+		} `json:"study_plan,omitempty"`
+		CateID   int    `json:"cate_id,omitempty"`
+		CateName string `json:"cate_name,omitempty"`
+		GroupTag struct {
+			IsRecommend     bool `json:"is_recommend,omitempty"`
+			IsRecentlyLearn bool `json:"is_recently_learn,omitempty"`
+			IsTop           bool `json:"is_top,omitempty"`
+		} `json:"group_tag,omitempty"`
+		FirstAward struct {
+			Show          bool   `json:"show,omitempty"`
+			Talks         int    `json:"talks,omitempty"`
+			Reads         int    `json:"reads,omitempty"`
+			Amount        int    `json:"amount,omitempty"`
+			ExpireTime    int    `json:"expire_time,omitempty"`
+			RedirectType  string `json:"redirect_type,omitempty"`
+			RedirectParam string `json:"redirect_param,omitempty"`
+		} `json:"first_award,omitempty"`
+		VipPromo struct {
+			DiscountLevel int `json:"discount_level,omitempty"`
+			DiscountPrice int `json:"discount_price,omitempty"`
+			MinLevel      int `json:"min_level,omitempty"`
+			Rules         any `json:"rules,omitempty"`
+		} `json:"vip_promo,omitempty"`
+		IsTgoTicket bool `json:"is_tgo_ticket,omitempty"`
+		BPack       any  `json:"b_pack,omitempty"`
+		PSkus       any  `json:"p_skus,omitempty"`
+	} `json:"extra,omitempty"`
+	AvailableCoupons any    `json:"available_coupons,omitempty"`
+	InPvip           int    `json:"in_pvip,omitempty"`
+	IsJoinCvip       int    `json:"is_join_cvip,omitempty"`
+	ColumnBadge      string `json:"column_badge,omitempty"`
+	HideCopyright    bool   `json:"hide_copyright,omitempty"`
 }
 
 type DowloadRequest struct {

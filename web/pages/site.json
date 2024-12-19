@@ -6,29 +6,29 @@
       {
         "label": "Home",
         "url": "/",
-        "redirect": "/product/pvip"
+        "redirect": "/task/list"
       },
       {
-        "label": "课程管理",
-        "rewrite": "/product/pvip",
-        "icon": "fa fa-magic",
-        "children": [
-          {
-            "label": "课程",
-            "url": "/product/pvip",
-            "schemaApi": "get:/pages/product-pvip.json"
-          }
-        ]
-      },
-      {
-        "label": "任务管理",
+        "label": "",
         "rewrite": "/task/list",
         "icon": "fa fa-magic",
         "children": [
           {
-            "label": "列表",
+            "label": "我的课程",
             "url": "/task/list",
-            "schemaApi": "get:/pages/task-list.json"
+            "schemaApi": "get:/pages/task.json"
+          },
+          {
+            "label": "极客课程",
+            "visibleOn": "${ls:role_id===1}",
+            "url": "/product/pvip",
+            "schemaApi": "get:/pages/product.json"
+          },
+          {
+            "label": "用户列表",
+            "visibleOn": "${ls:role_id===1}",
+            "url": "/user/list",
+            "schemaApi": "get:/pages/user.json"
           }
         ]
       }
