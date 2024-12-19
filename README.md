@@ -16,9 +16,9 @@ replace ${directory} with you local directory
 ```shell
 docker run  -d  --restart always \
 -p 8090:8090 \
--v  ${directory}:/repo \ 
 --name mygeektime \
-zkep/mygeektime:latest  server  
+-v ${directory}:/repo  \
+zkep/mygeektime:latest  server   
 ```
 browser web url:  http://127.0.0.1:8090  
 

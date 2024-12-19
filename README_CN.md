@@ -16,9 +16,9 @@ docker run -p 8090:8090 -d --name mygeektime --restart always zkep/mygeektime:la
 ```shell
 docker run  -d  --restart always \
 -p 8090:8090 \
--v  ${directory}:/repo \ 
 --name mygeektime \
-zkep/mygeektime:latest  server  
+-v ${directory}:/repo  \
+zkep/mygeektime:latest  server   
 ```
 浏览器访问:  http://127.0.0.1:8090
 
