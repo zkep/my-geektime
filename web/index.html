@@ -164,12 +164,25 @@
                         type: "${type}"
                     }
                 },
+                onEvent: {
+                    submitSucc: {
+                        actions: [
+                            {
+                                actionType: "changeActiveKey",
+                                componentId: "tabs-change-receiver",
+                                args: {
+                                    activeKey: 1
+                                }
+                            }
+                        ]
+                    }
+                },
                 body: [
                     {
                         label: "账 号｜Account",
                         type: "input-text",
                         required: true,
-                        placeholder: "请输入账号",
+                        placeholder: "快给自己取个响亮的名字",
                         name: "account",
                         validations: {
                             minLength: 5
@@ -284,6 +297,7 @@
                                 {
                                     type: "tabs",
                                     tabsMode: "chrome",
+                                    id: "tabs-change-receiver",
                                     tabs: login_tabs,
                                 },
                             ]
