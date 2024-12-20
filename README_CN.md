@@ -127,3 +127,7 @@ make && make install
 * [amis](https://github.com/baidu/amis)
 * [gorm](https://github.com/go-gorm/gorm)
 * [FFmpeg](https://ffmpeg.org/download.html)
+
+#### 扫码加入实战交流群
+
+<img src="./web/public/wechat.jpg"  width="200" />
