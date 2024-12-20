@@ -43,7 +43,7 @@ services:
     volumes:
       - .mygeektime/repo:/repo
       - .mygeektime/config.yml:/config.yml
-      - .mygeektime/Wechat.jpg:/Wechat.jpg
+      - .mygeektime/wechat.jpg:/wechat.jpg
     depends_on:
       - redis
       - mysql

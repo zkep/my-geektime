@@ -2,7 +2,6 @@ package v2
 
 import (
 	"context"
-	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -194,14 +193,14 @@ func (b *Base) SendEmail(c *gin.Context) {
 	code := gen.Random(6)
 	d := gomail.NewDialer(global.CONF.Email.Host,
 		global.CONF.Email.Port, global.CONF.Email.User, global.CONF.Email.Password)
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	m := gomail.NewMessage()
 	m.SetHeader("From", global.CONF.Email.From)
 	m.SetHeader("To", req.Email)
-	m.SetHeader("Subject", "我的极客时间邮箱验证码")
-	m.SetBody("text/html",
-		fmt.Sprintf("验证码： <b>%s</b> <br/><br/> <b>👏 扫下方微信二维码，欢迎加入技术交流群</b>", code))
-	m.Attach(".mygeektime/Wechat.jpg")
+	m.SetHeader("Subject", global.CONF.Site.EmailRegisterSubject)
+	m.SetBody("text/html", fmt.Sprintf(global.CONF.Site.EmailRegisterBody, code))
+	if global.CONF.Site.EmailRegisterAttach != "" {
+		m.Attach(global.CONF.Site.EmailRegisterAttach)
+	}
 	if err := d.DialAndSend(m); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"status": http.StatusInternalServerError,

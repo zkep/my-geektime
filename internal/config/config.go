@@ -11,4 +11,5 @@ type Config struct {
 	Oauth2  []zoauth.Config `json:"oauth2" yaml:"oauth2"`
 	Email   Email           `json:"email" yaml:"email"`
 	Redis   Redis           `json:"redis" yaml:"redis"`
+	Site    Site            `json:"site" yaml:"site"`
 }

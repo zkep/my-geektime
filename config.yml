@@ -31,3 +31,7 @@ storage: # mp4 or mp3 save folder
   host: http://127.0.0.1:8090  # Keep the port consistent with the http_port in the server
 browser:
   open_browser: true # Automatically open browser after service startup
+site:
+  email_register_subject: "我的极客时间邮箱验证码"
+  email_register_body: "验证码： <b>%s</b> <br/><br/> <b>👏 扫下方微信二维码，欢迎加入技术交流群</b>"
+  email_register_attach: web/public/wechat.jpg
