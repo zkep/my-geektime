@@ -396,7 +396,7 @@
                         "value": 2
                       },
                       {
-                        "label": "已完成",
+                        "label": "已缓存",
                         "value": 3
                       },
                       {
@@ -508,7 +508,7 @@
               {
                 "type": "tpl",
                 "label": "任务统计: ",
-                "tpl": "<div>${statistics.items.1>0?'排队中: '+ statistics.items.1 + '<br/>':''} ${statistics.items.2>0?'处理中: '+ statistics.items.2 +'<br/>':''} ${statistics.items.3 >0 ?'已完成: '+ statistics.items.3 +'<br/>':''} ${statistics.items.4 >0 ?'异常: '+ statistics.items.4 +'<br/>':''}<div>",
+                "tpl": "<div>${statistics.items.1>0?'排队中: '+ statistics.items.1 + '<br/>':''} ${statistics.items.2>0?'处理中: '+ statistics.items.2 +'<br/>':''} ${statistics.items.3 >0 ?'已缓存: '+ statistics.items.3 +'<br/>':''} ${statistics.items.4 >0 ?'异常: '+ statistics.items.4 +'<br/>':''}<div>",
                 "visibleOn": "${ ls:role_id === 1 }"
               },
               {
@@ -523,7 +523,7 @@
                 "map": {
                   "1": "排队中",
                   "2": "处理中",
-                  "3": "已完成",
+                  "3": "已缓存",
                   "4": "异常"
                 }
               },
@@ -551,6 +551,22 @@
               }
             ],
             "actions": [
+              {
+                "type": "button",
+                "icon": "fa-solid fa-trash",
+                "visibleOn": "${ ls:role_id === 1 }",
+                "label": "删除",
+                "actionType": "ajax",
+                "loading": true,
+                "api": {
+                  "url": "/v2/task/delete",
+                  "method":"delete",
+                  "data": {
+                    "pid": "${task_id}"
+                  }
+                },
+                "confirmText": "确定要删除 [${task_name}] 课程吗？"
+              },
               {
                 "type": "button",
                 "icon": "fa fa-eye",
@@ -581,6 +597,7 @@
                     {
                       "type": "html",
                       "wrapperComponent": "pre",
+                      "className": "word-break",
                       "name": "intro_html",
                       "label": "课程介绍"
                     },
@@ -634,7 +651,7 @@
                                     "value": 2
                                   },
                                   {
-                                    "label": "已完成",
+                                    "label": "已缓存",
                                     "value": 3
                                   },
                                   {
@@ -692,7 +709,7 @@
                               "ids": "${ids | raw}"
                             }
                           },
-                          "confirmText": "确定要删除当前任务吗？"
+                          "confirmText": "确定要删除当课程吗？"
                         }
                       ],
                       "footerToolbar": [
@@ -715,9 +732,17 @@
                         },
                         "body":[
                           {
+                            "type": "html",
+                            "label": "课程介绍",
+                            "className": "word-break",
+                            "name": "intro_html",
+                            "html": "${intro_html|truncate:50}"
+                          },
+                          {
                             "name": "task_id",
                             "type": "static",
-                            "label": "任务ID: "
+                            "label": "任务ID: ",
+                            "visibleOn": "${ ls:role_id === 1 }"
                           },
                           {
                             "type": "divider"
@@ -725,7 +750,7 @@
                           {
                             "name": "other_id",
                             "type": "static",
-                            "label": "业务ID: "
+                            "label": "课程ID: "
                           },
                           {
                             "type": "divider"
@@ -739,18 +764,20 @@
                             "map": {
                               "1": "排队中",
                               "2": "处理中",
-                              "3": "已完成",
+                              "3": "已缓存",
                               "4": "异常"
                             }
                           },
                           {
-                            "type": "divider"
+                            "type": "divider",
+                            "visibleOn": "${ ls:role_id === 1 }"
                           },
                           {
                             "name": "created_at",
                             "type": "date",
                             "format": "YYYY-MM-DD HH:mm:ss",
-                            "label": "创建时间: "
+                            "label": "创建时间: ",
+                            "visibleOn": "${ ls:role_id === 1 }"
                           },
                           {
                             "type": "divider"
@@ -763,6 +790,39 @@
                           }
                         ],
                         "actions":[
+                          {
+                            "type": "button",
+                            "icon": "fa-solid fa-repeat",
+                            "visibleOn": "${ ls:role_id === 1}",
+                            "label": "重试",
+                            "level": "info",
+                            "actionType": "ajax",
+                            "api": {
+                              "url": "/v2/task/retry",
+                              "method":"post",
+                              "data": {
+                                "pid": "${task_pid}",
+                                "ids": "${task_id}"
+                              }
+                            },
+                            "confirmText": "确定要重新下载么？"
+                          },
+                          {
+                            "type": "button",
+                            "icon": "fa-solid fa-trash",
+                            "label": "删除",
+                            "visibleOn": "${ ls:role_id === 1 }",
+                            "level": "danger",
+                            "actionType": "ajax",
+                            "api": {
+                              "url": "/v2/task/delete",
+                              "method":"delete",
+                              "data": {
+                                "ids": "${task_id}"
+                              }
+                            },
+                            "confirmText": "确定要删除 [${task_name}] 课程吗？"
+                          },
                           {
                             "type": "button",
                             "icon": "fa fa-eye",
@@ -882,39 +942,6 @@
                                 }
                               ]
                             }
-                          },
-                          {
-                            "type": "button",
-                            "icon": "fa-solid fa-repeat",
-                            "visibleOn": "${ ls:role_id === 1 }",
-                            "label": "重试",
-                            "level": "info",
-                            "actionType": "ajax",
-                            "api": {
-                              "url": "/v2/task/retry",
-                              "method":"post",
-                              "data": {
-                                "pid": "${task_pid}",
-                                "ids": "${task_id}"
-                              }
-                            },
-                            "confirmText": "确定要重新下载么？"
-                          },
-                          {
-                            "type": "button",
-                            "icon": "fa-solid fa-trash",
-                            "label": "删除",
-                            "visibleOn": "${ ls:role_id === 1 }",
-                            "level": "danger",
-                            "actionType": "ajax",
-                            "api": {
-                              "url": "/v2/task/delete",
-                              "method":"delete",
-                              "data": {
-                                "ids": "${task_id}"
-                              }
-                            },
-                            "confirmText": "确定要删除 [${task_name}] 课程吗？"
                           }
                         ]
                       },
@@ -930,22 +957,6 @@
                     }
                   ]
                 }
-              },
-              {
-                "type": "button",
-                "icon": "fa-solid fa-trash",
-                "visibleOn": "${ ls:role_id === 1 }",
-                "label": "删除",
-                "actionType": "ajax",
-                "loading": true,
-                "api": {
-                  "url": "/v2/task/delete",
-                  "method":"delete",
-                  "data": {
-                    "pid": "${task_id}"
-                  }
-                },
-                "confirmText": "确定要删除 [${task_name}] 课程吗？"
               }
             ]
           },

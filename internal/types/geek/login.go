@@ -1,17 +1,5 @@
 package geek
 
-var DefaultLoginRequest = LoginRequest{
-	Platform: 3,
-	Appid:    1,
-	Remember: 1,
-	Data:     "",
-	Sc: LoginSc{
-		ReportSource: "Web",
-		UserUniqueID: "7448540740960947200",
-		Refer:        "极客时间",
-	},
-}
-
 type LoginRequest struct {
 	Platform  int     `json:"platform"`
 	Appid     int     `json:"appid"`

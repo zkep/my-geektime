@@ -28,7 +28,7 @@ func (u *User) List(c *gin.Context) {
 		req.Page = 1
 	}
 	roleId := c.GetFloat64(global.Role)
-	if roleId != 1 {
+	if roleId != user.AdminRoleId {
 		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": "no auth"})
 		return
 	}
@@ -57,7 +57,6 @@ func (u *User) List(c *gin.Context) {
 			Avatar:      l.Avatar,
 			Status:      l.Status,
 			AccessToken: l.AccessToken,
-			Phone:       l.Phone,
 			RoleId:      l.RoleId,
 			CreatedAt:   l.CreatedAt,
 			UpdatedAt:   l.UpdatedAt,

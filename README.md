@@ -22,6 +22,15 @@ zkep/mygeektime:latest  server
 ```
 browser web url:  http://127.0.0.1:8090  
 
+#### docker compose
+
+```shell
+git clone https://github.com/zkep/mygeektime.git
+
+cd mygeektime
+
+docker-compose up -d
+```
 
 #### install with golang
 ```shell
@@ -36,9 +45,6 @@ mygeektime server
 
 ##### Customize configuration to start HTTP service
 ```shell
-# Generate a configuration template, and then customize the template content
-mygeektime cli config --config=config_templete.yml
-
 # Use custom configuration templates
 mygeektime server --config=config_templete.yml
 ```
@@ -68,11 +74,7 @@ storage: # mp4 or mp3 save folder
   bucket: object
   host: http://127.0.0.1:8090  # Keep the port consistent with the http_port in the server
 browser:
-  driver_path: chromedriver # If there is no cookie file, chromedriver will be used by default to simulate login and obtain cookies
   open_browser: true # Automatically open browser after service startup
-geektime:
-  auto_sync: true # Automatically sync geektime api data to db
-  auth_validate: true # check geektime account auth
 ```
 
 Commond help:
@@ -101,24 +103,9 @@ make && make install
 
 > Method 1: The browser developer tool retrieves a valid Geektime cookie
 
-> Method : [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing/#stable)
-> Check the Chrome version number and enter it in the address bar of Google Chrome:
->```shell
->chrome://version
->```
-> After obtaining the Chrome version number, you can replace the ${version} in the link below to download the corresponding system version according to your own system
-After decompression, place the chromedriver file in the program execution directory
->* linux64：https://storage.googleapis.com/chrome-for-testing-public/${version}/linux64/chromedriver-linux64.zip
->* mac-arm64：https://storage.googleapis.com/chrome-for-testing-public/${version}/mac-arm64/chromedriver-mac-arm64.zip
->* mac-x64：https://storage.googleapis.com/chrome-for-testing-public/${version}/mac-x64/chromedriver-mac-x64.zip
->* win32：https://storage.googleapis.com/chrome-for-testing-public/${version}/win32/chromedriver-win32.zip
->* win64：https://storage.googleapis.com/chrome-for-testing-public/${version}/win64/chromedriver-win64.zip
-
 
 #### thanks
 * [gin](https://github.com/gin-gonic/gin)
 * [amis](https://github.com/baidu/amis)
-* [tebeka/selenium](https://github.com/tebeka/selenium)
 * [gorm](https://github.com/go-gorm/gorm)
 * [FFmpeg](https://ffmpeg.org/download.html)
-* [ChromeDriver](https://developer.chrome.google.cn/docs/chromedriver/get-started)

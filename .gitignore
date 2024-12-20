@@ -27,4 +27,7 @@ go.work.sum
 # idea
 .idea
 .DS_Store
+
+# custom
 logs/
+.mygeektime/

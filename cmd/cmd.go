@@ -60,7 +60,7 @@ func (app *App) Run() {
 	subCLI.NewSubCommandFunction("browser", "install browser dependencies", cliApp.Browser)
 	subCLI.NewSubCommandFunction("config", "generate config file templete", cliApp.Config)
 
-	if err := c.Run(); err != nil {
+	if err := c.Run(os.Args[1:]...); err != nil {
 		fmt.Println(color.Red(err.Error()))
 	}
 }

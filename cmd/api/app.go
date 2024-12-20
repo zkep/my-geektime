@@ -74,6 +74,9 @@ func (app *App) Run(f *Flags) error {
 	if err := initialize.Tw(app.ctx); err != nil {
 		return err
 	}
+	if err := initialize.InitRedis(app.ctx); err != nil {
+		return err
+	}
 
 	options := []fx.Option{
 		fx.Provide(func() context.Context { return app.ctx }),

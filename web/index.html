@@ -56,19 +56,19 @@
 
         let login_tabs = []
 
-
         login_tabs.push({
-            title: "账号登录",
+            title: "邮箱登录",
             body: {
                 type: "form",
                 title: "",
                 actions: [],
                 wrapWithPanel: false,
+                autoFocus: true,
                 api: {
                     url: "/v2/base/login?waitSeconds=3",
                     method: "post",
                     data: {
-                        account: "${account}",
+                        email: "${email}",
                         password: "${password}",
                         type: "${type}"
                     },
@@ -86,16 +86,17 @@
                 },
                 body: [
                     {
-                        label: "账 号｜Account",
-                        type: "input-text",
+                        label: "邮 箱｜Email",
+                        type: "input-email",
                         required: true,
-                        placeholder: "请输入账号",
-                        name: "account",
+                        validateOnChange: true,
+                        placeholder: "请输入邮箱",
+                        name: "email",
                         validations: {
-                            minLength: 5
+                            isEmail: true,
                         },
                         validationErrors: {
-                            minLength: "账号不少于$1个字符"
+                            minLength: "邮箱不少于$1个字符"
                         },
                         borderMode: "half",
                         style: {
@@ -106,6 +107,7 @@
                         label: "密 码｜Password",
                         type: "input-password",
                         required: true,
+                        validateOnChange: true,
                         placeholder: "请输入密码",
                         name: "password",
                         validations: {
@@ -127,6 +129,9 @@
                     {
                         type: "flex",
                         alignItems: "center",
+                        mobile: {
+                            direction: "column"
+                        },
                         style: {
                             height: "100%",
                             backgroundColor: "#fff"
@@ -148,17 +153,19 @@
         })
 
         login_tabs.push({
-            title: "账号注册",
+            title: "邮箱注册",
             body: {
                 type: "form",
                 title: "",
                 actions: [],
                 wrapWithPanel: false,
+                autoFocus: true,
                 api: {
                     url: "/v2/base/register?waitSeconds=3",
                     method: "post",
                     data: {
-                        account: "${account}",
+                        email: "${email}",
+                        code: "${code}",
                         password: "${password}",
                         confirm_password: "${confirm_password}",
                         type: "${type}"
@@ -179,18 +186,56 @@
                 },
                 body: [
                     {
-                        label: "账 号｜Account",
-                        type: "input-text",
+                        label: "邮 箱｜Email",
+                        type: "input-email",
                         required: true,
-                        placeholder: "快给自己取个响亮的名字",
-                        name: "account",
+                        placeholder: "请输入邮箱",
+                        name: "email",
+                        validateOnChange: true,
                         validations: {
+                            isEmail: true,
                             minLength: 5
                         },
                         validationErrors: {
-                            minLength: "账号不少于$1个字符"
+                            minLength: "邮箱不少于$1个字符"
                         },
                         borderMode: "half",
+                        style: {
+                            margin: 5
+                        },
+                        addOn: {
+                            name: "countdown",
+                            label: "发送验证码",
+                            type: "button",
+                            level: "light",
+                            countDown: 120,
+                            strictMode: false,
+                            countDownTpl: "${timeLeft} 秒后重发",
+                            actionType: "ajax",
+                            api: {
+                                url:"/v2/base/send/email",
+                                method: "POST",
+                                data:{
+                                    email: "${email}",
+                                }
+                            }
+                        }
+                    },
+                    {
+                        name: "code",
+                        type: "input-text",
+                        required: true,
+                        label: "验证码｜Email Code",
+                        placeholder: "请输入邮箱验证码",
+                        borderMode: "half",
+                        strictMode: false,
+                        validateOnChange: true,
+                        validations: {
+                            minLength: 6
+                        },
+                        validationErrors: {
+                            minLength: "邮箱验证码不能为空"
+                        },
                         style: {
                             margin: 5
                         },
@@ -199,6 +244,7 @@
                         label: "密 码｜Password",
                         type: "input-password",
                         required: true,
+                        validateOnChange: true,
                         placeholder: "请输入密码",
                         name: "password",
                         validations: {
@@ -216,13 +262,17 @@
                         label: "确 认｜Confirm",
                         type: "input-password",
                         required: true,
+                        validateOnChange: true,
+                        strictMode: false,
                         placeholder: "请输入确认密码",
                         name: "confirm_password",
                         validations: {
-                            minLength: 6
+                            minLength: 6,
+                            equalsField: "password"
                         },
                         validationErrors: {
-                            minLength: "密码不少于$1个字符"
+                            minLength: "密码不少于$1个字符",
+                            equalsField: "两次密码不一致"
                         },
                         borderMode: "half",
                         style: {
@@ -237,6 +287,9 @@
                     {
                         type: "flex",
                         alignItems: "center",
+                        mobile: {
+                            direction: "column"
+                        },
                         style: {
                             height: "100%",
                             backgroundColor: "#fff"
@@ -261,8 +314,12 @@
             type: "page",
             body: {
                 type: "wrapper",
-                body:  {
+                body:  [
+                    {
                     type: "flex",
+                    mobile: {
+                      direction: "column"
+                    },
                     alignItems: "center",
                     style: {
                         height: "100%",
@@ -272,7 +329,7 @@
                         {
                             style: {
                                 width: 500,
-                                height: 500,
+                                height: 550,
                                 margin: 50,
                             },
                             type: "panel",
@@ -280,6 +337,9 @@
                             body: [
                                 {
                                     type: "flex",
+                                    mobile: {
+                                        direction: "column"
+                                    },
                                     alignItems: "center",
                                     style: {
                                         height: "100%",
@@ -288,7 +348,7 @@
                                         {
                                             type: "html",
                                             style: {
-                                                margin: 20
+                                                margin: 10
                                             },
                                             tpl: "<h2>您好，欢迎登录</h2><p>Hello, welcome to log in.</p>"
                                         },
@@ -299,11 +359,12 @@
                                     tabsMode: "chrome",
                                     id: "tabs-change-receiver",
                                     tabs: login_tabs,
-                                },
+                                }
                             ]
-                        },
+                        }
                     ]
-                }
+                   }
+                ]
             }
         }
 
@@ -321,6 +382,9 @@
                         md: 0,
                         body: {
                             type: "flex",
+                            mobile: {
+                                direction: "column"
+                            },
                             justify: "flex-end",
                             items: [
                                 {
@@ -348,7 +412,7 @@
                                                 size: "md",
                                                 title: "cookie登录",
                                                 body: [
-                                                    "极客时间登录凭据失效后，课程列表就刷新不出来数据了，需要重新刷新cookie, 才能获取极客时间课程",
+                                                    "极客时间登录凭据，是全站共享的基础，需要定期刷新，避免失效，失效后下载会找不到下载链接",
                                                     {
                                                         type: "form",
                                                         title: "",
@@ -426,14 +490,18 @@
         };
 
         function getCookie(name) {
-            var cookieArr = document.cookie.split(";");
-            for (var i = 0; i < cookieArr.length; i++) {
-                var cookiePair = cookieArr[i].split("=");
-                if (name === cookiePair[0].trim()) {
-                    return decodeURIComponent(cookiePair[1]);
-                }
-            }
-            return null;
+            return (
+                decodeURIComponent(
+                    document.cookie.replace(
+                        new RegExp(
+                            "(?:(?:^|.*;)\\s*" +
+                            encodeURIComponent(name).replace(/[-.+*]/g, "\\$&") +
+                            "\\s*\\=\\s*([^;]*).*$)|^.*$",
+                        ),
+                        "$1",
+                    ),
+                ) || null
+            );
         }
 
         function normalizeLink(to, location = history.location) {

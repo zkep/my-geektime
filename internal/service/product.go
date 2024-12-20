@@ -26,10 +26,6 @@ func GetArticleInfo(ctx context.Context, uid, accessToken string,
 	var resp geek.ArticleInfoResponse
 	err := Request(ctx, http.MethodPost, ArticleInfoURL,
 		bytes.NewBuffer(reqRaw), accessToken, func(raw []byte) error {
-			// auto sync to db
-			if !global.CONF.Geektime.AutoSync {
-				return nil
-			}
 			if err := json.Unmarshal(raw, &resp); err != nil {
 				global.LOG.Error("GetArticleInfo", zap.Error(err))
 				return err
@@ -73,10 +69,6 @@ func GetArticles(ctx context.Context, uid, accessToken string,
 	var resp geek.ArticlesResponse
 	err := Request(ctx, http.MethodPost, ArticlesURL,
 		bytes.NewBuffer(raw), accessToken, func(raw []byte) error {
-			// auto sync to db
-			if !global.CONF.Geektime.AutoSync {
-				return nil
-			}
 			if err := json.Unmarshal(raw, &resp); err != nil {
 				global.LOG.Error("GetArticles", zap.Error(err))
 				return err
@@ -125,10 +117,6 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 	var resp geek.ProductResponse
 	err := Request(ctx, http.MethodPost, PvipProductListURL,
 		bytes.NewBuffer(raw), accessToken, func(raw []byte) error {
-			// auto sync to db
-			if !global.CONF.Geektime.AutoSync {
-				return nil
-			}
 			if err := json.Unmarshal(raw, &resp); err != nil {
 				global.LOG.Error("GetPvipProduct", zap.Error(err))
 				return err
@@ -177,10 +165,6 @@ func GetDailyProduct(ctx context.Context, uid, accessToken string,
 	var resp geek.DailyProductResponse
 	err := Request(ctx, http.MethodPost, ProductListURL,
 		bytes.NewBuffer(raw), accessToken, func(raw []byte) error {
-			// auto sync to db
-			if !global.CONF.Geektime.AutoSync {
-				return nil
-			}
 			if err := json.Unmarshal(raw, &resp); err != nil {
 				global.LOG.Error("GetProduct", zap.Error(err))
 				return err

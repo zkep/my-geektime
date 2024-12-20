@@ -35,8 +35,6 @@ type User struct {
 	AccessToken string `json:"access_token,omitempty"`
 	// status
 	Status int32 `json:"status,omitempty"`
-	// phone
-	Phone string `json:"phone,omitempty"`
 	// role_id
 	RoleId int32 `json:"role_id,omitempty"`
 	// created_at

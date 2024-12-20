@@ -11,18 +11,18 @@ message User {
   int64 id = 1 [(gogoproto.moretags) = "gorm:\"primaryKey;autoIncrement;comment:id\""];
   // uid
   string uid = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:uid\""];
+  // email
+  string email = 3 [(gogoproto.moretags) = "gorm:\"unique;size:20;comment:email\""];
   // user_name
-  string user_name = 3 [(gogoproto.moretags) = "gorm:\"index;size:255;comment:user name\""];
+  string user_name = 4 [(gogoproto.moretags) = "gorm:\"index;size:255;comment:user name\""];
   // nike_name
-  string nike_name = 4 [(gogoproto.moretags) = "gorm:\"size:255;comment:nike name\""];
+  string nike_name = 5 [(gogoproto.moretags) = "gorm:\"size:255;comment:nike name\""];
   // password
-  string password = 5 [(gogoproto.moretags) = "gorm:\"size:128;comment:password\""];
+  string password = 6 [(gogoproto.moretags) = "gorm:\"size:128;comment:password\""];
   // avatar
-  string avatar = 6 [(gogoproto.moretags) = "gorm:\"size:255;comment:avatar\""];
+  string avatar = 7 [(gogoproto.moretags) = "gorm:\"size:255;comment:avatar\""];
   // access_token
-  string access_token = 7 [(gogoproto.moretags) = "gorm:\"comment:access_token\""];
-  // phone
-  string phone = 8 [(gogoproto.moretags) = "gorm:\"index;size:20;comment:phone\""];
+  string access_token = 8 [(gogoproto.moretags) = "gorm:\"comment:access_token\""];
   // role_id
   int32 role_id = 9 [(gogoproto.moretags) = "gorm:\"default:2;size:2;comment:role_id\""];
   // status

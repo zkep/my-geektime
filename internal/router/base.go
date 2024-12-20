@@ -5,11 +5,14 @@ import (
 	v2 "github.com/zkep/mygeektime/internal/api/v2"
 )
 
-func base(public, _ *gin.RouterGroup) {
+func base(public, private *gin.RouterGroup) {
 	api := v2.NewBase()
 	{
 		public.POST("/base/login", api.Login)
 		public.POST("/base/register", api.Register)
-		public.GET("/base/redirect", api.Redirect)
+		public.POST("/base/send/email", api.SendEmail)
+	}
+	{
+		private.POST("/base/refresh/cookie", api.RefreshCookie)
 	}
 }

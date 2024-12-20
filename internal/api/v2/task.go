@@ -102,6 +102,15 @@ func (t *Task) List(c *gin.Context) {
 			row.Sale = product.Price.Sale
 			row.SaleType = product.Price.SaleType
 			row.IsAudio = product.IsAudio
+		case service.TASK_TYPE_ARTICLE:
+			var articelInfo geek.ArticleInfoResponse
+			if len(l.Raw) > 0 {
+				_ = json.Unmarshal(l.Raw, &articelInfo)
+			}
+			row.Author = articelInfo.Data.Info.Author
+			row.Subtitle = articelInfo.Data.Info.Subtitle
+			row.IntroHTML = articelInfo.Data.Info.Summary
+			row.IsVideo = articelInfo.Data.Info.IsVideo
 		}
 		ret.Rows = append(ret.Rows, row)
 	}

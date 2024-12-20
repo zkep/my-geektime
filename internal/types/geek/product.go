@@ -543,11 +543,8 @@ type ArticleInfo struct {
 	Cover        struct {
 		Default string `json:"default,omitempty"`
 	} `json:"cover,omitempty"`
-	Author struct {
-		Name   string `json:"name,omitempty"`
-		Avatar string `json:"avatar,omitempty"`
-	} `json:"author,omitempty"`
-	Audio struct {
+	Author ProductAuthor `json:"author,omitempty"`
+	Audio  struct {
 		Title       string   `json:"title,omitempty"`
 		Dubber      string   `json:"dubber,omitempty"`
 		DownloadURL string   `json:"download_url,omitempty"`
