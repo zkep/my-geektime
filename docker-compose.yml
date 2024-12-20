@@ -1,0 +1,55 @@
+networks:
+  mygeektime:
+    driver: bridge
+services:
+  redis:
+    container_name: "mygeektime-redis"
+    image: redis:latest
+    hostname: "mygeektime-redis"
+    restart: always
+    networks:
+      - mygeektime
+    volumes:
+      # Mount the redis data directory to the container.
+      - .mygeektime/redis/data:/data
+    command: redis-server --requirepass 123456
+    ports:
+      - 6379:6379
+  mysql:
+    image: mysql:latest
+    container_name: "mygeektime-mysql"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=mygeektime
+    volumes:
+      - .mygeektime/mysql/log:/var/log/mysql
+      - .mygeektime/mysql/data:/var/lib/mysql
+      - .mygeektime/mysql/conf.d:/etc/mysql/conf.d
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 3306:3306
+    restart: always
+    networks:
+      - mygeektime
+  server:
+    container_name: "mygeektime-server"
+    hostname: "mygeektime-server"
+    image: zkep/mygeektime
+    privileged: true
+    restart: always
+    command: mygeektime server --config=config.yml
+    ports:
+      - 8090:8090
+    volumes:
+      - .mygeektime/repo:/repo
+      - .mygeektime/config.yml:/config.yml
+      - .mygeektime/Wechat.jpg:/Wechat.jpg
+    depends_on:
+      - redis
+      - mysql
+    networks:
+      - mygeektime
+    environment:
+      - GIN_MODE=test
+
+
