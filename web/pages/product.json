@@ -693,7 +693,7 @@
                                 "ids": "${id | trim}"
                               }
                             },
-                            "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在[任务管理]查看下载情况"
+                            "confirmText": "下载 [${share.title}] 会提交下载任务，\n 请在[我的课程]查看下载情况"
                           }
                         ]
                       },
@@ -712,7 +712,7 @@
                               "ids": "${ids|raw}"
                             }
                           },
-                          "confirmText": "下载 [${share.title}]会提交异步下载任务，\n 请在[任务管理]查看下载情况"
+                          "confirmText": "下载 [${share.title}]会提交下载任务，\n 请在[我的课程]查看下载情况"
                         }
                       ],
                       "headerToolbar": [
@@ -751,7 +751,7 @@
                 "level": "info",
                 "icon": "fa fa-download",
                 "actionType": "ajax",
-                "confirmText": "下载 [${share.title}] 会提交异步下载任务，\n 请在 [任务管理] 查看下载情况",
+                "confirmText": "下载 [${share.title}] 会提交下载任务，\n 请在 [我的课程] 查看下载情况",
                 "api": {
                   "url": "/v2/product/download",
                   "method":"post",

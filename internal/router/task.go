@@ -11,7 +11,7 @@ func task(_, private *gin.RouterGroup) {
 		private.GET("/task/list", api.List)
 		private.GET("/task/info", api.Info)
 		private.GET("/task/download", api.Download)
-		private.POST("/task/retry", api.Retry)
 		private.DELETE("/task/delete", api.Delete)
+		private.POST("/task/retry", api.Retry)
 	}
 }

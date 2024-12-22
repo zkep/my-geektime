@@ -1,7 +1,16 @@
 package config
 
 type Site struct {
-	EmailRegisterSubject string `json:"email_register_subject" yaml:"email_register_subject"`
-	EmailRegisterBody    string `json:"email_register_body" yaml:"email_register_body"`
-	EmailRegisterAttach  string `json:"email_register_attach" yaml:"email_register_attach"`
+	Register Register `json:"register" yaml:"register"`
+}
+
+type Register struct {
+	Type  string        `json:"type" yaml:"type"`
+	Email RegisterEmail `json:"email" yaml:"email"`
+}
+
+type RegisterEmail struct {
+	Subject string `json:"subject" yaml:"subject"`
+	Body    string `json:"body" yaml:"body"`
+	Attach  string `json:"attach" yaml:"attach"`
 }

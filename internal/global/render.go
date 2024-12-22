@@ -1,0 +1,16 @@
+package global
+
+import (
+	"github.com/zkep/mygeektime/lib/rest"
+)
+
+var (
+	Render *rest.I18nRender
+
+	OK            = Render.OK
+	OkWithMsg     = Render.OkWithMsg
+	FAIL          = Render.FAIL
+	FailWithMsg   = Render.FailWithMsg
+	FailWithError = Render.FailWithError
+	JSON          = Render.JSON
+)

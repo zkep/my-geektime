@@ -1,8 +1,6 @@
 package v2
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/service"
@@ -12,7 +10,7 @@ import (
 func (p *Product) PvipProductList(c *gin.Context) {
 	var req geek.PvipProductRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	if req.Tag > 0 {
@@ -24,7 +22,7 @@ func (p *Product) PvipProductList(c *gin.Context) {
 	accessToken := c.GetString(global.AccessToken)
 	resp, err := service.GetPvipProduct(c, identity, accessToken, req)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	ret := geek.ProductListResponse{Rows: make([]geek.ProductListRow, 0)}
@@ -56,5 +54,5 @@ func (p *Product) PvipProductList(c *gin.Context) {
 			Article:       v.Article,
 		})
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": ret})
+	global.OK(c, ret)
 }

@@ -6,6 +6,9 @@ server:
 jwt:
   secret: mygeektime-secret
   expires: 86400
+i18n:
+  directory: i18n
+  default_lang: zh-CN
 redis:
   addr: 127.0.0.1:6379
   password: 123456
@@ -32,6 +35,10 @@ storage: # mp4 or mp3 save folder
 browser:
   open_browser: true # Automatically open browser after service startup
 site:
-  email_register_subject: "我的极客时间邮箱验证码"
-  email_register_body: "验证码： <b>%s</b> <br/><br/> <b>👏 扫下方微信二维码，欢迎加入技术交流群</b>"
-  email_register_attach: web/public/wechat.jpg
+  register:
+     type: name # email | name
+     email:
+        subject: "我的极客时间邮箱验证码"
+        body: "验证码： <b>%s</b> <br/><br/> <b>👏 扫下方微信二维码，欢迎加入技术交流群</b>"
+        attach: web/public/wechat.jpg
+

@@ -47,7 +47,7 @@ mygeektime server
 ##### 自定义配置启动http服务
 ```shell
 # 使用自定义配置启动服务
-mygeektime server --config=config_templete.yml
+mygeektime server --config=config.yml
 ```
 
 ##### 默认配置文件

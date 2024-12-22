@@ -2,7 +2,6 @@ package v2
 
 import (
 	"encoding/json"
-	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -26,7 +25,7 @@ func NewTask() *Task {
 func (t *Task) List(c *gin.Context) {
 	var req task.TaskListRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	if req.PerPage <= 0 || (req.PerPage > 200) {
@@ -66,7 +65,7 @@ func (t *Task) List(c *gin.Context) {
 		Offset((req.Page - 1) * req.PerPage).
 		Limit(req.PerPage).
 		Find(&ls).Error; err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	for _, l := range ls {
@@ -114,19 +113,19 @@ func (t *Task) List(c *gin.Context) {
 		}
 		ret.Rows = append(ret.Rows, row)
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": ret})
+	global.OK(c, ret)
 }
 
 func (t *Task) Info(c *gin.Context) {
 	var req task.TaskInfoRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	var l model.Task
 	if err := global.DB.Model(&model.Task{}).
 		Where("task_id=?", req.Id).First(&l).Error; err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	var statistics task.TaskStatistics
@@ -163,13 +162,13 @@ func (t *Task) Info(c *gin.Context) {
 		Article: articleData.Data.Info,
 		Message: taskMessage,
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": resp})
+	global.OK(c, resp)
 }
 
 func (t *Task) Retry(c *gin.Context) {
 	var req task.RetryRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	err := global.DB.Transaction(func(tx *gorm.DB) error {
@@ -188,16 +187,16 @@ func (t *Task) Retry(c *gin.Context) {
 		return nil
 	})
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK"})
+	global.OK(c, nil)
 }
 
 func (t *Task) Delete(c *gin.Context) {
 	var req task.DeleteRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	err := global.DB.Transaction(func(tx *gorm.DB) error {
@@ -225,32 +224,32 @@ func (t *Task) Delete(c *gin.Context) {
 		return nil
 	})
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK"})
+	global.OK(c, nil)
 }
 
 func (t *Task) Download(c *gin.Context) {
 	var req task.TaskDownloadRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	var l model.Task
 	if err := global.DB.Model(&model.Task{}).
 		Where("task_id=?", req.Id).First(&l).Error; err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	var articleData geek.ArticleInfoResponse
 	if err := json.Unmarshal(l.Raw, &articleData); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	var taskMessage task.TaskMessage
 	if err := json.Unmarshal(l.Message, &taskMessage); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	baseName := service.VerifyFileName(articleData.Data.Info.Title)
@@ -259,7 +258,7 @@ func (t *Task) Download(c *gin.Context) {
 		converter := md.NewConverter("", true, nil)
 		markdown, err := converter.ConvertString(articleData.Data.Info.Content)
 		if err != nil {
-			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+			global.FAIL(c, "fail.msg", err.Error())
 			return
 		}
 		fileName := baseName + ".md"

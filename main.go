@@ -6,6 +6,7 @@ import (
 	"github.com/zkep/mygeektime/cmd"
 )
 
+//go:embed i18n/*
 //go:embed web/index.html
 //go:embed web/public/*
 //go:embed web/pages/*

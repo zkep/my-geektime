@@ -35,7 +35,9 @@ func NewApp(ctx context.Context, quit <-chan os.Signal, assets embed.FS) *App {
 }
 
 func (app *App) Run(f *Flags) error {
-	var cfg config.Config
+	var (
+		cfg config.Config
+	)
 	if f.Config == "" {
 		fi, err := app.assets.Open("config.yml")
 		if err != nil {
@@ -74,7 +76,10 @@ func (app *App) Run(f *Flags) error {
 	if err := initialize.Tw(app.ctx); err != nil {
 		return err
 	}
-	if err := initialize.InitRedis(app.ctx); err != nil {
+	if err := initialize.Redis(app.ctx); err != nil {
+		return err
+	}
+	if err := initialize.I18N(app.ctx, app.assets); err != nil {
 		return err
 	}
 

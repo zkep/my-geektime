@@ -12,7 +12,7 @@ message User {
   // uid
   string uid = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:uid\""];
   // email
-  string email = 3 [(gogoproto.moretags) = "gorm:\"unique;size:20;comment:email\""];
+  string email = 3 [(gogoproto.moretags) = "gorm:\"index;size:20;comment:email\""];
   // user_name
   string user_name = 4 [(gogoproto.moretags) = "gorm:\"index;size:255;comment:user name\""];
   // nike_name

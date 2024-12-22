@@ -1,0 +1,20 @@
+ok: "OK!"
+fail:
+  normal: "FAIL!!!"
+  msg: "FAIL! %s"
+
+base:
+  login:
+    error: "Wrong username or password"
+    type: "Incorrect login method"
+  register:
+    type: "nsupported registration methods"
+    exists: "The current account already exists, please log in"
+    err_code: "The verification code is incorrect"
+
+
+product:
+  no_cookie: "Geek time cookie does not exist, please refresh the cookie!"
+  api_busy: "The service is busy, please try again later！"
+  no_exists_pid: "Non-existent course ID"
+

@@ -46,7 +46,7 @@ mygeektime server
 ##### Customize configuration to start HTTP service
 ```shell
 # Use custom configuration templates
-mygeektime server --config=config_templete.yml
+mygeektime server --config=config.yml
 ```
 
 ##### Default configuration file

@@ -1,24 +1,23 @@
 package v2
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"net/http/cookiejar"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
+	"github.com/zkep/mygeektime/internal/service"
 	"github.com/zkep/mygeektime/internal/types/base"
 	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/internal/types/user"
 	"github.com/zkep/mygeektime/lib/utils"
-	"github.com/zkep/mygeektime/lib/zhttp"
 	"gopkg.in/gomail.v2"
 	"gorm.io/gorm"
 )
@@ -32,46 +31,67 @@ func NewBase() *Base {
 func (b *Base) Login(c *gin.Context) {
 	var r base.LoginRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusInternalServerError,
-			"msg":    err.Error(),
-		})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	var info model.User
 	switch r.Type {
-	case geek.AuthWithUser:
+	case base.LoginWithEmail:
+		var req base.LoginWithEmailRequest
+		if err := json.Unmarshal(r.Data, &req); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		if err := binding.Validator.ValidateStruct(req); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
 		if err := global.DB.
 			Where(&model.User{
-				Email:  r.Email,
+				Email:  req.Email,
 				Status: user.UserStatusActive,
 			}).
 			First(&info).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				c.JSON(http.StatusOK, gin.H{
-					"status": http.StatusInternalServerError,
-					"msg":    "错误的用户名或密码",
-				})
-			} else {
-				c.JSON(http.StatusOK, gin.H{
-					"status": http.StatusInternalServerError,
-					"msg":    err.Error(),
-				})
+				global.FAIL(c, "base.login.error")
+				return
 			}
+			global.FAIL(c, "fail.msg", err.Error())
 			return
 		}
-		if !utils.BcryptCheck(r.Password, info.Password) {
-			c.JSON(http.StatusOK, gin.H{
-				"status": http.StatusInternalServerError,
-				"msg":    "错误的用户名或密码",
-			})
+		if !utils.BcryptCheck(req.Password, info.Password) {
+			global.FAIL(c, "base.login.error")
+			return
+		}
+	case base.LoginWithName:
+		var req base.LoginWithNameRequest
+		if err := json.Unmarshal(r.Data, &req); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		if err := binding.Validator.ValidateStruct(req); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		if err := global.DB.
+			Where(&model.User{
+				UserName: req.Account,
+				Status:   user.UserStatusActive,
+			}).
+			First(&info).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				global.FAIL(c, "base.login.error")
+				return
+			}
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		if !utils.BcryptCheck(req.Password, info.Password) {
+			global.FAIL(c, "base.login.error")
 			return
 		}
 	default:
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusInternalServerError,
-			"msg":    "错误的登录方式",
-		})
+		global.FAIL(c, "base.login.type")
 		return
 	}
 	token, expire, err := global.JWT.DefaultTokenGenerator(
@@ -79,14 +99,10 @@ func (b *Base) Login(c *gin.Context) {
 			claims := jwt.MapClaims{}
 			claims[global.Identity] = info.Uid
 			claims[global.Role] = info.RoleId
-			claims[global.AccessToken] = info.AccessToken
 			return claims, nil
 		})
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusInternalServerError,
-			"msg":    err.Error(),
-		})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -101,29 +117,29 @@ func (b *Base) Login(c *gin.Context) {
 }
 
 func (b *Base) Register(c *gin.Context) {
-	var req base.RegisterRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
-			"msg":    "Register Fail",
-		})
+	var r base.RegisterRequest
+	if err := c.ShouldBindJSON(&r); err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	switch req.Type {
-	case geek.AuthWithUser:
+	switch r.Type {
+	case base.LoginWithEmail:
+		var req base.RegisterWithEmailRequest
+		if err := json.Unmarshal(r.Data, &req); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		if err := binding.Validator.ValidateStruct(req); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
 		code, err := global.Redis.Get(c, req.Email).Result()
 		if err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"status": http.StatusInternalServerError,
-				"msg":    err.Error(),
-			})
+			global.FAIL(c, "fail.msg", err.Error())
 			return
 		}
 		if !strings.EqualFold(code, req.Code) {
-			c.JSON(http.StatusOK, gin.H{
-				"status": http.StatusInternalServerError,
-				"msg":    "验证码不正确",
-			})
+			global.FAIL(c, "base.register.err_code")
 			return
 		}
 		var info model.User
@@ -133,60 +149,83 @@ func (b *Base) Register(c *gin.Context) {
 				Status: user.UserStatusActive,
 			}).
 			First(&info).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-			c.JSON(http.StatusOK, gin.H{
-				"status": http.StatusInternalServerError,
-				"msg":    err.Error(),
-			})
+			global.FAIL(c, "fail.msg", err.Error())
 			return
 		}
 		if len(info.UserName) > 0 {
-			c.JSON(http.StatusOK, gin.H{
-				"status": http.StatusInternalServerError,
-				"msg":    "当前账号已存在，请登录",
-			})
+			global.FAIL(c, "base.register.exists")
 			return
 		}
 		var count int64
-		if err := global.DB.Model(&model.User{}).Count(&count).Error; err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"status": http.StatusInternalServerError,
-				"msg":    err.Error(),
-			})
+		if err = global.DB.Model(&model.User{}).Count(&count).Error; err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
 			return
 		}
 		// first user is admin
 		if count == 0 {
-			info.RoleId = 1
+			info.RoleId = user.AdminRoleId
 		}
 		info.Uid = utils.HalfUUID()
 		info.Email = req.Email
 		info.UserName = req.Email
 		info.NikeName = req.Email
 		info.Password = utils.BcryptHash(req.Password)
+		if err = global.DB.Create(&info).Error; err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+	case base.LoginWithName:
+		var req base.RegisterWithNameRequest
+		if err := json.Unmarshal(r.Data, &req); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		if err := binding.Validator.ValidateStruct(req); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		var info model.User
+		if err := global.DB.
+			Where(&model.User{
+				UserName: req.Account,
+				Status:   user.UserStatusActive,
+			}).
+			First(&info).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		if len(info.UserName) > 0 {
+			global.FAIL(c, "base.register.exists")
+			return
+		}
+		var count int64
+		if err := global.DB.Model(&model.User{}).Count(&count).Error; err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		// first user is admin
+		if count == 0 {
+			info.RoleId = user.AdminRoleId
+		}
+		info.Uid = utils.HalfUUID()
+		info.UserName = req.Account
+		info.NikeName = req.Account
+		info.Password = utils.BcryptHash(req.Password)
 		if err := global.DB.Create(&info).Error; err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"status": http.StatusInternalServerError,
-				"msg":    err.Error(),
-			})
+			global.FAIL(c, "fail.msg", err.Error())
 			return
 		}
 	default:
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusInternalServerError,
-			"msg":    "Unsupported registration type",
-		})
+		global.FAIL(c, "base.register.type")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK"})
+	global.OK(c, nil)
 }
 
 func (b *Base) SendEmail(c *gin.Context) {
 	var req base.SendEmailRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusInternalServerError,
-			"msg":    err.Error(),
-		})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	gen := utils.NewStrGenerator(utils.StrGeneratorWithChars(utils.SimpleChars))
@@ -196,99 +235,40 @@ func (b *Base) SendEmail(c *gin.Context) {
 	m := gomail.NewMessage()
 	m.SetHeader("From", global.CONF.Email.From)
 	m.SetHeader("To", req.Email)
-	m.SetHeader("Subject", global.CONF.Site.EmailRegisterSubject)
-	m.SetBody("text/html", fmt.Sprintf(global.CONF.Site.EmailRegisterBody, code))
-	if global.CONF.Site.EmailRegisterAttach != "" {
-		m.Attach(global.CONF.Site.EmailRegisterAttach)
+	m.SetHeader("Subject", global.CONF.Site.Register.Email.Subject)
+	m.SetBody("text/html", fmt.Sprintf(global.CONF.Site.Register.Email.Body, code))
+	if global.CONF.Site.Register.Email.Attach != "" {
+		m.Attach(global.CONF.Site.Register.Email.Attach)
 	}
 	if err := d.DialAndSend(m); err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusInternalServerError,
-			"msg":    err.Error(),
-		})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	if err := global.Redis.SetEx(c, req.Email, code, time.Minute*2).Err(); err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusInternalServerError,
-			"msg":    err.Error(),
-		})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK"})
+	global.OK(c, nil)
 }
 
 func (b *Base) RefreshCookie(c *gin.Context) {
 	var r base.RefreshCookieRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusInternalServerError,
-			"msg":    err.Error(),
-		})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	identity := c.GetString(global.Identity)
 	var auth geek.AuthResponse
-	if err := authority(r.Cookie, saveCookie(r.Cookie, identity, &auth)); err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
-			"msg":    err.Error(),
-		})
+	if err := service.Authority(r.Cookie, service.SaveCookie(r.Cookie, identity, &auth)); err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK"})
+	global.OK(c, nil)
 }
 
-const (
-	authURL    = "https://account.geekbang.org/serv/v1/user/auth"
-	refererURL = "https://time.geekbang.org/dashboard/usercenter"
-)
-
-func saveCookie(cookies string, identity string, auth *geek.AuthResponse) func(r *http.Response) error {
-	return func(r *http.Response) error {
-		if err := json.NewDecoder(r.Body).Decode(auth); err != nil {
-			return err
-		}
-		user := model.User{
-			Uid:         identity,
-			NikeName:    auth.Data.Nick,
-			Avatar:      auth.Data.Avatar,
-			AccessToken: cookies,
-		}
-		if err := global.DB.Where(model.User{Uid: identity}).
-			Assign(model.User{
-				UserName:    auth.Data.Nick,
-				Avatar:      auth.Data.Avatar,
-				AccessToken: cookies,
-			}).
-			FirstOrCreate(&user).Error; err != nil {
-			return err
-		}
-		return nil
+func (b *Base) Config(c *gin.Context) {
+	ret := base.Config{
+		RegisterType: global.CONF.Site.Register.Type,
 	}
-}
-
-func authority(cookies string, after func(*http.Response) error) error {
-	jar, _ := cookiejar.New(nil)
-	global.HttpClient = &http.Client{Jar: jar, Timeout: 5 * time.Minute}
-	t := time.Now().UnixMilli()
-	authUrl := fmt.Sprintf("%s?t=%d&v_t=%d", authURL, t, t)
-
-	err := zhttp.R.Client(global.HttpClient).
-		Before(func(r *http.Request) {
-			r.Header.Set("Accept", "application/json, text/plain, */*")
-			r.Header.Set("Referer", refererURL)
-			r.Header.Set("Cookie", cookies)
-			r.Header.Set("Sec-Ch-Ua", `"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"`)
-			r.Header.Set("User-Agent", zhttp.RandomUserAgent())
-			r.Header.Set("Accept", "application/json, text/plain, */*")
-			r.Header.Set("Content-Type", "application/json")
-			r.Header.Set("Origin", "https://time.geekbang.com")
-		}).
-		After(after).
-		DoWithRetry(context.Background(), http.MethodGet, authUrl, nil)
-	if err != nil {
-		return err
-	}
-	return nil
+	global.OK(c, ret)
 }

@@ -56,7 +56,6 @@ func doWithToken(c *gin.Context, token *jwt.Token) error {
 	}
 	c.Set(global.Identity, claims[global.Identity])
 	c.Set(global.Role, claims[global.Role])
-	c.Set(global.AccessToken, claims[global.AccessToken])
 	return nil
 }
 

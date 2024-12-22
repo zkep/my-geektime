@@ -3,6 +3,7 @@ package task
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"strconv"
 	"sync"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/zkep/mygeektime/internal/service"
 	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/internal/types/task"
+	"github.com/zkep/mygeektime/internal/types/user"
 	"github.com/zkep/mygeektime/lib/pool"
 	"go.uber.org/zap"
 )
@@ -138,11 +140,14 @@ func worker(ctx context.Context, x *model.Task) error {
 		if err != nil {
 			return err
 		}
-		var user model.User
-		if err = global.DB.Where(&model.Task{Uid: x.Uid}).Find(&user).Error; err != nil {
+		var u model.User
+		if err = global.DB.Where(&model.User{RoleId: user.AdminRoleId}).First(&u).Error; err != nil {
 			return err
 		}
-		article, err := service.GetArticleInfo(ctx, user.Uid, user.AccessToken, geek.ArticlesInfoRequest{Id: aid})
+		if u.AccessToken == "" {
+			return errors.New("no access token, please refresh geektime cookie")
+		}
+		article, err := service.GetArticleInfo(ctx, u.Uid, u.AccessToken, geek.ArticlesInfoRequest{Id: aid})
 		if err != nil {
 			return err
 		}

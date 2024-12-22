@@ -3,7 +3,6 @@ package v2
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"strconv"
 	"strings"
 
@@ -26,7 +25,7 @@ func NewProduct() *Product {
 func (p *Product) Articles(c *gin.Context) {
 	var req geek.ArticlesListRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	req.Size = req.PerPage
@@ -35,7 +34,7 @@ func (p *Product) Articles(c *gin.Context) {
 	accessToken := c.GetString(global.AccessToken)
 	resp, err := service.GetArticles(c, identity, accessToken, req)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	ret := geek.ArticlesListResponse{Rows: make([]geek.ArticlesListRow, 0)}
@@ -58,33 +57,37 @@ func (p *Product) Articles(c *gin.Context) {
 		}
 		ret.Rows = append(ret.Rows, item)
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "data": ret})
+	global.OK(c, ret)
 }
 
 func (p *Product) ArticleInfo(c *gin.Context) {
 	var req geek.ArticlesInfoRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	identity := c.GetString(global.Identity)
 	accessToken := c.GetString(global.AccessToken)
 	resp, err := service.GetArticleInfo(c, identity, accessToken, req)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": resp.Data.Info})
+	global.OK(c, resp.Data.Info)
 }
 
 func (p *Product) Download(c *gin.Context) {
 	var req geek.DowloadRequest
 	if err := c.BindJSON(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "error": err.Error()})
+		global.FAIL(c, "fail.msg", err)
 		return
 	}
 	identity := c.GetString(global.Identity)
 	accessToken := c.GetString(global.AccessToken)
+	if accessToken == "" {
+		global.FAIL(c, "product.no_cookie")
+		return
+	}
 	articlesMap := make(map[int64]*model.Article, 10)
 	ids := make([]int64, 0, 1)
 	switch x := req.Ids.(type) {
@@ -92,7 +95,7 @@ func (p *Product) Download(c *gin.Context) {
 		for _, v := range strings.Split(x, ",") {
 			i, err := strconv.ParseInt(v, 10, 64)
 			if err != nil {
-				c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+				global.FAIL(c, "fail.msg", err)
 				return
 			}
 			ids = append(ids, i)
@@ -101,10 +104,9 @@ func (p *Product) Download(c *gin.Context) {
 		ids = append(ids, int64(x))
 	default:
 		if req.Pid <= 0 {
-			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": "not valid ids"})
+			global.FAIL(c, "product.no_exists_pid")
 			return
 		}
-
 		resp, err := service.GetArticles(c,
 			identity, accessToken,
 			geek.ArticlesListRequest{
@@ -114,11 +116,11 @@ func (p *Product) Download(c *gin.Context) {
 				Size:  500,
 			})
 		if err != nil {
-			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+			global.FailWithError(c, err)
 			return
 		}
 		if len(resp.Data.List) == 0 {
-			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": "geektime api busy"})
+			global.FAIL(c, "product.api_busy")
 			return
 		}
 		for _, v := range resp.Data.List {
@@ -135,15 +137,15 @@ func (p *Product) Download(c *gin.Context) {
 	}
 	var product model.Product
 	if err := global.DB.Model(&model.Product{}).
-		Where("pid = ?", req.Pid).Find(&product).Error; err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		Where(&model.Product{Pid: fmt.Sprintf("%d", req.Pid)}).Find(&product).Error; err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	if len(articlesMap) == 0 {
 		var articles []*model.Article
 		if err := global.DB.Model(&model.Article{}).
 			Where("aid IN ?", ids).Find(&articles).Error; err != nil {
-			c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+			global.FAIL(c, "fail.msg", err.Error())
 			return
 		}
 		for _, v := range articles {
@@ -175,7 +177,7 @@ func (p *Product) Download(c *gin.Context) {
 		if article, ok := articlesMap[id]; !ok {
 			info, err := service.GetArticleInfo(c, identity, accessToken, geek.ArticlesInfoRequest{Id: id})
 			if err != nil {
-				c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+				global.FAIL(c, "fail.msg", err.Error())
 				return
 			}
 			raw, _ = json.Marshal(info)
@@ -227,17 +229,17 @@ func (p *Product) Download(c *gin.Context) {
 		return nil
 	})
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	resp := geek.DowloadResponse{JobID: jobId}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": resp})
+	global.OK(c, resp)
 }
 
 func (p *Product) DailyProductList(c *gin.Context) {
 	var req geek.DailyProductRequest
 	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	req.Size = req.PerPage
@@ -246,7 +248,7 @@ func (p *Product) DailyProductList(c *gin.Context) {
 	accessToken := c.GetString(global.AccessToken)
 	resp, err := service.GetDailyProduct(c, identity, accessToken, req)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"status": 100, "msg": err.Error()})
+		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	ret := geek.ProductListResponse{Rows: make([]geek.ProductListRow, 0)}
@@ -278,5 +280,5 @@ func (p *Product) DailyProductList(c *gin.Context) {
 			Article:       v.Article,
 		})
 	}
-	c.JSON(http.StatusOK, gin.H{"status": 0, "msg": "OK", "data": ret})
+	global.OK(c, resp)
 }

@@ -8,7 +8,6 @@ import (
 
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// origin := c.Request.Header.Get("Origin")
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,"+
 			"X-CSRF-Token,Authorization,Token,X-Token,X-User-Id,X-ijt")

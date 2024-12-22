@@ -6,3 +6,7 @@ type Storage struct {
 	Bucket    string `json:"bucket" yaml:"bucket"`
 	Host      string `json:"host" yaml:"host"`
 }
+
+const (
+	StorageLocal = "local"
+)

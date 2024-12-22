@@ -1,10 +1,5 @@
 package geek
 
-const (
-	AuthWithUser   = "user"
-	AuthWithCookie = "cookie"
-)
-
 type AuthResponse struct {
 	Error []any    `json:"error,omitempty"`
 	Extra []any    `json:"extra,omitempty"`
