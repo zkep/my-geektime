@@ -918,7 +918,7 @@
                                       "type": "video",
                                       "muted": true,
                                       "autoPlay": false,
-                                      "rates": [1.0,1.5, 2.0],
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${article.video.hls_medias|last|pick:url}",
                                       "poster": "${article.video.cover}",
                                       "visibleOn": "${ article.video.hls_medias !== undefined }"
@@ -927,7 +927,7 @@
                                       "type": "video",
                                       "muted": true,
                                       "autoPlay": false,
-                                      "rates": [1.0,1.5, 2.0],
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${article.video_preview.medias|last|pick:url}",
                                       "poster": "${article.video.cover}",
                                       "visibleOn": "${ article.video.hls_medias === undefined && article.video_preview.medias !== undefined }"
@@ -938,7 +938,7 @@
                                     {
                                       "type": "audio",
                                       "autoPlay": false,
-                                      "rates": [1.0,1.5, 2.0],
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${article.audio.download_url}",
                                       "visibleOn": "${ article.audio.download_url !== undefined }"
                                     },
