@@ -34,8 +34,9 @@ func GetArticleInfo(ctx context.Context, uid, accessToken string,
 				global.LOG.Warn("GetArticleInfo", zap.Any("error", resp.Error))
 				return nil
 			}
+			resp.Raw = raw
 			go func(info geek.ArticleInfoResponse) {
-				aid := fmt.Sprintf("%d", info.Data.Info.Id)
+				aid := fmt.Sprintf("%d", info.Data.Info.ID)
 				pid := fmt.Sprintf("%d", info.Data.Info.Pid)
 				article := model.Article{
 					Aid:   aid,
@@ -47,9 +48,7 @@ func GetArticleInfo(ctx context.Context, uid, accessToken string,
 				}
 				if err := global.DB.
 					Model(&model.Article{}).
-					Where(&model.Article{
-						Aid: aid,
-					}).
+					Where(&model.Article{Aid: aid}).
 					Assign(&article).
 					FirstOrCreate(&article).Error; err != nil {
 					global.LOG.Error("GetArticleInfo.AutoSync", zap.Error(err))
@@ -142,9 +141,7 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 					}
 					if err := global.DB.
 						Model(&model.Product{}).
-						Where(&model.Product{
-							Pid: product.Pid,
-						}).
+						Where(&model.Product{Pid: product.Pid}).
 						Assign(product).
 						FirstOrCreate(&product).Error; err != nil {
 						global.LOG.Error("GetPvipProduct.AutoSync", zap.Error(err))
@@ -186,9 +183,7 @@ func GetDailyProduct(ctx context.Context, uid, accessToken string,
 					}
 					if err := global.DB.
 						Model(&model.Product{}).
-						Where(&model.Product{
-							Pid: product.Pid,
-						}).
+						Where(&model.Product{Pid: product.Pid}).
 						Assign(product).
 						FirstOrCreate(&product).Error; err != nil {
 						global.LOG.Error("GetProduct.AutoSync", zap.Error(err))

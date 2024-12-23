@@ -1,5 +1,7 @@
 package geek
 
+import "encoding/json"
+
 type ProductListRequest struct {
 	Desc           bool   `json:"desc" form:"desc"`
 	Expire         int    `json:"expire" form:"expire"`
@@ -38,7 +40,7 @@ type ProductListRow struct {
 	Sale          int            `json:"sale,omitempty"`
 	SaleType      int            `json:"sale_type,omitempty"`
 	Share         ProductShare   `json:"share,omitempty"`
-	Author        ProductAuthor  `json:"author,omitempty"`
+	Author        ArticleAuthor  `json:"author,omitempty"`
 	Cover         ProductCover   `json:"cover,omitempty"`
 	Article       ProductArticle `json:"article,omitempty"`
 }
@@ -48,16 +50,6 @@ type ProductShare struct {
 	Content string `json:"content,omitempty"`
 	Cover   string `json:"cover,omitempty"`
 	Poster  string `json:"poster,omitempty"`
-}
-
-type ProductAuthor struct {
-	Name      string `json:"name,omitempty"`
-	Intro     string `json:"intro,omitempty"`
-	Info      string `json:"info,omitempty"`
-	Avatar    string `json:"avatar,omitempty"`
-	BriefHTML string `json:"brief_html,omitempty"`
-	Brief     string `json:"brief,omitempty"`
-	AiID      string `json:"ai_id,omitempty"`
 }
 
 type ProductCover struct {
@@ -83,6 +75,7 @@ type ProductArticle struct {
 type Extra struct {
 	Cost      any `json:"cost,omitempty"`
 	RequestID any `json:"request-id,omitempty"`
+	Sub       Sub `json:"sub,omitempty"`
 }
 
 type ProductResponse struct {
@@ -155,7 +148,7 @@ type ProductBase struct {
 	Ucode         string         `json:"ucode,omitempty"`
 	IsFinish      bool           `json:"is_finish,omitempty"`
 	Share         ProductShare   `json:"share,omitempty"`
-	Author        ProductAuthor  `json:"author,omitempty"`
+	Author        ArticleAuthor  `json:"author,omitempty"`
 	Cover         ProductCover   `json:"cover,omitempty"`
 	Article       ProductArticle `json:"article,omitempty"`
 	Seo           struct {
@@ -502,152 +495,18 @@ type ArticlesInfoRequest struct {
 }
 
 type ArticleInfoResponse struct {
-	Code  int         `json:"code,omitempty"`
-	Data  ArticleData `json:"data,omitempty"`
-	Error any         `json:"error,omitempty"`
-	Extra Extra       `json:"extra,omitempty"`
+	Code  int             `json:"code,omitempty"`
+	Data  ArticleData     `json:"data,omitempty"`
+	Error any             `json:"error,omitempty"`
+	Extra Extra           `json:"extra,omitempty"`
+	Raw   json.RawMessage `json:"-"`
 }
 
-type ArticleData struct {
-	Info    ArticleInfo `json:"info,omitempty"`
-	Product struct {
-		ID         int    `json:"id,omitempty"`
-		Title      string `json:"title,omitempty"`
-		University struct {
-			RedirectType  string `json:"redirect_type,omitempty"`
-			RedirectParam string `json:"redirect_param,omitempty"`
-		} `json:"university,omitempty"`
-		Extra struct {
-			Sub struct {
-				HadDone    bool `json:"had_done,omitempty"`
-				AccessMask int  `json:"access_mask,omitempty"`
-			} `json:"sub,omitempty"`
-		} `json:"extra,omitempty"`
-		Type string `json:"type,omitempty"`
-	} `json:"product,omitempty"`
-	FreeGet    bool `json:"free_get,omitempty"`
-	IsFullText bool `json:"is_full_text,omitempty"`
-}
-
-type ArticleInfo struct {
-	Id           int    `json:"id,omitempty"`
-	Pid          int    `json:"pid,omitempty"`
-	Type         int    `json:"type,omitempty"`
-	ChapterID    int    `json:"chapter_id,omitempty"`
-	ChapterTitle string `json:"chapter_title,omitempty"`
-	Title        string `json:"title,omitempty"`
-	Subtitle     string `json:"subtitle,omitempty"`
-	ShareTitle   string `json:"share_title,omitempty"`
-	Summary      string `json:"summary,omitempty"`
-	Ctime        int    `json:"ctime,omitempty"`
-	Cover        struct {
-		Default string `json:"default,omitempty"`
-	} `json:"cover,omitempty"`
-	Author ProductAuthor `json:"author,omitempty"`
-	Audio  struct {
-		Title       string   `json:"title,omitempty"`
-		Dubber      string   `json:"dubber,omitempty"`
-		DownloadURL string   `json:"download_url,omitempty"`
-		Md5         string   `json:"md5,omitempty"`
-		Size        int      `json:"size,omitempty"`
-		Time        string   `json:"time,omitempty"`
-		TimeArr     []string `json:"time_arr,omitempty"`
-		URL         string   `json:"url,omitempty"`
-	} `json:"audio,omitempty"`
-	Video struct {
-		ID       string `json:"id,omitempty"`
-		Duration int    `json:"duration,omitempty"`
-		Cover    string `json:"cover,omitempty"`
-		Width    int    `json:"width,omitempty"`
-		Height   int    `json:"height,omitempty"`
-		Size     int    `json:"size,omitempty"`
-		Time     string `json:"time,omitempty"`
-		Medias   []struct {
-			Size    int    `json:"size,omitempty"`
-			Quality string `json:"quality,omitempty"`
-			URL     string `json:"url,omitempty"`
-		} `json:"medias,omitempty"`
-		HlsVid    string `json:"hls_vid,omitempty"`
-		HlsMedias []struct {
-			Size    int    `json:"size,omitempty"`
-			Quality string `json:"quality,omitempty"`
-			URL     string `json:"url,omitempty"`
-		} `json:"hls_medias,omitempty"`
-		Subtitles []any `json:"subtitles,omitempty"`
-		Tips      []any `json:"tips,omitempty"`
-	} `json:"video,omitempty"`
-	VideoPreview struct {
-		Duration int `json:"duration,omitempty"`
-		Medias   []struct {
-			Size    int    `json:"size,omitempty"`
-			Quality string `json:"quality,omitempty"`
-			URL     string `json:"url,omitempty"`
-		} `json:"medias,omitempty"`
-	} `json:"video_preview,omitempty"`
-	VideoPreviews []struct {
-		Duration int `json:"duration,omitempty"`
-		Medias   []struct {
-			Size    int    `json:"size,omitempty"`
-			Quality string `json:"quality,omitempty"`
-			URL     string `json:"url,omitempty"`
-		} `json:"medias,omitempty"`
-	} `json:"video_previews,omitempty"`
-	InlineVideoSubtitles []any `json:"inline_video_subtitles,omitempty"`
-	CouldPreview         bool  `json:"could_preview,omitempty"`
-	VideoCouldPreview    bool  `json:"video_could_preview,omitempty"`
-	CoverHidden          bool  `json:"cover_hidden,omitempty"`
-	IsRequired           bool  `json:"is_required,omitempty"`
-	Extra                struct {
-		Rate []struct {
-			Type           int  `json:"type,omitempty"`
-			CurVersion     int  `json:"cur_version,omitempty"`
-			CurRate        int  `json:"cur_rate,omitempty"`
-			MaxRate        int  `json:"max_rate,omitempty"`
-			TotalRate      int  `json:"total_rate,omitempty"`
-			LearnedSeconds int  `json:"learned_seconds,omitempty"`
-			IsFinished     bool `json:"is_finished,omitempty"`
-		} `json:"rate,omitempty"`
-		RatePercent int  `json:"rate_percent,omitempty"`
-		IsFinished  bool `json:"is_finished,omitempty"`
-		Fav         struct {
-			Count   int  `json:"count,omitempty"`
-			HadDone bool `json:"had_done,omitempty"`
-		} `json:"fav,omitempty"`
-		IsUnlocked bool `json:"is_unlocked,omitempty"`
-		Learn      struct {
-			Ucount int `json:"ucount,omitempty"`
-		} `json:"learn,omitempty"`
-		FooterCoverData struct {
-			ImgURL  string `json:"img_url,omitempty"`
-			MpURL   string `json:"mp_url,omitempty"`
-			LinkURL string `json:"link_url,omitempty"`
-		} `json:"footer_cover_data,omitempty"`
-		Work struct {
-			IsWork       bool `json:"is_work,omitempty"`
-			Status       int  `json:"status,omitempty"`
-			CorrectLevel int  `json:"correct_level,omitempty"`
-		} `json:"work,omitempty"`
-		TypeTime int `json:"type_time,omitempty"`
-	} `json:"extra,omitempty"`
-	Score           int    `json:"score,omitempty"`
-	IsVideo         bool   `json:"is_video,omitempty"`
-	PosterWxlite    string `json:"poster_wxlite,omitempty"`
-	HadFreelyread   bool   `json:"had_freelyread,omitempty"`
-	FloatQrcode     string `json:"float_qrcode,omitempty"`
-	FloatAppQrcode  string `json:"float_app_qrcode,omitempty"`
-	FloatQrcodeJump string `json:"float_qrcode_jump,omitempty"`
-	InPvip          int    `json:"in_pvip,omitempty"`
-	CommentCount    int    `json:"comment_count,omitempty"`
-	Cshort          string `json:"cshort,omitempty"`
-	Like            struct {
-		Count   int  `json:"count,omitempty"`
-		HadDone bool `json:"had_done,omitempty"`
-	} `json:"like,omitempty"`
-	ReadingTime int    `json:"reading_time,omitempty"`
-	IPAddress   string `json:"ip_address,omitempty"`
-	Content     string `json:"content,omitempty"`
-	ContentMd   string `json:"content_md,omitempty"`
-	Attachments []any  `json:"attachments,omitempty"`
+type ArticleInfoRaw struct {
+	Code  int             `json:"code,omitempty"`
+	Data  json.RawMessage `json:"data,omitempty"`
+	Error any             `json:"error,omitempty"`
+	Extra Extra           `json:"extra,omitempty"`
 }
 
 type DailyProductRequest struct {
@@ -973,4 +832,169 @@ type DailyProductResponse struct {
 		Cost      float64 `json:"cost,omitempty"`
 		RequestID any     `json:"request-id,omitempty"`
 	} `json:"extra,omitempty"`
+}
+
+type ArticleData struct {
+	Info       ArticleInfo `json:"info,omitempty"`
+	Product    Product     `json:"product,omitempty"`
+	FreeGet    bool        `json:"free_get,omitempty"`
+	IsFullText bool        `json:"is_full_text,omitempty"`
+}
+
+type ArticleInfo struct {
+	ID                   int                 `json:"id,omitempty"`
+	Type                 int                 `json:"type,omitempty"`
+	Pid                  int                 `json:"pid,omitempty"`
+	ChapterID            int                 `json:"chapter_id,omitempty"`
+	ChapterTitle         string              `json:"chapter_title,omitempty"`
+	Title                string              `json:"title,omitempty"`
+	Subtitle             string              `json:"subtitle,omitempty"`
+	ShareTitle           string              `json:"share_title,omitempty"`
+	Summary              string              `json:"summary,omitempty"`
+	Ctime                int                 `json:"ctime,omitempty"`
+	Cover                ArticleCover        `json:"cover,omitempty"`
+	Author               ArticleAuthor       `json:"author,omitempty"`
+	Audio                ArticleAudio        `json:"audio,omitempty"`
+	Video                ArticleVideo        `json:"video,omitempty"`
+	VideoPreview         ArticleVideoPreview `json:"video_preview,omitempty"`
+	VideoPreviews        []any               `json:"video_previews,omitempty"`
+	InlineVideoSubtitles []any               `json:"inline_video_subtitles,omitempty"`
+	CouldPreview         bool                `json:"could_preview,omitempty"`
+	VideoCouldPreview    bool                `json:"video_could_preview,omitempty"`
+	CoverHidden          bool                `json:"cover_hidden,omitempty"`
+	IsRequired           bool                `json:"is_required,omitempty"`
+	Extra                ArticleExtra        `json:"extra,omitempty"`
+	Score                int                 `json:"score,omitempty"`
+	IsVideo              bool                `json:"is_video,omitempty"`
+	PosterWxlite         string              `json:"poster_wxlite,omitempty"`
+	HadFreelyread        bool                `json:"had_freelyread,omitempty"`
+	FloatQrcode          string              `json:"float_qrcode,omitempty"`
+	FloatAppQrcode       string              `json:"float_app_qrcode,omitempty"`
+	FloatQrcodeJump      string              `json:"float_qrcode_jump,omitempty"`
+	InPvip               int                 `json:"in_pvip,omitempty"`
+	CommentCount         int                 `json:"comment_count,omitempty"`
+	Cshort               string              `json:"cshort,omitempty"`
+	Like                 ArticleLike         `json:"like,omitempty"`
+	ReadingTime          int                 `json:"reading_time,omitempty"`
+	IPAddress            string              `json:"ip_address,omitempty"`
+	Content              string              `json:"content,omitempty"`
+	ContentMd            string              `json:"content_md,omitempty"`
+	Attachments          []any               `json:"attachments,omitempty"`
+}
+
+type ArticleCover struct {
+	Default string `json:"default,omitempty"`
+}
+
+type ArticleAuthor struct {
+	Name      string `json:"name,omitempty"`
+	Intro     string `json:"intro,omitempty"`
+	Info      string `json:"info,omitempty"`
+	Avatar    string `json:"avatar,omitempty"`
+	BriefHTML string `json:"brief_html,omitempty"`
+	Brief     string `json:"brief,omitempty"`
+	AiID      string `json:"ai_id,omitempty"`
+}
+
+type ArticleAudio struct {
+	Title       string   `json:"title,omitempty"`
+	Dubber      string   `json:"dubber,omitempty"`
+	DownloadURL string   `json:"download_url,omitempty"`
+	Md5         string   `json:"md5,omitempty"`
+	Size        int      `json:"size,omitempty"`
+	Time        string   `json:"time,omitempty"`
+	TimeArr     []string `json:"time_arr,omitempty"`
+	URL         string   `json:"url,omitempty"`
+}
+
+type ArticleVideo struct {
+	ID        string        `json:"id,omitempty"`
+	Duration  int           `json:"duration,omitempty"`
+	Cover     string        `json:"cover,omitempty"`
+	Width     int           `json:"width,omitempty"`
+	Height    int           `json:"height,omitempty"`
+	Size      int           `json:"size,omitempty"`
+	Time      string        `json:"time,omitempty"`
+	Medias    []VideoMedias `json:"medias,omitempty"`
+	HlsVid    string        `json:"hls_vid,omitempty"`
+	HlsMedias []VideoMedias `json:"hls_medias,omitempty"`
+	Subtitles []any         `json:"subtitles,omitempty"`
+	Tips      []any         `json:"tips,omitempty"`
+}
+
+type VideoMedias struct {
+	Size    int    `json:"size,omitempty"`
+	Quality string `json:"quality,omitempty"`
+	URL     string `json:"url,omitempty"`
+}
+
+type ArticleVideoPreview struct {
+	Duration int           `json:"duration,omitempty"`
+	Medias   []VideoMedias `json:"medias,omitempty"`
+}
+
+type ArticleRate struct {
+	Type           int  `json:"type,omitempty"`
+	CurVersion     int  `json:"cur_version,omitempty"`
+	CurRate        int  `json:"cur_rate,omitempty"`
+	MaxRate        int  `json:"max_rate,omitempty"`
+	TotalRate      int  `json:"total_rate,omitempty"`
+	LearnedSeconds int  `json:"learned_seconds,omitempty"`
+	IsFinished     bool `json:"is_finished,omitempty"`
+}
+
+type ArticleFav struct {
+	Count   int  `json:"count,omitempty"`
+	HadDone bool `json:"had_done,omitempty"`
+}
+
+type ArticleLearn struct {
+	Ucount int `json:"ucount,omitempty"`
+}
+
+type ArticleFooterCoverData struct {
+	ImgURL  string `json:"img_url,omitempty"`
+	MpURL   string `json:"mp_url,omitempty"`
+	LinkURL string `json:"link_url,omitempty"`
+}
+
+type ArticleWork struct {
+	IsWork       bool `json:"is_work,omitempty"`
+	Status       int  `json:"status,omitempty"`
+	CorrectLevel int  `json:"correct_level,omitempty"`
+}
+
+type ArticleExtra struct {
+	Rate            []ArticleRate          `json:"rate,omitempty"`
+	RatePercent     int                    `json:"rate_percent,omitempty"`
+	IsFinished      bool                   `json:"is_finished,omitempty"`
+	Fav             ArticleFav             `json:"fav,omitempty"`
+	IsUnlocked      bool                   `json:"is_unlocked,omitempty"`
+	Learn           ArticleLearn           `json:"learn,omitempty"`
+	FooterCoverData ArticleFooterCoverData `json:"footer_cover_data,omitempty"`
+	Work            ArticleWork            `json:"work,omitempty"`
+	TypeTime        int                    `json:"type_time,omitempty"`
+}
+
+type ArticleLike struct {
+	Count   int  `json:"count,omitempty"`
+	HadDone bool `json:"had_done,omitempty"`
+}
+
+type University struct {
+	RedirectType  string `json:"redirect_type,omitempty"`
+	RedirectParam string `json:"redirect_param,omitempty"`
+}
+
+type Sub struct {
+	HadDone    bool `json:"had_done,omitempty"`
+	AccessMask int  `json:"access_mask,omitempty"`
+}
+
+type Product struct {
+	ID         int        `json:"id,omitempty"`
+	Title      string     `json:"title,omitempty"`
+	University University `json:"university,omitempty"`
+	Extra      Extra      `json:"extra,omitempty"`
+	Type       string     `json:"type,omitempty"`
 }

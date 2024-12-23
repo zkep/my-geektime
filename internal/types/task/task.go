@@ -50,7 +50,7 @@ type Task struct {
 	// Share
 	Share geek.ProductShare `json:"share,omitempty"`
 	// Author
-	Author geek.ProductAuthor `json:"author,omitempty"`
+	Author geek.ArticleAuthor `json:"author,omitempty"`
 	// Article
 	Article geek.ProductArticle `json:"article,omitempty"`
 	// created_at

@@ -2,6 +2,7 @@ package config
 
 type Site struct {
 	Register Register `json:"register" yaml:"register"`
+	Download bool     `json:"download" yaml:"download"`
 }
 
 type Register struct {

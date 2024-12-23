@@ -180,8 +180,13 @@ func (p *Product) Download(c *gin.Context) {
 				global.FAIL(c, "fail.msg", err.Error())
 				return
 			}
-			raw, _ = json.Marshal(info)
-			otherId = fmt.Sprintf("%d", info.Data.Info.Id)
+			var m geek.ArticleInfoRaw
+			if err = json.Unmarshal(info.Raw, &m); err != nil {
+				global.FAIL(c, "fail.msg", err.Error())
+				return
+			}
+			raw = m.Data
+			otherId = fmt.Sprintf("%d", info.Data.Info.ID)
 			taskName = info.Data.Info.Title
 			cover = info.Data.Info.Cover.Default
 		} else {

@@ -872,17 +872,27 @@
                                     },
                                     {
                                       "type": "button-group",
-                                      "tiled": true,
-                                      "btnLevel": "default",
-                                      "btnActiveLevel": "light",
+                                      "btnLevel": "light",
+                                      "btnActiveLevel": "warning",
+                                      "style": {
+                                        "margin": 10
+                                      },
                                       "buttons": [
                                         {
                                           "label": "下载音频",
                                           "type": "action",
                                           "actionType": "download",
                                           "size": "sm",
-                                          "api": "/v2/task/download?id=${task_id}&type=audio",
-                                          "visibleOn": "${ article.audio.download_url !== undefined && message.object !==''}"
+                                          "api": "/v2/task/download?id=${task_id}&type=audio&url=${article.audio.download_url}",
+                                          "visibleOn": "${ article.audio.download_url !== undefined  && message.object ==='' }"
+                                        },
+                                        {
+                                          "label": "下载音频",
+                                          "type": "action",
+                                          "actionType": "download",
+                                          "size": "sm",
+                                          "api": "/v2/task/download?id=${task_id}&type=audio}",
+                                          "visibleOn": "${ article.audio.download_url !== undefined  && message.object !=='' }"
                                         },
                                         {
                                           "label": "下载视频",
@@ -893,7 +903,7 @@
                                           "visibleOn": "${ article.video.cover !== undefined && message.object !=='' }"
                                         },
                                         {
-                                          "label": "导出Markdown文本",
+                                          "label": "导出Markdown",
                                           "type": "action",
                                           "size": "sm",
                                           "actionType": "download",
@@ -908,7 +918,7 @@
                                       "type": "video",
                                       "muted": true,
                                       "autoPlay": false,
-                                      "rates": [1.0, 1.5, 2.0],
+                                      "rates": [1.0,1.2, 1.5, 2.0],
                                       "src": "${article.video.hls_medias|last|pick:url}",
                                       "poster": "${article.video.cover}",
                                       "visibleOn": "${ article.video.hls_medias !== undefined }"
@@ -917,7 +927,7 @@
                                       "type": "video",
                                       "muted": true,
                                       "autoPlay": false,
-                                      "rates": [1.0, 1.5, 2.0],
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${article.video_preview.medias|last|pick:url}",
                                       "poster": "${article.video.cover}",
                                       "visibleOn": "${ article.video.hls_medias === undefined && article.video_preview.medias !== undefined }"
@@ -928,14 +938,14 @@
                                     {
                                       "type": "audio",
                                       "autoPlay": false,
-                                      "rates": [1.0, 1.5, 2.0],
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${article.audio.download_url}",
                                       "visibleOn": "${ article.audio.download_url !== undefined }"
                                     },
                                     {
                                       "type": "html",
                                       "classname": "word-break",
-                                      "name": "article.content",
+                                      "name": "article.cshort",
                                       "label": "附件"
                                     }
                                   ]

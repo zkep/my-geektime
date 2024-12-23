@@ -2,17 +2,21 @@ package v2
 
 import (
 	"encoding/json"
+	"errors"
+	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/render"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/service"
 	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/internal/types/task"
+	"github.com/zkep/mygeektime/lib/zhttp"
 	"gorm.io/gorm"
 )
 
@@ -124,7 +128,7 @@ func (t *Task) Info(c *gin.Context) {
 	}
 	var l model.Task
 	if err := global.DB.Model(&model.Task{}).
-		Where("task_id=?", req.Id).First(&l).Error; err != nil {
+		Where(&model.Task{TaskId: req.Id}).First(&l).Error; err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
@@ -133,9 +137,12 @@ func (t *Task) Info(c *gin.Context) {
 		_ = json.Unmarshal(l.Statistics, &statistics)
 	}
 
-	var articleData geek.ArticleInfoResponse
+	var articleData geek.ArticleData
 	if len(l.Raw) > 0 {
-		_ = json.Unmarshal(l.Raw, &articleData)
+		if err := json.Unmarshal(l.Raw, &articleData); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
 	}
 
 	var taskMessage task.TaskMessage
@@ -159,7 +166,7 @@ func (t *Task) Info(c *gin.Context) {
 			CreatedAt:  l.CreatedAt,
 			UpdatedAt:  l.UpdatedAt,
 		},
-		Article: articleData.Data.Info,
+		Article: articleData.Info,
 		Message: taskMessage,
 	}
 	global.OK(c, resp)
@@ -238,25 +245,27 @@ func (t *Task) Download(c *gin.Context) {
 	}
 	var l model.Task
 	if err := global.DB.Model(&model.Task{}).
-		Where("task_id=?", req.Id).First(&l).Error; err != nil {
+		Where(&model.Task{TaskId: req.Id}).First(&l).Error; err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	var articleData geek.ArticleInfoResponse
+	var articleData geek.ArticleData
 	if err := json.Unmarshal(l.Raw, &articleData); err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	var taskMessage task.TaskMessage
-	if err := json.Unmarshal(l.Message, &taskMessage); err != nil {
-		global.FAIL(c, "fail.msg", err.Error())
-		return
+	if len(l.Message) > 0 {
+		if err := json.Unmarshal(l.Message, &taskMessage); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
 	}
-	baseName := service.VerifyFileName(articleData.Data.Info.Title)
+	baseName := service.VerifyFileName(articleData.Info.Title)
 	switch req.Type {
 	case "markdown":
 		converter := md.NewConverter("", true, nil)
-		markdown, err := converter.ConvertString(articleData.Data.Info.Content)
+		markdown, err := converter.ConvertString(articleData.Info.Cshort)
 		if err != nil {
 			global.FAIL(c, "fail.msg", err.Error())
 			return
@@ -270,6 +279,43 @@ func (t *Task) Download(c *gin.Context) {
 		fileName := baseName + ".mp4"
 		if req.Type == "audio" {
 			fileName = baseName + ".mp3"
+		}
+		if len(req.Url) > 0 {
+			err := zhttp.R.Client(global.HttpClient).
+				Before(func(r *http.Request) {
+					r.Header.Set("Accept", "application/json, text/plain, */*")
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Sec-Ch-Ua", `"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"`)
+					r.Header.Set("User-Agent", zhttp.RandomUserAgent())
+					r.Header.Set("Referer", req.Url)
+					r.Header.Set("Origin", "https://time.geekbang.org")
+				}).
+				After(func(r *http.Response) error {
+					if zhttp.IsHTTPSuccessStatus(r.StatusCode) {
+						c.Header("Content-Type", "application/octet-stream")
+						c.Header("Content-Disposition", "attachment; filename="+url.QueryEscape(fileName))
+						c.Header("Content-Transfer-Encoding", "binary")
+						c.Render(http.StatusOK, render.Reader{
+							ContentLength: -1,
+							ContentType:   "application/octet-stream",
+							Reader:        r.Body,
+						})
+						return nil
+					}
+					if zhttp.IsHTTPStatusSleep(r.StatusCode) {
+						time.Sleep(time.Second * 10)
+					}
+					if zhttp.IsHTTPStatusRetryable(r.StatusCode) {
+						return errors.New("http status: " + r.Status)
+					}
+					return zhttp.BreakRetryError(errors.New("http status: " + r.Status))
+				}).
+				DoWithRetry(c, http.MethodGet, req.Url, nil)
+			if err != nil {
+				global.FAIL(c, "fail.msg", err.Error())
+				return
+			}
+			return
 		}
 		c.Header("Content-Type", "application/octet-stream")
 		c.Header("Content-Disposition", "attachment; filename="+url.QueryEscape(fileName))
