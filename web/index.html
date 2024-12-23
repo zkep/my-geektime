@@ -356,6 +356,7 @@
                                                                             minLength: "邮箱不少于$1个字符"
                                                                         },
                                                                         borderMode: "half",
+                                                                        strictMode: false,
                                                                         style: {
                                                                             margin: 5
                                                                         },
@@ -367,6 +368,13 @@
                                                                             countDown: 120,
                                                                             strictMode: false,
                                                                             countDownTpl: "${timeLeft} 秒后重发",
+                                                                            validations: {
+                                                                                isEmail: true,
+                                                                                minLength: 5
+                                                                            },
+                                                                            validationErrors: {
+                                                                                minLength: "邮箱不少于$1个字符"
+                                                                            },
                                                                             actionType: "ajax",
                                                                             api: {
                                                                                 url:"/v2/base/send/email",
