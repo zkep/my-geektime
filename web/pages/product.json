@@ -786,7 +786,7 @@
                               "resizable": true,
                               "closeOnOutside": true,
                               "actions": [],
-                              "size": "xl",
+                              "size": "lg",
                               "title": "课程详情",
                               "body": [
                                 {

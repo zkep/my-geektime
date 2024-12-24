@@ -991,7 +991,7 @@
                               "resizable": true,
                               "closeOnOutside": true,
                               "actions": [],
-                              "size": "xl",
+                              "size": "lg",
                               "title": "",
                               "body": [
                                 {
