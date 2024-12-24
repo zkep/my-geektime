@@ -17,5 +17,6 @@ func task(public, private *gin.RouterGroup) {
 	{
 		public.GET("/task/kms", api.Kms)
 		public.GET("/task/play.m3u8", api.Play)
+		public.GET("/task/play/part", api.PlayPart)
 	}
 }

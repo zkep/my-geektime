@@ -809,7 +809,9 @@
             token === null ? login : app,
             {
                 location: history.location,
-                data: {},
+                data: {
+                    token: token
+                },
                 context: {
                     // API_HOST: ''
                 }

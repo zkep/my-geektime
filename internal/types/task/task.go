@@ -119,3 +119,8 @@ type TaskPlayRequest struct {
 	// task id
 	Id string `json:"id,omitempty" form:"id" binding:"required"`
 }
+
+type TaskPlayPartRequest struct {
+	// part
+	P string `json:"p,omitempty" form:"p" binding:"required"`
+}

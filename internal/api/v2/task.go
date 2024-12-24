@@ -1,6 +1,8 @@
 package v2
 
 import (
+	"bufio"
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -177,7 +179,7 @@ func (t *Task) Info(c *gin.Context) {
 	if len(resp.Article.Cshort) > len(resp.Article.Content) {
 		resp.Article.Content = resp.Article.Cshort
 	}
-	if len(l.Ciphertext) > 0 {
+	if len(l.Ciphertext) > 0 || len(l.RewriteHls) > 0 {
 		resp.PalyURL = fmt.Sprintf("%s/v2/task/play.m3u8?id=%s", global.CONF.Storage.Host, l.TaskId)
 	}
 	global.OK(c, resp)
@@ -390,5 +392,54 @@ func (t *Task) Play(c *gin.Context) {
 		return
 	}
 	l.RewriteHls = regexp.MustCompile("{host}").ReplaceAll(l.RewriteHls, []byte(global.CONF.Storage.Host))
+	var (
+		buff bytes.Buffer
+	)
+	bio := bufio.NewReader(bytes.NewReader(l.RewriteHls))
+	for {
+		line, _, err1 := bio.ReadLine()
+		if err1 != nil {
+			break
+		}
+		ln := string(line)
+		if strings.HasSuffix(ln, ".ts") {
+			if strings.HasPrefix(ln, "https://res001.geekbang.org") {
+				ln = "/v2/task/play/part?p=" + ln
+			}
+		}
+		buff.WriteString(ln + "\n")
+	}
+
+	l.RewriteHls = buff.Bytes()
+
 	c.Data(200, "application/x-mpegurl", l.RewriteHls)
+}
+
+func (t *Task) PlayPart(c *gin.Context) {
+	var req task.TaskPlayPartRequest
+	if err := c.ShouldBind(&req); err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+
+	if err := zhttp.R.
+		Before(func(r *http.Request) {
+			r.Header.Set("origin", "https://www.geekbang.org")
+			r.Header.Set("referer", "https://www.geekbang.org")
+		}).
+		After(func(r *http.Response) error {
+			if r.StatusCode == 200 {
+				c.Render(http.StatusOK, render.Reader{
+					ContentLength: -1,
+					ContentType:   "application/octet-stream",
+					Reader:        r.Body,
+				})
+				return nil
+			}
+			return fmt.Errorf("not found part [%s]", req.P)
+		}).Do(http.MethodGet, req.P, nil); err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	// c.Redirect(http.StatusMovedPermanently, req.P)
 }
