@@ -118,6 +118,7 @@ func (app *App) Data(f *DataFlags) error {
 								OtherForm:  form,
 								OtherGroup: tag.Value,
 								OtherTag:   opt.Value,
+								Status:     service.TASK_STATUS_PENDING,
 							}
 							tasks := make([]*model.Task, 0, len(articles.Data.List))
 							for _, article := range articles.Data.List {
@@ -147,6 +148,7 @@ func (app *App) Data(f *DataFlags) error {
 									OtherForm:  form,
 									OtherGroup: tag.Value,
 									OtherTag:   opt.Value,
+									Status:     service.TASK_STATUS_PENDING,
 								}
 								tasks = append(tasks, &item)
 							}
