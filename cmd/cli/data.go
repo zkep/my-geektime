@@ -189,9 +189,9 @@ func (app *App) Data(f *DataFlags) error {
 }
 
 var (
-	ProductTypes = []int32{1, 4, 5, 6}
+	ProductTypes = []int32{1, 4, 5}
 
-	ProductForm = []int32{1, 2}
+	ProductForm = []int32{2, 1}
 )
 
 type Tag struct {

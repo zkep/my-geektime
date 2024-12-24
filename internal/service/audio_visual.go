@@ -384,7 +384,6 @@ func RewritePlay(ctx context.Context, hlsURL, taskId string) (string, []byte, er
 						if err != nil {
 							return err
 						}
-						fmt.Println("ciphertext", string(raw), len(raw))
 						ciphertext = raw
 						return nil
 					}
