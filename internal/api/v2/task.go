@@ -174,6 +174,9 @@ func (t *Task) Info(c *gin.Context) {
 		Article: articleData.Info,
 		Message: taskMessage,
 	}
+	if len(resp.Article.Cshort) > len(resp.Article.Content) {
+		resp.Article.Content = resp.Article.Cshort
+	}
 	if len(l.Ciphertext) > 0 {
 		resp.PalyURL = fmt.Sprintf("%s/v2/task/play.m3u8?id=%s", global.CONF.Storage.Host, l.TaskId)
 	}
