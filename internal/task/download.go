@@ -157,19 +157,20 @@ func worker(ctx context.Context, x *model.Task) error {
 				return err
 			}
 			m.Raw = info.Data
+			x.Raw = info.Data
 		}
-		if global.CONF.Site.Download {
-			if err = global.DB.Where(&model.Task{Id: x.Id}).Updates(m).Error; err != nil {
-				global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
-				return err
-			}
-			if err = service.Download(ctx, x); err != nil {
-				global.LOG.Error("worker download", zap.Error(err), zap.String("taskId", x.TaskId))
-				status = service.TASK_STATUS_ERROR
-				message := task.TaskMessage{Text: err.Error()}
-				x.Message, _ = json.Marshal(message)
-			}
+		if err = global.DB.Where(&model.Task{Id: x.Id}).Updates(m).Error; err != nil {
+			global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
+			return err
 		}
+		if err = service.Download(ctx, x); err != nil {
+			global.LOG.Error("worker download", zap.Error(err), zap.String("taskId", x.TaskId))
+			status = service.TASK_STATUS_ERROR
+			message := task.TaskMessage{Text: err.Error()}
+			x.Message, _ = json.Marshal(message)
+		}
+		m.Ciphertext = x.Ciphertext
+		m.RewriteHls = x.RewriteHls
 		m.Message = x.Message
 		m.Status = int32(status)
 		m.UpdatedAt = time.Now().Unix()

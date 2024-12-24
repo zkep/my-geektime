@@ -5,7 +5,7 @@ import (
 	v2 "github.com/zkep/mygeektime/internal/api/v2"
 )
 
-func task(_, private *gin.RouterGroup) {
+func task(public, private *gin.RouterGroup) {
 	api := v2.NewTask()
 	{
 		private.GET("/task/list", api.List)
@@ -13,5 +13,9 @@ func task(_, private *gin.RouterGroup) {
 		private.GET("/task/download", api.Download)
 		private.DELETE("/task/delete", api.Delete)
 		private.POST("/task/retry", api.Retry)
+	}
+	{
+		public.GET("/task/kms", api.Kms)
+		public.GET("/task/play.m3u8", api.Play)
 	}
 }

@@ -85,7 +85,7 @@ func ParseToken(j *rest.JWTConfig, c *gin.Context) (*jwt.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	return j.DefaultParseToken(token)
+	return j.ParseToken(token)
 }
 
 var (

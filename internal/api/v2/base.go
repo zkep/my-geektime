@@ -94,13 +94,10 @@ func (b *Base) Login(c *gin.Context) {
 		global.FAIL(c, "base.login.type")
 		return
 	}
-	token, expire, err := global.JWT.DefaultTokenGenerator(
-		func() (jwt.MapClaims, error) {
-			claims := jwt.MapClaims{}
-			claims[global.Identity] = info.Uid
-			claims[global.Role] = info.RoleId
-			return claims, nil
-		})
+	token, expire, err := global.JWT.TokenGenerator(func(claims jwt.MapClaims) {
+		claims[global.Identity] = info.Uid
+		claims[global.Role] = info.RoleId
+	})
 	if err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return

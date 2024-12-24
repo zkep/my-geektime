@@ -90,6 +90,8 @@ type TaskInfoResponse struct {
 	Article geek.ArticleInfo `json:"article"`
 	// message
 	Message TaskMessage `json:"message,omitempty"`
+	// palyURL
+	PalyURL string `json:"play_url,omitempty"`
 }
 
 type TaskDownloadRequest struct {
@@ -106,4 +108,14 @@ type DeleteRequest struct {
 	Pid string `json:"pid,omitempty" form:"pid"`
 	// task ids
 	Ids string `json:"ids,omitempty" form:"ids"`
+}
+
+type TaskKmsRequest struct {
+	// task id
+	Ciphertext string `json:"Ciphertext,omitempty" form:"Ciphertext" binding:"required"`
+}
+
+type TaskPlayRequest struct {
+	// task id
+	Id string `json:"id,omitempty" form:"id" binding:"required"`
 }

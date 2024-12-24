@@ -1,8 +1,10 @@
 package v2
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -11,6 +13,7 @@ import (
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/service"
@@ -170,6 +173,9 @@ func (t *Task) Info(c *gin.Context) {
 		Article: articleData.Info,
 		Message: taskMessage,
 	}
+	if len(l.Ciphertext) > 0 {
+		resp.PalyURL = fmt.Sprintf("%s/v2/task/play.m3u8?id=%s", global.CONF.Storage.Host, l.TaskId)
+	}
 	global.OK(c, resp)
 }
 
@@ -324,4 +330,60 @@ func (t *Task) Download(c *gin.Context) {
 		object := global.Storage.GetKey(taskMessage.Object, true)
 		c.File(object)
 	}
+}
+
+func (t *Task) Kms(c *gin.Context) {
+	var req task.TaskKmsRequest
+	if err := c.ShouldBind(&req); err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	token, err := global.JWT.ParseToken(req.Ciphertext)
+	if err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	mapClaims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		global.FAIL(c, "fail.msg", errors.New("invalid token claims"))
+		return
+	}
+	taskId, ok := mapClaims["task_id"]
+	if !ok {
+		global.FAIL(c, "fail.msg", errors.New("invalid vod"))
+		return
+	}
+	tid, ok := taskId.(string)
+	if !ok {
+		global.FAIL(c, "fail.msg", errors.New("invalid vod"))
+		return
+	}
+	var l model.Task
+	if err = global.DB.Model(&model.Task{}).
+		Where(&model.Task{TaskId: tid}).First(&l).Error; err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	ciphertext, err := base64.StdEncoding.DecodeString(l.Ciphertext)
+	if err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	c.Header("Content-Type", "application/octet-stream")
+	c.Data(200, "application/octet-stream", ciphertext)
+}
+
+func (t *Task) Play(c *gin.Context) {
+	var req task.TaskPlayRequest
+	if err := c.ShouldBind(&req); err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	var l model.Task
+	if err := global.DB.Model(&model.Task{}).
+		Where(&model.Task{TaskId: req.Id}).First(&l).Error; err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	c.Data(200, "application/x-mpegurl", l.RewriteHls)
 }

@@ -46,12 +46,12 @@ func JWT(key string, expires int64) *JWTConfig {
 		c.KeyFunc = c.DefaultKeyFunc
 	}
 	if c.ParseTokenFunc == nil {
-		c.ParseTokenFunc = c.DefaultParseToken
+		c.ParseTokenFunc = c.ParseToken
 	}
 	return &c
 }
 
-func (config *JWTConfig) DefaultParseToken(tokenstr string) (token *jwt.Token, err error) {
+func (config *JWTConfig) ParseToken(tokenstr string) (token *jwt.Token, err error) {
 	if _, ok := config.Claims.(jwt.MapClaims); ok {
 		token, err = jwt.Parse(tokenstr, config.KeyFunc)
 	} else {
@@ -83,18 +83,15 @@ func (config *JWTConfig) DefaultKeyFunc(t *jwt.Token) (any, error) {
 	return config.SigningKey, nil
 }
 
-func (config *JWTConfig) DefaultTokenGenerator(fn func() (jwt.MapClaims, error)) (string, time.Time, error) {
-	claims, err := fn()
-	if err != nil {
-		return "", time.Time{}, err
-	}
-	if claims == nil {
-		claims = jwt.MapClaims{}
-	}
+func (config *JWTConfig) TokenGenerator(fn func(jwt.MapClaims)) (string, time.Time, error) {
+	claims := jwt.MapClaims{}
 	now := time.Now().UTC()
 	expire := now.Add(config.Expires)
 	claims["exp"] = expire.Unix()
 	claims["orig_iat"] = now.Unix()
+	if fn != nil {
+		fn(claims)
+	}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod(config.SigningMethod), claims)
 	tokenString, err := token.SignedString(config.SigningKey)
 	if err != nil {

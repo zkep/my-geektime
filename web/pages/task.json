@@ -540,6 +540,7 @@
                     "type": "select",
                     "label": "课程状态",
                     "name": "xstatus",
+                    "visibleOn": "${ ls:role_id === 1 }",
                     "value": 0,
                     "options": [
                       {
@@ -1079,7 +1080,7 @@
                                       "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${article.video.hls_medias|last|pick:url}",
                                       "poster": "${article.video.cover}",
-                                      "visibleOn": "${ article.video.hls_medias !== undefined }"
+                                      "visibleOn": "${ play_url === undefined && article.video.hls_medias !== undefined }"
                                     },
                                     {
                                       "type": "video",
@@ -1088,7 +1089,16 @@
                                       "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${article.video_preview.medias|last|pick:url}",
                                       "poster": "${article.video.cover}",
-                                      "visibleOn": "${ article.video.hls_medias === undefined && article.video_preview.medias !== undefined }"
+                                      "visibleOn": "${ play_url === undefined && article.video.hls_medias === undefined && article.video_preview.medias !== undefined }"
+                                    },
+                                    {
+                                      "type": "video",
+                                      "muted": true,
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
+                                      "src": "${play_url}",
+                                      "poster": "${article.video.cover}",
+                                      "visibleOn": "${ play_url !== undefined }"
                                     },
                                     {
                                       "type": "divider"

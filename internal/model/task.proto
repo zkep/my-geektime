@@ -31,6 +31,10 @@ message Task {
   int32 other_group = 12 [(gogoproto.moretags) = "gorm:\"index;size:4;comment:other group\""];
   // task type
   string task_type = 13 [(gogoproto.moretags) = "gorm:\"index;size:50;comment:task type\""];
+  // ciphertext
+  string ciphertext = 14 [(gogoproto.moretags) = "gorm:\"comment:ciphertext\""];
+  // rewrite_hls
+  bytes rewrite_hls = 15 [(gogoproto.moretags) = "gorm:\"comment:rewrite hls\""];
   // raw
   bytes raw = 21[(gogoproto.moretags) = "gorm:\"comment:raw\""];
   // message
