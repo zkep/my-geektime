@@ -6,7 +6,7 @@ type TaskListRequest struct {
 	TaskPid     string `json:"task_pid"  form:"task_pid"`
 	Xstatus     int32  `json:"xstatus" form:"xstatus"`
 	Tag         int32  `json:"tag"  form:"tag"`
-	Sort        int32  `json:"sort"  form:"sort"`
+	Direction   int32  `json:"direction"  form:"direction"`
 	ProductType int32  `json:"product_type"  form:"product_type"`
 	ProductForm int32  `json:"product_form"  form:"product_form"`
 	Page        int    `json:"page" form:"page"`

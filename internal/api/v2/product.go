@@ -154,17 +154,17 @@ func (p *Product) Download(c *gin.Context) {
 	}
 	jobId := utils.HalfUUID()
 	job := &model.Task{
-		TaskId:    jobId,
-		Uid:       identity,
-		TaskName:  product.Title,
-		TaskType:  service.TASK_TYPE_PRODUCT,
-		OtherId:   fmt.Sprintf("%d", req.Pid),
-		Cover:     product.Cover,
-		Raw:       product.Raw,
-		OtherType: product.OtherType,
-		OtherForm: product.OtherForm,
-		OtherSort: product.OtherSort,
-		OtherTag:  product.OtherTag,
+		TaskId:     jobId,
+		Uid:        identity,
+		TaskName:   product.Title,
+		TaskType:   service.TASK_TYPE_PRODUCT,
+		OtherId:    fmt.Sprintf("%d", req.Pid),
+		Cover:      product.Cover,
+		Raw:        product.Raw,
+		OtherType:  product.OtherType,
+		OtherForm:  product.OtherForm,
+		OtherGroup: product.OtherGroup,
+		OtherTag:   product.OtherTag,
 	}
 	tasks := make([]*model.Task, 0, len(ids))
 	for _, id := range ids {
@@ -196,18 +196,18 @@ func (p *Product) Download(c *gin.Context) {
 			cover = article.Cover
 		}
 		item := model.Task{
-			TaskPid:   jobId,
-			TaskId:    utils.HalfUUID(),
-			Uid:       identity,
-			OtherId:   otherId,
-			TaskName:  taskName,
-			TaskType:  service.TASK_TYPE_ARTICLE,
-			Cover:     cover,
-			Raw:       raw,
-			OtherType: product.OtherType,
-			OtherForm: product.OtherForm,
-			OtherSort: product.OtherSort,
-			OtherTag:  product.OtherTag,
+			TaskPid:    jobId,
+			TaskId:     utils.HalfUUID(),
+			Uid:        identity,
+			OtherId:    otherId,
+			TaskName:   taskName,
+			TaskType:   service.TASK_TYPE_ARTICLE,
+			Cover:      cover,
+			Raw:        raw,
+			OtherType:  product.OtherType,
+			OtherForm:  product.OtherForm,
+			OtherGroup: product.OtherGroup,
+			OtherTag:   product.OtherTag,
 		}
 		tasks = append(tasks, &item)
 	}

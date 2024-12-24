@@ -86,11 +86,11 @@
                 "name": "tag",
                 "label": "分类",
                 "clearable": true,
-                "value": 3,
+                "value": 0,
                 "options":[
                   {
                     "label": "全部",
-                    "value": 3
+                    "value": 0
                   },
                   {
                     "label": "Java",
@@ -164,16 +164,16 @@
                 "visibleOn": "${ direction == 3 }"
               },
               {
-                "type": "list-select",
                 "id": "pvip-tag",
+                "type": "list-select",
                 "name": "tag",
                 "label": "分类",
                 "clearable": true,
-                "value": 5,
+                "value": 0,
                 "options": [
                   {
                     "label": "全部",
-                    "value": 5
+                    "value": 0
                   },
                   {
                     "label": "JavaScript",
@@ -231,76 +231,256 @@
                 "visibleOn": "${ direction == 5 }"
               },
               {
+                "id": "pvip-tag",
                 "type": "list-select",
                 "name": "tag",
-                "id": "pvip-tag",
                 "label": "分类",
                 "clearable": true,
-                "value": 9,
+                "value": 0,
                 "options":[
                   {
                     "label": "全部",
-                    "value": 9
+                    "value": 0
+                  },
+                  {
+                    "label": "算法",
+                    "value": 75
+                  },
+                  {
+                    "label": "网络",
+                    "value": 76
+                  },
+                  {
+                    "label": "数据库",
+                    "value": 78
+                  },
+                  {
+                    "label": "面试专场",
+                    "value": 102
+                  },
+                  {
+                    "label": "组成原理",
+                    "value": 83
+                  },
+                  {
+                    "label": "数学",
+                    "value": 82
+                  },
+                  {
+                    "label": "代码",
+                    "value": 81
+                  },
+                  {
+                    "label": "编译原理",
+                    "value": 80
+                  },
+                  {
+                    "label": "操作系统",
+                    "value": 79
+                  },
+                  {
+                    "label": "工具",
+                    "value": 77
                   }
                 ],
                 "visibleOn": "${ direction == 9 }"
               },
               {
+                "id": "pvip-tag",
                 "type": "list-select",
                 "name": "tag",
-                "id": "pvip-tag",
                 "label": "分类",
                 "clearable": true,
-                "value": 8,
+                "value": 0,
                 "options":[
                   {
                     "label": "全部",
-                    "value": 8
+                    "value": 0
+                  },
+                  {
+                    "label": "NLP",
+                    "value": 66
+                  },
+                  {
+                    "label": "机器学习",
+                    "value": 56
+                  },
+                  {
+                    "label": "数据分析",
+                    "value": 72
+                  },
+                  {
+                    "label": "大数据",
+                    "value": 60
+                  },
+                  {
+                    "label": "推荐系统",
+                    "value": 59
+                  },
+                  {
+                    "label": "AI算法",
+                    "value": 58
+                  },
+                  {
+                    "label": "数学",
+                    "value": 57
+                  },
+                  {
+                    "label": "AIGC应用",
+                    "value": 99
+                  },
+                  {
+                    "label": "大模型",
+                    "value": 100
                   }
                 ],
                 "visibleOn": "${ direction == 8 }"
               },
               {
+                "id": "pvip-tag",
                 "type": "list-select",
                 "name": "tag",
-                "id": "pvip-tag",
                 "label": "分类",
                 "clearable": true,
-                "value": 6,
+                "value": 0,
                 "options":[
                   {
                     "label": "全部",
-                    "value": 6
+                    "value": 0
+                  },
+                  {
+                    "label": "CI/CD",
+                    "value": 45
+                  },
+                  {
+                    "label": "云计算",
+                    "value": 67
+                  },
+                  {
+                    "label": "测试",
+                    "value": 47
+                  },
+                  {
+                    "label": "敏捷开发",
+                    "value": 50
+                  },
+                  {
+                    "label": "性能",
+                    "value": 49
+                  },
+                  {
+                    "label": "Linux",
+                    "value": 48
+                  },
+                  {
+                    "label": "安全",
+                    "value": 46
+                  },
+                  {
+                    "label": "运维管理",
+                    "value": 44
+                  },
+                  {
+                    "label": "DevOps",
+                    "value": 43
+                  },
+                  {
+                    "label": "Kubernetes",
+                    "value": 42
                   }
                 ],
                 "visibleOn": "${ direction == 6 }"
               },
               {
+                "id": "pvip-tag",
                 "type": "list-select",
                 "name": "tag",
-                "id": "pvip-tag",
                 "label": "分类",
                 "clearable": true,
-                "value": 7,
+                "value": 0,
                 "options":[
                   {
                     "label": "全部",
-                    "value": 7
+                    "value": 0
+                  },
+                  {
+                    "label": "产品创新",
+                    "value": 55
+                  },
+                  {
+                    "label": "增长",
+                    "value": 54
+                  },
+                  {
+                    "label": "运营",
+                    "value": 53
+                  },
+                  {
+                    "label": "市场",
+                    "value": 74
                   }
                 ],
                 "visibleOn": "${ direction == 7 }"
               },
               {
+                "id": "pvip-tag",
                 "type": "list-select",
                 "name": "tag",
-                "id": "pvip-tag",
                 "label": "分类",
                 "clearable": true,
-                "value": 4,
+                "value": 0,
                 "options":[
                   {
                     "label": "全部",
-                    "value": 4
+                    "value": 0
+                  },
+                  {
+                    "label": "研发效能",
+                    "value": 26
+                  },
+                  {
+                    "label": "团队管理",
+                    "value": 27
+                  },
+                  {
+                    "label": "个人成长",
+                    "value": 28
+                  },
+                  {
+                    "label": "面试专场",
+                    "value": 97
+                  },
+                  {
+                    "label": "短视频",
+                    "value": 95
+                  },
+                  {
+                    "label": "英语",
+                    "value": 94
+                  },
+                  {
+                    "label": "写作",
+                    "value": 93
+                  },
+                  {
+                    "label": "摄影",
+                    "value": 92
+                  },
+                  {
+                    "label": "音乐",
+                    "value": 91
+                  },
+                  {
+                    "label": "项目管理",
+                    "value": 29
+                  },
+                  {
+                    "label": "新经理",
+                    "value": 25
+                  },
+                  {
+                    "label": "OKR",
+                    "value": 24
                   }
                 ],
                 "visibleOn": "${ direction == 4 }"
@@ -308,27 +488,6 @@
               {
                 "type": "group",
                 "body": [
-                  {
-                    "type": "list-select",
-                    "clearable": true,
-                    "label": "最新/热度",
-                    "name": "sort",
-                    "value": 8,
-                    "options": [
-                      {
-                        "label": "综合",
-                        "value": 8
-                      },
-                      {
-                        "label": "最新",
-                        "value": 1
-                      },
-                      {
-                        "label": "最热",
-                        "value": 4
-                      }
-                    ]
-                  },
                   {
                     "type": "select",
                     "label": "课程类型",
@@ -425,13 +584,12 @@
             "url": "/v2/task/list"
           },
           "defaultParams": {
-            "perPage": 10
+            "perPage": 20
           },
           "keepItemSelectionOnPageChange": true,
           "bulkActions": [],
           "footerToolbar": [
             "statistics",
-            "switch-per-page",
             "pagination"
           ],
           "tableLayout": "fixed",
@@ -680,7 +838,7 @@
                         "url": "/v2/task/list"
                       },
                       "defaultParams": {
-                        "perPage": 10
+                        "perPage": 20
                       },
                       "keepItemSelectionOnPageChange": true,
                       "bulkActions": [

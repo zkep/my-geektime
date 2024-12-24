@@ -57,8 +57,8 @@ func (app *App) Run() {
 
 	cliApp := cli.NewApp(app.ctx, app.quit, app.assets)
 	subCLI := c.NewSubCommand("cli", "This is command")
-	subCLI.NewSubCommandFunction("browser", "install browser dependencies", cliApp.Browser)
 	subCLI.NewSubCommandFunction("config", "generate config file templete", cliApp.Config)
+	subCLI.NewSubCommandFunction("data", "init geektime data", cliApp.Data)
 
 	if err := c.Run(); err != nil {
 		fmt.Println(color.Red(err.Error()))

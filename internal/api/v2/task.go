@@ -46,9 +46,6 @@ func (t *Task) List(c *gin.Context) {
 	if req.Xstatus > 0 {
 		tx = tx.Where("status = ?", req.Xstatus)
 	}
-	if req.Sort > 0 {
-		tx = tx.Where("other_sort = ?", req.Sort)
-	}
 	if req.ProductForm > 0 {
 		tx = tx.Where("other_form = ?", req.ProductForm)
 	}
@@ -58,6 +55,10 @@ func (t *Task) List(c *gin.Context) {
 	if req.Tag > 0 {
 		tx = tx.Where("other_tag = ?", req.Tag)
 	}
+	if req.Direction > 0 {
+		tx = tx.Where("other_group = ?", req.Direction)
+	}
+
 	tx = tx.Where("task_pid = ?", req.TaskPid)
 	tx = tx.Where("deleted_at = ?", 0)
 	if req.TaskPid != "" {

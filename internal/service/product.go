@@ -128,16 +128,16 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 				for _, value := range resp.Data.Products {
 					itemRaw, _ := json.Marshal(value)
 					product := model.Product{
-						Pid:       fmt.Sprintf("%d", value.ID),
-						Uid:       uid,
-						Title:     value.Share.Title,
-						Cover:     value.Share.Cover,
-						Raw:       itemRaw,
-						Source:    value.Type,
-						OtherType: req.ProductType,
-						OtherForm: req.ProductForm,
-						OtherSort: req.Sort,
-						OtherTag:  req.Tag,
+						Pid:        fmt.Sprintf("%d", value.ID),
+						Uid:        uid,
+						Title:      value.Share.Title,
+						Cover:      value.Share.Cover,
+						Raw:        itemRaw,
+						Source:     value.Type,
+						OtherType:  req.ProductType,
+						OtherForm:  req.ProductForm,
+						OtherGroup: req.Direction,
+						OtherTag:   req.Tag,
 					}
 					if err := global.DB.
 						Model(&model.Product{}).
