@@ -187,7 +187,7 @@ func Video(ctx context.Context, x *model.Task, hlsURL, dir, fileName string) (st
 			if er != nil {
 				return "", er
 			}
-			rl = fmt.Sprintf(`%s"%s/v2/task/kms?Ciphertext=%s"`, sps[0], global.CONF.Storage.Host, token)
+			rl = fmt.Sprintf(`%s"{host}/v2/task/kms?Ciphertext=%s"`, sps[0], token)
 		} else if strings.HasSuffix(l, ".ts") {
 			srcURL = hlsURL[:strings.LastIndex(hlsURL, "/")+1] + l
 			destName = path.Join(dir, l)
@@ -370,7 +370,7 @@ func RewritePlay(ctx context.Context, hlsURL, taskId string) (string, []byte, er
 			if er != nil {
 				return "", nil, er
 			}
-			l = fmt.Sprintf(`%s"%s/v2/task/kms?Ciphertext=%s"`, sps[0], global.CONF.Storage.Host, token)
+			l = fmt.Sprintf(`%s"{host}/v2/task/kms?Ciphertext=%s"`, sps[0], token)
 			err = zhttp.R.
 				Before(func(r *http.Request) {
 					r.Header.Set("Accept", "application/json, text/plain, */*")

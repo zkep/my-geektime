@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -385,5 +386,6 @@ func (t *Task) Play(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
+	l.RewriteHls = regexp.MustCompile("{host}").ReplaceAll(l.RewriteHls, []byte(global.CONF.Storage.Host))
 	c.Data(200, "application/x-mpegurl", l.RewriteHls)
 }
