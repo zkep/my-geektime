@@ -663,7 +663,6 @@
                 "icon": "fa fa-eye",
                 "label": "详情",
                 "level": "light",
-                "loading": true,
                 "actionType": "drawer",
                 "drawer": {
                   "resizable": true,
@@ -783,7 +782,6 @@
                             "label": "详情",
                             "level": "light",
                             "actionType": "drawer",
-                            "loading": true,
                             "drawer": {
                               "resizable": true,
                               "closeOnOutside": true,
@@ -861,7 +859,6 @@
                           },
                           {
                             "type": "button",
-                            "loading": true,
                             "label": "下载",
                             "level": "info",
                             "icon": "fa fa-download",
@@ -882,7 +879,6 @@
                       "bulkActions": [
                         {
                           "label": "批量下载",
-                          "loading": true,
                           "level": "info",
                           "actionType": "ajax",
                           "api": {
@@ -927,7 +923,6 @@
               },
               {
                 "type": "button",
-                "loading": true,
                 "label": "下载",
                 "level": "info",
                 "icon": "fa fa-download",

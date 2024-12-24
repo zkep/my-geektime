@@ -126,7 +126,6 @@
             "buttons": [
               {
                 "type": "button",
-                "loading": true,
                 "label": "${status === 1?'禁用':'启用'}",
                 "actionType": "ajax",
                 "level": "${status === 1?'warning':'success'}",
