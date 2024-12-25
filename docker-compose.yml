@@ -37,7 +37,7 @@ services:
     image: zkep/mygeektime
     privileged: true
     restart: always
-    command: mygeektime server --config=config.yml
+    command: server --config=config.yml
     ports:
       - 8090:8090
     volumes:
