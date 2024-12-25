@@ -114,14 +114,14 @@ func (t *Task) List(c *gin.Context) {
 			row.SaleType = product.Price.SaleType
 			row.IsAudio = product.IsAudio
 		case service.TASK_TYPE_ARTICLE:
-			var articelInfo geek.ArticleInfoResponse
+			var articelInfo geek.ArticleData
 			if len(l.Raw) > 0 {
 				_ = json.Unmarshal(l.Raw, &articelInfo)
 			}
-			row.Author = articelInfo.Data.Info.Author
-			row.Subtitle = articelInfo.Data.Info.Subtitle
-			row.IntroHTML = articelInfo.Data.Info.Summary
-			row.IsVideo = articelInfo.Data.Info.IsVideo
+			row.Author = articelInfo.Info.Author
+			row.Subtitle = articelInfo.Info.Subtitle
+			row.IntroHTML = articelInfo.Info.Summary
+			row.IsVideo = articelInfo.Info.IsVideo
 		}
 		if len(row.IntroHTML) > 0 {
 			if markdown, err := converter.ConvertString(row.IntroHTML); err == nil {
