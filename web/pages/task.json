@@ -752,7 +752,7 @@
                       "body": []
                     },
                     {
-                      "type": "html",
+                      "type": "markdown",
                       "wrapperComponent": "pre",
                       "className": "word-break",
                       "name": "intro_html",
@@ -1100,8 +1100,7 @@
                                       "visibleOn": "${ article.audio.download_url !== undefined }"
                                     },
                                     {
-                                      "type": "html",
-                                      "classname": "word-break",
+                                      "type": "markdown",
                                       "name": "article.content",
                                       "label": "附件"
                                     }

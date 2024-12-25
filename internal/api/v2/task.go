@@ -79,6 +79,7 @@ func (t *Task) List(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
+	converter := md.NewConverter("", true, nil)
 	for _, l := range ls {
 		var statistics task.TaskStatistics
 		if len(l.Statistics) > 0 {
@@ -121,6 +122,11 @@ func (t *Task) List(c *gin.Context) {
 			row.Subtitle = articelInfo.Data.Info.Subtitle
 			row.IntroHTML = articelInfo.Data.Info.Summary
 			row.IsVideo = articelInfo.Data.Info.IsVideo
+		}
+		if len(row.IntroHTML) > 0 {
+			if markdown, err := converter.ConvertString(row.IntroHTML); err == nil {
+				row.IntroHTML = markdown
+			}
 		}
 		ret.Rows = append(ret.Rows, row)
 	}
@@ -178,6 +184,10 @@ func (t *Task) Info(c *gin.Context) {
 	}
 	if len(resp.Article.Cshort) > len(resp.Article.Content) {
 		resp.Article.Content = resp.Article.Cshort
+	}
+	converter := md.NewConverter("", true, nil)
+	if markdown, err := converter.ConvertString(resp.Article.Content); err == nil {
+		resp.Article.Content = markdown
 	}
 	if len(l.Ciphertext) > 0 || len(l.RewriteHls) > 0 {
 		resp.PalyURL = fmt.Sprintf("%s/v2/task/play.m3u8?id=%s", global.CONF.Storage.Host, l.TaskId)
