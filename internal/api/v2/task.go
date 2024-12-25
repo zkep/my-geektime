@@ -64,7 +64,9 @@ func (t *Task) List(c *gin.Context) {
 	if req.Direction > 0 {
 		tx = tx.Where("other_group = ?", req.Direction)
 	}
-
+	if req.Keywords != "" {
+		tx = tx.Where("task_name LIKE ?", "%"+req.Keywords+"%")
+	}
 	tx = tx.Where("task_pid = ?", req.TaskPid)
 	tx = tx.Where("deleted_at = ?", 0)
 	if req.TaskPid != "" {
@@ -288,7 +290,10 @@ func (t *Task) Download(c *gin.Context) {
 	switch req.Type {
 	case "markdown":
 		converter := md.NewConverter("", true, nil)
-		markdown, err := converter.ConvertString(articleData.Info.Cshort)
+		if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
+			articleData.Info.Content = articleData.Info.Cshort
+		}
+		markdown, err := converter.ConvertString(articleData.Info.Content)
 		if err != nil {
 			global.FAIL(c, "fail.msg", err.Error())
 			return
@@ -451,5 +456,4 @@ func (t *Task) PlayPart(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	// c.Redirect(http.StatusMovedPermanently, req.P)
 }

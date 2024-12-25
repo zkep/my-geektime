@@ -1,7 +1,7 @@
-ok: "OK!"
+ok: "OK"
 fail:
-  normal: "FAIL!!!"
-  msg: "FAIL! %s"
+  normal: "FAIL"
+  msg: "FAIL %s"
 
 base:
   login:

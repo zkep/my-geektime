@@ -564,6 +564,12 @@
                         "value": 4
                       }
                     ]
+                  },
+                  {
+                    "type": "input-text",
+                    "placeholder": "搜索关键字",
+                    "clearable": true,
+                    "name": "keywords"
                   }
                 ]
               }
@@ -791,8 +797,15 @@
                                 "value": "${task_id}"
                               },
                               {
+                                "type": "input-text",
+                                "placeholder": "搜索关键字",
+                                "clearable": true,
+                                "name": "keywords"
+                              },
+                              {
                                 "type": "select",
                                 "name": "xstatus",
+                                "visibleOn": "${ ls:role_id === 1 }",
                                 "value": 0,
                                 "options": [
                                   {
@@ -910,11 +923,13 @@
                             "label": "课程ID: "
                           },
                           {
-                            "type": "divider"
+                            "type": "divider",
+                            "visibleOn": "${ ls:role_id === 1 }"
                           },
                           {
                             "name": "status",
                             "type": "static-mapping",
+                            "visibleOn": "${ ls:role_id === 1 }",
                             "label": "状态: ",
                             "canAccessSuperData": false,
                             "classNameExpr": "${ status =='4' ? 'text-danger' : '' }",

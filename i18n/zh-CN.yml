@@ -1,7 +1,7 @@
-ok: "成功!"
+ok: "成功"
 fail:
-  normal: "失败!!!"
-  msg: "失败! %s"
+  normal: "失败"
+  msg: "失败 %s"
 
 base:
   login:

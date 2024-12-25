@@ -4,6 +4,7 @@ import "github.com/zkep/mygeektime/internal/types/geek"
 
 type TaskListRequest struct {
 	TaskPid     string `json:"task_pid"  form:"task_pid"`
+	Keywords    string `json:"keywords"  form:"keywords"`
 	Xstatus     int32  `json:"xstatus" form:"xstatus"`
 	Tag         int32  `json:"tag"  form:"tag"`
 	Direction   int32  `json:"direction"  form:"direction"`
