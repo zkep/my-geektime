@@ -111,7 +111,7 @@
                                                     id: "tabs-change-receiver",
                                                     tabs: [
                                                         {
-                                                            visibleOn: "${ register_type=='email' }",
+                                                            visibleOn: "${ login_type=='email' }",
                                                             title: "邮箱登录",
                                                             body: {
                                                                 type: "form",
@@ -149,6 +149,7 @@
                                                                         validateOnChange: true,
                                                                         placeholder: "请输入邮箱",
                                                                         name: "email",
+                                                                        value: "${ login_guest.name===undefined ? '' : login_guest.name }",
                                                                         validations: {
                                                                             isEmail: true,
                                                                         },
@@ -167,6 +168,7 @@
                                                                         validateOnChange: true,
                                                                         placeholder: "请输入密码",
                                                                         name: "password",
+                                                                        value: "${ login_guest.password===undefined ? '' : login_guest.password }",
                                                                         validations: {
                                                                             minLength: 6
                                                                         },
@@ -210,7 +212,7 @@
                                                         },
                                                         {
                                                             title: "用户名登录",
-                                                            visibleOn: "${ register_type=='name' }",
+                                                            visibleOn: "${ login_type=='name' }",
                                                             body: {
                                                                 type: "form",
                                                                 title: "",
@@ -247,6 +249,7 @@
                                                                         validateOnChange: true,
                                                                         placeholder: "请输入用户名",
                                                                         name: "account",
+                                                                        value: "${ login_guest.name===undefined ? '' : login_guest.name }",
                                                                         validations: {
                                                                             minLength: 6
                                                                         },
@@ -265,6 +268,7 @@
                                                                         validateOnChange: true,
                                                                         placeholder: "请输入密码",
                                                                         name: "password",
+                                                                        value: "${ login_guest.password===undefined ? '' : login_guest.password }",
                                                                         validations: {
                                                                             minLength: 6
                                                                         },

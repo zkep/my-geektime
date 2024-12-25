@@ -266,6 +266,11 @@ func (b *Base) RefreshCookie(c *gin.Context) {
 func (b *Base) Config(c *gin.Context) {
 	ret := base.Config{
 		RegisterType: global.CONF.Site.Register.Type,
+		LoginType:    global.CONF.Site.Login.Type,
+		LoginGuest: base.Guest{
+			Name:     global.CONF.Site.Login.Guest.Name,
+			Password: global.CONF.Site.Login.Guest.Password,
+		},
 	}
 	global.OK(c, ret)
 }
