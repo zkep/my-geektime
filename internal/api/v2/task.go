@@ -417,7 +417,21 @@ func (t *Task) Play(c *gin.Context) {
 			break
 		}
 		ln := string(line)
-		if strings.HasSuffix(ln, ".ts") {
+		if strings.HasPrefix(ln, "#EXT-X-KEY:") {
+			sps := strings.Split(ln, `"`)
+			token, _, er := global.JWT.TokenGenerator(func(claims jwt.MapClaims) {
+				claims["task_id"] = l.TaskId
+				now := time.Now().UTC()
+				expire := now.Add(time.Minute)
+				claims["exp"] = expire.Unix()
+				claims["orig_iat"] = now.Unix()
+			})
+			if er != nil {
+				global.FAIL(c, "fail.msg", er.Error())
+				return
+			}
+			ln = fmt.Sprintf(`%s"%s/v2/task/kms?Ciphertext=%s"`, sps[0], global.CONF.Storage.Host, token)
+		} else if strings.HasSuffix(ln, ".ts") {
 			if strings.HasPrefix(ln, "https://res001.geekbang.org") {
 				ln = "/v2/task/play/part?p=" + ln
 			}
