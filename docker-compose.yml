@@ -3,7 +3,6 @@ networks:
     driver: bridge
 services:
   redis:
-    container_name: "mygeektime-redis"
     image: redis:latest
     hostname: "mygeektime-redis"
     restart: always
@@ -15,24 +14,37 @@ services:
     command: redis-server --requirepass 123456
     ports:
       - 63790:6379
-  mysql:
-    image: mysql:latest
-    container_name: "mygeektime-mysql"
-    environment:
-      - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_DATABASE=mygeektime
-    volumes:
-      - .mygeektime/mysql/log:/var/log/mysql
-      - .mygeektime/mysql/data:/var/lib/mysql
-      - .mygeektime/mysql/conf.d:/etc/mysql/conf.d
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 33060:3306
-    restart: always
-    networks:
-      - mygeektime
+#  postgres:
+#    image: postgres:latest
+#    hostname: "mygeektime-postgres"
+#    environment:
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_PASSWORD=postgres
+#      - POSTGRES_DB=mygeektime
+#    volumes:
+#      - .mygeektime/postgresql/data:/var/lib/postgresql/data
+#      - .mygeektime/postgresql/log:/var/log/postgresql
+#      - /etc/localtime:/etc/localtime:ro
+#    ports:
+#      - 54320:5432
+#    restart: always
+#    networks:
+#      - mygeektime
+#  mysql:
+#    image: mysql:latest
+#    hostname: "mygeektime-mysql"
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=123456
+#      - MYSQL_DATABASE=mygeektime
+#    volumes:
+#      - .mygeektime/mysql/data:/var/lib/mysql
+#      - /etc/localtime:/etc/localtime:ro
+#    ports:
+#      - 33060:3306
+#    restart: always
+#    networks:
+#      - mygeektime
   server:
-    container_name: "mygeektime-server"
     hostname: "mygeektime-server"
     image: zkep/mygeektime
     privileged: true
@@ -40,16 +52,18 @@ services:
     command: server --config=config.yml
     ports:
       - 8090:8090
-    volumes:
-      - .mygeektime/repo:/repo
-      - .mygeektime/config.yml:/config.yml
-      - .mygeektime/wechat.jpg:/wechat.jpg
-    depends_on:
-      - redis
-      - mysql
     networks:
       - mygeektime
     environment:
       - GIN_MODE=test
+    volumes:
+      - .mygeektime/repo:/repo
+      -  ./config-compose.yml:/config.yml
+      -  ./web:/web
+    depends_on:
+      - redis
+      # - postgres
+      # - mysql
+
 
 

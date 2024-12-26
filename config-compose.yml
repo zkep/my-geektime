@@ -10,15 +10,15 @@ i18n:
   directory: i18n
   default_lang: zh-CN
 redis:
-  addr: 127.0.0.1:6379
+  addr: mygeektime-redis:6379
   password: 123456
   pool_size: 20
   max_open_conns: 10
 database:
   driver:  sqlite   # mysql|postgres|sqlite
   source:  mygeektime.db
-  # source: root:123456@tcp(127.0.0.1:3306)/mygeektime?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
-  # source: host=127.0.0.1 user=postgres password=postgres dbname=mygeektime port=5432 sslmode=disable TimeZone=Asia/Shanghai
+  # source: root:123456@tcp(mygeektime-mysql:33060)/mygeektime?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
+  # source: host=mygeektime-postgres user=postgres password=postgres dbname=mygeektime port=5432 sslmode=disable TimeZone=Asia/Shanghai
   max_idle_conns: 10
   max_open_conns: 10
 email:
@@ -37,11 +37,11 @@ browser:
 site:
   download: true
   register:
-     type: name # email | name | none
-     email:
-        subject: "我的极客时间邮箱验证码"
-        body: "验证码： <b>%s</b> <br/><br/> <b>👏 扫下方微信二维码，欢迎加入技术交流群</b>"
-        attach: web/public/wechat.jpg
+    type: name # email | name | none
+    email:
+      subject: "我的极客时间邮箱验证码"
+      body: "验证码： <b>%s</b> <br/><br/> <b>👏 扫下方微信二维码，欢迎加入技术交流群</b>"
+      attach: web/public/wechat.jpg
   login:
     type: name # email | name
     guest:
