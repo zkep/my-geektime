@@ -6,7 +6,7 @@ This is a tool to obtain the geektime video or articles with you geektime accoun
 ---
 ### [Show Time](https://mygeektime.anyfun.tech)
 
-### [Docs](zkep.github.io/mygeektime/)
+### [Docs](https://zkep.github.io/mygeektime/)
 
 #### Install
 
