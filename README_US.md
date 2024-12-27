@@ -4,6 +4,10 @@ English | [中文](./README.md)
 This is a tool to obtain the geektime video or articles with you geektime account
 
 ---
+### [Show Time](https://mygeektime.anyfun.tech)
+
+### [Docs](zkep.github.io/mygeektime/)
+
 #### Install
 
 #### install with docker compose

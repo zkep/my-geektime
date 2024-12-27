@@ -7,6 +7,8 @@
 ---
 ### [在线体验](https://mygeektime.anyfun.tech)
 
+### [文档](zkep.github.io/mygeektime/)
+
 ### 安装
 
 #### docker compose 方式
