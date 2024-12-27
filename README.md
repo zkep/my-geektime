@@ -5,9 +5,11 @@
 极客时间资源下载工具
 
 ---
-### [在线体验](https://mygeektime.anyfun.tech)
 
 ### [文档](https://zkep.github.io/mygeektime/)
+
+### [在线体验](https://mygeektime.anyfun.tech)
+
 
 ### 安装
 
