@@ -1,6 +1,7 @@
 package v2
 
 import (
+	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/service"
@@ -30,8 +31,9 @@ func (p *Product) PvipProductList(c *gin.Context) {
 	if resp.Data.Page.Total == 0 {
 		ret.HasNext = resp.Data.Page.More
 	}
+	converter := md.NewConverter("", true, nil)
 	for _, v := range resp.Data.Products {
-		ret.Rows = append(ret.Rows, geek.ProductListRow{
+		row := geek.ProductListRow{
 			ID:            v.ID,
 			Title:         v.Title,
 			Subtitle:      v.Subtitle,
@@ -52,7 +54,13 @@ func (p *Product) PvipProductList(c *gin.Context) {
 			Author:        v.Author,
 			Cover:         v.Cover,
 			Article:       v.Article,
-		})
+		}
+		if len(row.IntroHTML) > 0 {
+			if markdown, err := converter.ConvertString(row.IntroHTML); err == nil {
+				row.IntroHTML = markdown
+			}
+		}
+		ret.Rows = append(ret.Rows, row)
 	}
 	global.OK(c, ret)
 }

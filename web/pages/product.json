@@ -684,8 +684,9 @@
                       "body": []
                     },
                     {
-                      "type": "html",
+                      "type": "markdown",
                       "wrapperComponent": "pre",
+                      "className": "word-break",
                       "name": "intro_html",
                       "label": "课程介绍"
                     },
@@ -822,32 +823,41 @@
                                       "type": "video",
                                       "muted": true,
                                       "autoPlay": false,
-                                      "rates": [1.0, 1.5, 2.0],
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${video.hls_medias|last|pick:url}",
-                                      "poster": "${video.cover}",
+                                      "poster": "${cover.default}",
                                       "visibleOn": "${ video.hls_medias !== undefined }"
                                     },
                                     {
                                       "type": "video",
                                       "muted": true,
                                       "autoPlay": false,
-                                      "rates": [1.0, 1.5, 2.0],
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${video_preview.medias|last|pick:url}",
-                                      "poster": "${video.cover}",
+                                      "poster": "${cover.default}",
                                       "visibleOn": "${ video.hls_medias === undefined && video_preview.medias !== undefined }"
                                     },
                                     {
                                       "type": "audio",
                                       "autoPlay": false,
-                                      "rates": [1.0, 1.5, 2.0],
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${audio.download_url}",
                                       "visibleOn": "${ audio.download_url !== undefined }"
+                                    },
+                                    {
+                                      "type": "video",
+                                      "muted": true,
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
+                                      "src": "${audio.url}",
+                                      "poster": "${cover.default}",
+                                      "visibleOn": "${ audio.url !== undefined }"
                                     },
                                     {
                                       "type": "divider"
                                     },
                                     {
-                                      "type": "html",
+                                      "type": "markdown",
                                       "className": "word-break",
                                       "name": "content",
                                       "label": "附件"

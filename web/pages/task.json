@@ -1054,7 +1054,7 @@
                                           "type": "action",
                                           "actionType": "download",
                                           "size": "sm",
-                                          "api": "/v2/task/download?id=${task_id}&type=audio}",
+                                          "api": "/v2/task/download?id=${task_id}&type=audio",
                                           "visibleOn": "${ article.audio.download_url !== undefined  && message.object !=='' }"
                                         },
                                         {
@@ -1096,23 +1096,32 @@
                                       "visibleOn": "${ play_url === undefined && article.video.hls_medias === undefined && article.video_preview.medias !== undefined }"
                                     },
                                     {
-                                      "type": "video",
-                                      "muted": true,
-                                      "autoPlay": false,
-                                      "rates": [1.0, 1.2, 1.5, 2.0],
-                                      "src": "${play_url}",
-                                      "poster": "${article.video.cover}",
-                                      "visibleOn": "${ play_url !== undefined }"
-                                    },
-                                    {
-                                      "type": "divider"
-                                    },
-                                    {
                                       "type": "audio",
                                       "autoPlay": false,
                                       "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${article.audio.download_url}",
                                       "visibleOn": "${ article.audio.download_url !== undefined }"
+                                    },
+                                    {
+                                      "type": "video",
+                                      "muted": true,
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
+                                      "src": "${play_url}",
+                                      "poster": "${ article.cover.default }",
+                                      "visibleOn": "${ play_url !== undefined }"
+                                    },
+                                    {
+                                      "type": "video",
+                                      "muted": true,
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
+                                      "src": "${article.audio.url}",
+                                      "poster": "${ article.cover.default }",
+                                      "visibleOn": "${ play_url === undefined && article.audio.url !== undefined}"
+                                    },
+                                    {
+                                      "type": "divider"
                                     },
                                     {
                                       "type": "markdown",

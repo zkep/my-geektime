@@ -72,15 +72,7 @@ func Download(ctx context.Context, x *model.Task) error {
 			return data.Info.Video.HlsMedias[i].Size > data.Info.Video.HlsMedias[j].Size
 		})
 		downloadURL = data.Info.Video.HlsMedias[0].URL
-		if !global.CONF.Site.Download {
-			ciphertext, rewriteHls, err1 := RewritePlay(ctx, downloadURL, x.TaskId)
-			if err1 != nil {
-				global.LOG.Error("download rewritePlay", zap.Error(err1), zap.String("taskId", x.TaskId))
-				return err1
-			}
-			x.RewriteHls = rewriteHls
-			x.Ciphertext = ciphertext
-		} else {
+		if global.CONF.Site.Download {
 			fileName := VerifyFileName(data.Info.Title)
 			dir := path.Join(x.TaskPid, VerifyFileName(data.Product.Title), fileName)
 			source, err = Video(ctx, x, downloadURL, dir, fileName)
@@ -88,15 +80,32 @@ func Download(ctx context.Context, x *model.Task) error {
 				global.LOG.Error("download video", zap.Error(err), zap.String("taskId", x.TaskId))
 				return err
 			}
+		} else {
+			ciphertext, rewriteHls, err1 := RewritePlay(ctx, downloadURL, x.TaskId)
+			if err1 != nil {
+				global.LOG.Error("download rewritePlay", zap.Error(err1), zap.String("taskId", x.TaskId))
+				return err1
+			}
+			x.RewriteHls = rewriteHls
+			x.Ciphertext = ciphertext
 		}
-	} else if data.Info.Audio.DownloadURL != "" && global.CONF.Site.Download {
+	} else if data.Info.Audio.DownloadURL != "" {
 		downloadURL = data.Info.Audio.DownloadURL
-		dir := path.Join(x.TaskPid, VerifyFileName(data.Product.Title))
-		source, err = Audio(ctx, x, downloadURL, dir, VerifyFileName(data.Info.Title))
-		if err != nil {
-			global.LOG.Error("download audio", zap.Error(err), zap.String("taskId", x.TaskId))
-			return err
+		if global.CONF.Site.Download {
+			dir := path.Join(x.TaskPid, VerifyFileName(data.Product.Title))
+			source, err = Audio(ctx, x, downloadURL, dir, VerifyFileName(data.Info.Title))
+			if err != nil {
+				global.LOG.Error("download audio", zap.Error(err), zap.String("taskId", x.TaskId))
+				return err
+			}
 		}
+		ciphertext, rewriteHls, err1 := RewritePlay(ctx, data.Info.Audio.URL, x.TaskId)
+		if err1 != nil {
+			global.LOG.Error("download rewritePlay", zap.Error(err1), zap.String("taskId", x.TaskId))
+			return err1
+		}
+		x.RewriteHls = rewriteHls
+		x.Ciphertext = ciphertext
 	}
 
 	if global.CONF.Site.Download {
@@ -404,5 +413,9 @@ func RewritePlay(ctx context.Context, hlsURL, taskId string) (string, []byte, er
 		}
 		buff.WriteString(l + "\n")
 	}
-	return base64.StdEncoding.EncodeToString(ciphertext), buff.Bytes(), nil
+	cipher := ""
+	if len(ciphertext) > 0 {
+		cipher = base64.StdEncoding.EncodeToString(ciphertext)
+	}
+	return cipher, buff.Bytes(), nil
 }

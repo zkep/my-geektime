@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
@@ -40,7 +41,7 @@ func (p *Product) Articles(c *gin.Context) {
 	ret := geek.ArticlesListResponse{Rows: make([]geek.ArticlesListRow, 0)}
 	ret.Count = resp.Data.Page.Count
 	for _, v := range resp.Data.List {
-		item := geek.ArticlesListRow{
+		row := geek.ArticlesListRow{
 			ID:               v.ID,
 			ArticleTitle:     v.ArticleTitle,
 			ArticleSummary:   v.ArticleSummary,
@@ -52,10 +53,10 @@ func (p *Product) Articles(c *gin.Context) {
 			AuthorName:       v.AuthorName,
 			AuthorIntro:      v.AuthorIntro,
 		}
-		if item.VideoCover != "" && item.ArticleCover == "" {
-			item.ArticleCover = item.VideoCover
+		if row.VideoCover != "" && row.ArticleCover == "" {
+			row.ArticleCover = row.VideoCover
 		}
-		ret.Rows = append(ret.Rows, item)
+		ret.Rows = append(ret.Rows, row)
 	}
 	global.OK(c, ret)
 }
@@ -72,6 +73,12 @@ func (p *Product) ArticleInfo(c *gin.Context) {
 	if err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
+	}
+	converter := md.NewConverter("", true, nil)
+	if len(resp.Data.Info.Content) > 0 {
+		if markdown, err := converter.ConvertString(resp.Data.Info.Content); err == nil {
+			resp.Data.Info.Content = markdown
+		}
 	}
 	global.OK(c, resp.Data.Info)
 }

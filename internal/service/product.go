@@ -69,7 +69,7 @@ func GetArticles(ctx context.Context, uid, accessToken string,
 	err := Request(ctx, http.MethodPost, ArticlesURL,
 		bytes.NewBuffer(raw), accessToken, func(raw []byte) error {
 			if err := json.Unmarshal(raw, &resp); err != nil {
-				global.LOG.Error("GetArticles", zap.Error(err))
+				global.LOG.Error("GetArticles", zap.Error(err), zap.String("raw", string(raw)))
 				return err
 			}
 			if resp.Code != 0 {

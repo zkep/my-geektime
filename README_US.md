@@ -1,13 +1,12 @@
- [English](./README_US.md) | 中文
- 
+English | [中文](./README.md)
 
-## 我的极客时间
-极客时间资源下载工具
+### my geektime
+This is a tool to obtain the geektime video or articles with you geektime account
 
 ---
-### 安装
+#### Install
 
-#### docker compose 方式
+#### install with docker compose
 
 ```shell
 git clone https://github.com/zkep/mygeektime.git
@@ -16,10 +15,10 @@ cd mygeektime/docker
 
 docker-compose up -d
 ```
-浏览器访问:  http://127.0.0.1
 
+browser web url:  http://127.0.0.1
 
-#### docker 方式
+#### install with  docker 
 ```shell
 docker run  -d  --restart always \
 --name mygeektime  \
@@ -29,38 +28,37 @@ docker run  -d  --restart always \
 zkep/mygeektime:latest  server --config=config.yml
 ```
 
-##### docker 挂载下载目录
-使用宿主机目录替换下面的 ${directory}
+##### docker with specify download directory
+replace ${directory} with you local directory
 ```shell
-docker run -d --restart always \
+docker run  -d  --restart always \
 -p 8090:8090 \
 --name mygeektime \
 -v config.yml:/config.yml \
 -v ${directory}:/repo  \
-zkep/mygeektime:latest server   
+zkep/mygeektime:latest  server   
 ```
+browser web url:  http://127.0.0.1:8090  
 
 
-#### golang 方式
+#### install with golang
 ```shell
 go install github.com/zkep/mygeektime@latest
 ```
+#### Start web service
 
-#### 启动web服务
-
-##### 默认配置启动http服务
+##### Default configuration to start HTTP service
 ```shell
-# 使用默认配置启动
 mygeektime server
 ```
 
-##### 自定义配置启动http服务
+##### Customize configuration to start HTTP service
 ```shell
-# 使用自定义配置启动服务
+# Use custom configuration templates
 mygeektime server --config=config.yml
 ```
 
-##### 默认配置文件
+##### Default configuration file
 ```yaml
 server:
   app_name: My Geek Time
@@ -79,39 +77,21 @@ database:
   source:  mygeektime.db
   max_idle_conns: 10
   max_open_conns: 10
-storage: # mp4 或 mp3 存储目录
-  directory: repo # 自定义下载文件夹，默认执行目录下的repo目录
+storage: # mp4 or mp3 save folder
   driver: local
+  directory: repo  # Customize download folder, default to execute repo directory under the directory
   bucket: object
-  host: http://127.0.0.1:8090 # 端口与server中的 http_port 保持一致
-browser:  # 
-  open_browser: true # 服务启动后自动打开浏览器
-
+  host: http://127.0.0.1:8090  # Keep the port consistent with the http_port in the server
+browser:
+  open_browser: true # Automatically open browser after service startup
 ```
 
-
-### 查看帮助
+Commond help:
 ```shell
 mygeektime -help
 ```
-#### 查看帮助输出
-```shell
-My GeekTime CLI 0.0.1
 
-Available commands:
-
-   server   This is http server 
-   cli      This is command 
-
-Flags:
-
-  -help
-        Get help on the 'mygeektime' command.
-```
-
-### 依赖项
-
-#### [FFmpeg 处理视频](https://ffmpeg.org/download.html)
+#### [FFmpeg](https://ffmpeg.org/download.html)
 
 MacOS
 ```shell
@@ -128,16 +108,17 @@ cd ffmpeg
 make && make install
 ```
 
-### 模拟用户登录：
+### Simulate user login：
 
-> 方式1: 浏览器开发者工具获取geektime有效cookie
+> Method 1: The browser developer tool retrieves a valid Geektime cookie
 
-#### 感谢
+
+#### thanks
 * [gin](https://github.com/gin-gonic/gin)
 * [amis](https://github.com/baidu/amis)
 * [gorm](https://github.com/go-gorm/gorm)
 * [FFmpeg](https://ffmpeg.org/download.html)
 
-#### 扫码加入实战交流群
+#### Join our communication group
 
 <img src="./web/public/wechat.jpg"  width="200" />

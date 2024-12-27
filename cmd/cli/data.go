@@ -70,16 +70,20 @@ func (app *App) Data(f *DataFlags) error {
 	if err := json.Unmarshal([]byte(TagJSON), &tags); err != nil {
 		return err
 	}
-	for _, form := range ProductForm {
-		for _, typ := range ProductTypes {
+	for _, typ := range ProductTypes {
+		for _, form := range ProductForms {
 			for _, tag := range tags {
 				for _, opt := range tag.Options {
-					prev, psize, hasNext := 1, 20, true
+					prev, psize, hasNext, total := 1, 20, true, 0
+					fmt.Printf(
+						"download start [%s/%s/%s/%s] \n",
+						typ.Label, form.Label, tag.Label, opt.Label,
+					)
 					for hasNext {
 						req := geek.PvipProductRequest{
 							TagIds:       []int32{opt.Value},
-							ProductType:  typ,
-							ProductForm:  form,
+							ProductType:  typ.Value,
+							ProductForm:  form.Value,
 							Sort:         8,
 							Size:         psize,
 							Prev:         prev,
@@ -89,7 +93,12 @@ func (app *App) Data(f *DataFlags) error {
 						if err != nil {
 							return err
 						}
+						total += len(resp.Data.Products)
 						if len(resp.Data.Products) < psize {
+							fmt.Printf(
+								"download end [%s/%s/%s/%s] total: %d \n",
+								typ.Label, form.Label, tag.Label, opt.Label, total,
+							)
 							hasNext = false
 						}
 						prev++
@@ -114,8 +123,8 @@ func (app *App) Data(f *DataFlags) error {
 								OtherId:    fmt.Sprintf("%d", product.ID),
 								Cover:      product.Cover.Square,
 								Raw:        itemRaw,
-								OtherType:  typ,
-								OtherForm:  form,
+								OtherType:  typ.Value,
+								OtherForm:  form.Value,
 								OtherGroup: tag.Value,
 								OtherTag:   opt.Value,
 								Status:     service.TASK_STATUS_PENDING,
@@ -144,19 +153,18 @@ func (app *App) Data(f *DataFlags) error {
 									TaskType:   service.TASK_TYPE_ARTICLE,
 									Cover:      cover,
 									Raw:        raw,
-									OtherType:  typ,
-									OtherForm:  form,
+									OtherType:  typ.Value,
+									OtherForm:  form.Value,
 									OtherGroup: tag.Value,
 									OtherTag:   opt.Value,
 									Status:     service.TASK_STATUS_PENDING,
 								}
 								tasks = append(tasks, &item)
 							}
-							count := len(tasks)
 							statistics := task.TaskStatistics{
-								Count: count,
+								Count: len(tasks),
 								Items: map[int]int{
-									service.TASK_STATUS_PENDING:  count,
+									service.TASK_STATUS_PENDING:  len(tasks),
 									service.TASK_STATUS_RUNNING:  0,
 									service.TASK_STATUS_FINISHED: 0,
 									service.TASK_STATUS_ERROR:    0,
@@ -188,12 +196,6 @@ func (app *App) Data(f *DataFlags) error {
 	return nil
 }
 
-var (
-	ProductTypes = []int32{1, 4, 5}
-
-	ProductForm = []int32{2, 1}
-)
-
 type Tag struct {
 	Option
 	Options []Option `json:"options"`
@@ -203,6 +205,19 @@ type Option struct {
 	Label string `json:"label"`
 	Value int32  `json:"value"`
 }
+
+var (
+	ProductTypes = []Option{
+		{"体系课", 1},
+		{"公开课", 4},
+		{"线下大会", 5},
+	}
+
+	ProductForms = []Option{
+		{"图文+音频", 1},
+		{"视频", 2},
+	}
+)
 
 var TagJSON = `
 [

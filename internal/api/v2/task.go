@@ -432,8 +432,11 @@ func (t *Task) Play(c *gin.Context) {
 			}
 			ln = fmt.Sprintf(`%s"%s/v2/task/kms?Ciphertext=%s"`, sps[0], global.CONF.Storage.Host, token)
 		} else if strings.HasSuffix(ln, ".ts") {
-			if strings.HasPrefix(ln, "https://res001.geekbang.org") {
-				ln = "/v2/task/play/part?p=" + ln
+			for _, proxyURL := range global.CONF.Site.Play.ProxyUrl {
+				if strings.HasPrefix(ln, proxyURL) {
+					ln = "/v2/task/play/part?p=" + ln
+					break
+				}
 			}
 		}
 		buff.WriteString(ln + "\n")

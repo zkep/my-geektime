@@ -32,7 +32,6 @@ func SaveCookie(cookies string, identity string, auth *geek.AuthResponse) func(r
 		}
 		if err := global.DB.Where(model.User{Uid: identity}).
 			Assign(model.User{
-				UserName:    auth.Data.Nick,
 				Avatar:      auth.Data.Avatar,
 				AccessToken: cookies,
 			}).
