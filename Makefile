@@ -21,3 +21,8 @@ run: build
 	gofmt -w ./
 	mygeektime \
     --help
+
+website:
+	pip install mkdocs-material
+	mkdocs gh-deploy --force
+

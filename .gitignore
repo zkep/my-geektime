@@ -31,3 +31,4 @@ go.work.sum
 # custom
 logs/
 .mygeektime/
+site/
