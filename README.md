@@ -10,6 +10,17 @@
 
 ### [在线体验](https://mygeektime.anyfun.tech)
 
+### 查看本地文档
+```shell
+git clone https://github.com/zkep/mygeektime.git
+
+pip install mkdocs-material
+
+mkdocs serve
+
+```
+浏览器访问:  http://127.0.0.1:8000/
+
 
 ### 安装
 
@@ -66,54 +77,6 @@ mygeektime server
 mygeektime server --config=config.yml
 ```
 
-##### 默认配置文件
-```yaml
-server:
-  app_name: My Geek Time
-  run_mode: debug
-  http_addr: 0.0.0.0
-  http_port: 8090
-jwt:
-  secret: mygeektime-secret
-  expires: 7200
-database:
-# driver: mysql
-# source: root:123456@tcp(127.0.0.1:3306)/mygeektime?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
-# driver: postgres
-# source: host=127.0.0.1 user=postgres password=123456 dbname=mygeektime port=5432 sslmode=disable TimeZone=Asia/Shanghai
-  driver:  sqlite   # mysql|postgres|sqlite
-  source:  mygeektime.db
-  max_idle_conns: 10
-  max_open_conns: 10
-storage: # mp4 或 mp3 存储目录
-  directory: repo # 自定义下载文件夹，默认执行目录下的repo目录
-  driver: local
-  bucket: object
-  host: http://127.0.0.1:8090 # 端口与server中的 http_port 保持一致
-browser:  # 
-  open_browser: true # 服务启动后自动打开浏览器
-
-```
-
-
-### 查看帮助
-```shell
-mygeektime -help
-```
-#### 查看帮助输出
-```shell
-My GeekTime CLI 0.0.1
-
-Available commands:
-
-   server   This is http server 
-   cli      This is command 
-
-Flags:
-
-  -help
-        Get help on the 'mygeektime' command.
-```
 
 ### 依赖项
 
@@ -133,10 +96,6 @@ cd ffmpeg
 
 make && make install
 ```
-
-### 模拟用户登录：
-
-> 方式1: 浏览器开发者工具获取geektime有效cookie
 
 #### 感谢
 * [gin](https://github.com/gin-gonic/gin)

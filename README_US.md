@@ -10,6 +10,15 @@ This is a tool to obtain the geektime video or articles with you geektime accoun
 
 ### [Show Time](https://mygeektime.anyfun.tech)
 
+### Local Docs
+```shell
+git clone https://github.com/zkep/mygeektime.git
+
+pip install mkdocs-material
+
+mkdocs serve
+```
+browser web url:  http://127.0.0.1:8000/
 
 #### Install
 
@@ -63,39 +72,6 @@ mygeektime server
 ```shell
 # Use custom configuration templates
 mygeektime server --config=config.yml
-```
-
-##### Default configuration file
-```yaml
-server:
-  app_name: My Geek Time
-  run_mode: debug
-  http_addr: 0.0.0.0
-  http_port: 8090
-jwt:
-  secret: mygeektime-secret
-  expires: 7200
-database:
-# driver: mysql
-# source: root:123456@tcp(127.0.0.1:3306)/mygeektime?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
-# driver: postgres
-# source: host=127.0.0.1 user=postgres password=123456 dbname=mygeektime port=5432 sslmode=disable TimeZone=Asia/Shanghai
-  driver:  sqlite   # mysql|postgres|sqlite
-  source:  mygeektime.db
-  max_idle_conns: 10
-  max_open_conns: 10
-storage: # mp4 or mp3 save folder
-  driver: local
-  directory: repo  # Customize download folder, default to execute repo directory under the directory
-  bucket: object
-  host: http://127.0.0.1:8090  # Keep the port consistent with the http_port in the server
-browser:
-  open_browser: true # Automatically open browser after service startup
-```
-
-Commond help:
-```shell
-mygeektime -help
 ```
 
 #### [FFmpeg](https://ffmpeg.org/download.html)
