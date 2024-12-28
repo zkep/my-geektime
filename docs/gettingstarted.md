@@ -21,95 +21,6 @@ docker-compose up -d
 ```
 服务启动后浏览器访问:  http://127.0.0.1
 
-### docker-compose.yml
-
-```yaml
-name: mygeektime
-networks:
-  mygeektime:
-    driver: bridge
-services:
-  mysql:
-    image: mysql:latest
-    hostname: "mysql"
-    restart: always
-    networks:
-      - mygeektime
-    environment:
-      - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_DATABASE=mygeektime
-    volumes:
-      - ./mysql/data:/var/lib/mysql
-      - ./mysql/init/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./mysql/init/tasks.sql:/docker-entrypoint-initdb.d/tasks.sql
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 33060:3306
-  redis:
-    image: redis:latest
-    hostname: redis
-    restart: always
-    networks:
-      - mygeektime
-    volumes:
-      - ./redis/data:/data
-    command: redis-server --requirepass 123456
-    ports:
-      - 63790:6379
-#  natter:
-#    image: natter:latest
-#    hostname: natter
-#    restart: always
-#    build: #启动服务时，先将build中指定的dockerfile打包成镜像，再运行该镜像
-#      context: ./natter #指定上下文目录dockerfile所在目录[相对、绝对路径都可以]
-#      dockerfile: Dockerfile.debian-amd64 #文件名称[在指定的context的目录下指定那个Dockerfile文件名称]
-#    network_mode: host
-#    volumes:
-#      - ./natter:/data
-#    command: -p 80
-  server:
-    hostname: mygeektime
-    image: zkep/mygeektime:latest
-#    image:  mygeektime:latest
-#    build: #启动服务时，先将build中指定的dockerfile打包成镜像，再运行该镜像
-#      context: ../ #指定上下文目录dockerfile所在目录[相对、绝对路径都可以]
-#      dockerfile: Dockerfile #文件名称[在指定的context的目录下指定那个Dockerfile文件名称]
-    privileged: true
-    restart: always
-    networks:
-      - mygeektime
-    command: server --config=config.yml
-    ports:
-      - 8090:8090
-    environment:
-      - GIN_MODE=test
-    volumes:
-      -  ./server/repo:/repo
-      -  ./server/config.yml:/config.yml
-      -  ./server/wechat.jpg:/wechat.jpg
-    depends_on:
-      - mysql
-      - redis
-  nginx:
-    image: nginx:latest
-    hostname: nginx
-    restart: always
-    networks:
-      - mygeektime
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/html:/usr/share/nginx/html
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/logs:/var/logs/nginx
-    ports:
-      - 80:80
-      - 443:443
-    depends_on:
-      - server
-#      - natter
-
-```
-
 
 ## docker 安装
 ${directory} 是宿主机的音视频下载目录，替换成你自己的文件目录即可
@@ -162,4 +73,4 @@ cd ffmpeg
 make && make install
 ```
 
-[配置项](./config.md) -->
+[配置项](./config.md)  👉

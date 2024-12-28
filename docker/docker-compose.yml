@@ -30,17 +30,6 @@ services:
     command: redis-server --requirepass 123456
     ports:
       - 63790:6379
-#  natter:
-#    image: natter:latest
-#    hostname: natter
-#    restart: always
-#    build: #启动服务时，先将build中指定的dockerfile打包成镜像，再运行该镜像
-#      context: ./natter #指定上下文目录dockerfile所在目录[相对、绝对路径都可以]
-#      dockerfile: Dockerfile.debian-amd64 #文件名称[在指定的context的目录下指定那个Dockerfile文件名称]
-#    network_mode: host
-#    volumes:
-#      - ./natter:/data
-#    command: -p 80
   server:
     hostname: mygeektime
     image: zkep/mygeektime:latest
@@ -80,7 +69,6 @@ services:
       - 443:443
     depends_on:
       - server
-#      - natter
 
 
 

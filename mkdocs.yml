@@ -53,9 +53,10 @@ nav:
   - gettingstarted.md
   - config.md
   - "教程🧑‍🏫":
+      - guide/register.md
       - guide/data_default.md
       - guide/data_geektime.md
-  - "例子🌰":
-      - examples/basic.md
+  - "高级🌰":
+      - examples/natter.md
   - "FQA 🙋":
     - faq.md

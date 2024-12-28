@@ -74,7 +74,7 @@ func Download(ctx context.Context, x *model.Task) error {
 		downloadURL = data.Info.Video.HlsMedias[0].URL
 		if global.CONF.Site.Download {
 			fileName := VerifyFileName(data.Info.Title)
-			dir := path.Join(x.TaskPid, VerifyFileName(data.Product.Title), fileName)
+			dir := path.Join(x.OtherId, VerifyFileName(data.Product.Title), fileName)
 			source, err = Video(ctx, x, downloadURL, dir, fileName)
 			if err != nil {
 				global.LOG.Error("download video", zap.Error(err), zap.String("taskId", x.TaskId))
@@ -92,7 +92,7 @@ func Download(ctx context.Context, x *model.Task) error {
 	} else if data.Info.Audio.DownloadURL != "" {
 		downloadURL = data.Info.Audio.DownloadURL
 		if global.CONF.Site.Download {
-			dir := path.Join(x.TaskPid, VerifyFileName(data.Product.Title))
+			dir := path.Join(x.OtherId, VerifyFileName(data.Product.Title))
 			source, err = Audio(ctx, x, downloadURL, dir, VerifyFileName(data.Info.Title))
 			if err != nil {
 				global.LOG.Error("download audio", zap.Error(err), zap.String("taskId", x.TaskId))
