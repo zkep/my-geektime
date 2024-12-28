@@ -17,7 +17,7 @@ func NewI18nRender(i18n I18n) *I18nRender {
 }
 
 func (r *I18nRender) OK(c *gin.Context, obj any) {
-	r.JSON(c, 0, obj, "OK!", "OK!")
+	r.JSON(c, 0, obj, "OK", "OK")
 }
 
 func (r *I18nRender) OkWithMsg(c *gin.Context, obj any, msg, other string, params ...any) {
@@ -25,7 +25,7 @@ func (r *I18nRender) OkWithMsg(c *gin.Context, obj any, msg, other string, param
 }
 
 func (r *I18nRender) FAIL(c *gin.Context, msg string, params ...any) {
-	r.JSON(c, 100, struct{}{}, msg, "FAIL!!!", params...)
+	r.JSON(c, 100, struct{}{}, msg, "FAIL", params...)
 }
 
 func (r *I18nRender) FailWithMsg(c *gin.Context, msg, other string, params ...any) {
@@ -37,9 +37,6 @@ func (r *I18nRender) FailWithError(c *gin.Context, err error) {
 }
 
 func (r *I18nRender) JSON(c *gin.Context, code int, obj any, msg, other string, params ...any) {
-	//if obj == nil {
-	//	obj = struct{}{}
-	//}
 	msg = r.I18n.HttpValue(c.Request, msg, other, params...)
 	c.Render(http.StatusOK, render.JSON{Data: gin.H{"status": code, "msg": msg, "data": obj}})
 }

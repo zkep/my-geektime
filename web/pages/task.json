@@ -722,6 +722,22 @@
             "actions": [
               {
                 "type": "button",
+                "icon": "fa-solid fa-download",
+                "visibleOn": "${ ls:role_id === 1}",
+                "label": "缓存",
+                "level": "info",
+                "actionType": "ajax",
+                "api": {
+                  "url": "/v2/task/retry",
+                  "method":"post",
+                  "data": {
+                    "pid": "${task_id}"
+                  }
+                },
+                "confirmText": "确定要缓存【音视频】到本地磁盘么？"
+              },
+              {
+                "type": "button",
                 "icon": "fa-solid fa-trash",
                 "visibleOn": "${ ls:role_id === 1 }",
                 "label": "删除",
@@ -738,7 +754,7 @@
               {
                 "type": "button",
                 "icon": "fa fa-eye",
-                "label": "学习",
+                "label": "在线看",
                 "level": "light",
                 "actionType": "drawer",
                 "drawer": {
@@ -859,7 +875,7 @@
                       "keepItemSelectionOnPageChange": true,
                       "bulkActions": [
                         {
-                          "label": "批量重试",
+                          "label": "批量缓存",
                           "actionType": "ajax",
                           "visibleOn": "${ ls:role_id === 1 }",
                           "api": {
@@ -870,7 +886,7 @@
                               "ids": "${ids | raw}"
                             }
                           },
-                          "confirmText": "确定要重新下载吗？"
+                          "confirmText": "确定要批量缓存【音视频】到本地吗？"
                         },
                         {
                           "label": "批量删除",
@@ -968,9 +984,9 @@
                         "actions":[
                           {
                             "type": "button",
-                            "icon": "fa-solid fa-repeat",
+                            "icon": "fa-solid fa-download",
                             "visibleOn": "${ ls:role_id === 1}",
-                            "label": "重试",
+                            "label": "缓存",
                             "level": "info",
                             "actionType": "ajax",
                             "api": {
@@ -981,7 +997,7 @@
                                 "ids": "${task_id}"
                               }
                             },
-                            "confirmText": "确定要重新下载么？"
+                            "confirmText": "确定要缓存【音视频】到本地磁盘么？"
                           },
                           {
                             "type": "button",
@@ -1002,7 +1018,7 @@
                           {
                             "type": "button",
                             "icon": "fa fa-eye",
-                            "label": "学习",
+                            "label": "在线看",
                             "level": "light",
                             "actionType": "drawer",
                             "visibleOn": "${status !='1'}",

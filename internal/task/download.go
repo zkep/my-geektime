@@ -136,22 +136,22 @@ func worker(ctx context.Context, x *model.Task) error {
 			Status:    service.TASK_STATUS_RUNNING,
 			UpdatedAt: time.Now().Unix(),
 		}
-		aid, err := strconv.ParseInt(x.OtherId, 10, 64)
-		if err != nil {
-			return err
-		}
-		var u model.User
-		if err = global.DB.Where(&model.User{RoleId: user.AdminRoleId}).First(&u).Error; err != nil {
-			return err
-		}
-		if u.AccessToken == "" {
-			return errors.New("no access token, please refresh geektime cookie")
-		}
-		status := service.TASK_STATUS_FINISHED
-		if article, err1 := service.GetArticleInfo(ctx, u.Uid,
-			u.AccessToken, geek.ArticlesInfoRequest{Id: aid}); err1 != nil {
-			return err1
-		} else {
+		if len(x.RewriteHls) == 0 {
+			aid, err := strconv.ParseInt(x.OtherId, 10, 64)
+			if err != nil {
+				return err
+			}
+			var u model.User
+			if err = global.DB.Where(&model.User{RoleId: user.AdminRoleId}).First(&u).Error; err != nil {
+				return err
+			}
+			if u.AccessToken == "" {
+				return errors.New("no access token, please refresh geektime cookie")
+			}
+			article, err1 := service.GetArticleInfo(ctx, u.Uid, u.AccessToken, geek.ArticlesInfoRequest{Id: aid})
+			if err1 != nil {
+				return err1
+			}
 			var info geek.ArticleInfoRaw
 			if err = json.Unmarshal(article.Raw, &info); err != nil {
 				return err
@@ -159,11 +159,12 @@ func worker(ctx context.Context, x *model.Task) error {
 			m.Raw = info.Data
 			x.Raw = info.Data
 		}
-		if err = global.DB.Where(&model.Task{Id: x.Id}).Updates(m).Error; err != nil {
+		if err := global.DB.Where(&model.Task{Id: x.Id}).Updates(m).Error; err != nil {
 			global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
-		if err = service.Download(ctx, x); err != nil {
+		status := service.TASK_STATUS_FINISHED
+		if err := service.Download(ctx, x); err != nil {
 			global.LOG.Error("worker download", zap.Error(err), zap.String("taskId", x.TaskId))
 			status = service.TASK_STATUS_ERROR
 			message := task.TaskMessage{Text: err.Error()}
@@ -174,8 +175,7 @@ func worker(ctx context.Context, x *model.Task) error {
 		m.Message = x.Message
 		m.Status = int32(status)
 		m.UpdatedAt = time.Now().Unix()
-		err = global.DB.Where(&model.Task{Id: x.Id}).Updates(&m).Error
-		if err != nil {
+		if err := global.DB.Where(&model.Task{Id: x.Id}).Updates(&m).Error; err != nil {
 			global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}

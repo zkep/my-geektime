@@ -209,11 +209,19 @@ func (t *Task) Retry(c *gin.Context) {
 			UpdateColumn("status", service.TASK_STATUS_PENDING).Error; err != nil {
 			return err
 		}
-		for _, idx := range strings.Split(req.Ids, ",") {
+		if len(req.Ids) == 0 {
 			if err := tx.Model(&model.Task{}).
-				Where("task_id", idx).
+				Where("task_pid", req.Pid).
 				UpdateColumn("status", service.TASK_STATUS_PENDING).Error; err != nil {
 				return err
+			}
+		} else {
+			for _, idx := range strings.Split(req.Ids, ",") {
+				if err := tx.Model(&model.Task{}).
+					Where("task_id", idx).
+					UpdateColumn("status", service.TASK_STATUS_PENDING).Error; err != nil {
+					return err
+				}
 			}
 		}
 		return nil

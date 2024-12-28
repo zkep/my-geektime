@@ -46,8 +46,9 @@ func VerifyFileName(name string) string {
 }
 
 type Part struct {
-	Src  string
-	Dest string
+	Src   string
+	Dest  string
+	IsKey bool
 }
 
 func Download(ctx context.Context, x *model.Task) error {
@@ -74,13 +75,13 @@ func Download(ctx context.Context, x *model.Task) error {
 		downloadURL = data.Info.Video.HlsMedias[0].URL
 		if global.CONF.Site.Download {
 			fileName := VerifyFileName(data.Info.Title)
-			dir := path.Join(x.OtherId, VerifyFileName(data.Product.Title), fileName)
+			dir := path.Join(x.TaskPid, VerifyFileName(data.Product.Title), fileName)
 			source, err = Video(ctx, x, downloadURL, dir, fileName)
 			if err != nil {
 				global.LOG.Error("download video", zap.Error(err), zap.String("taskId", x.TaskId))
 				return err
 			}
-		} else {
+		} else if len(x.RewriteHls) == 0 {
 			ciphertext, rewriteHls, err1 := RewritePlay(ctx, downloadURL, x.TaskId)
 			if err1 != nil {
 				global.LOG.Error("download rewritePlay", zap.Error(err1), zap.String("taskId", x.TaskId))
@@ -92,20 +93,22 @@ func Download(ctx context.Context, x *model.Task) error {
 	} else if data.Info.Audio.DownloadURL != "" {
 		downloadURL = data.Info.Audio.DownloadURL
 		if global.CONF.Site.Download {
-			dir := path.Join(x.OtherId, VerifyFileName(data.Product.Title))
+			dir := path.Join(x.TaskPid, VerifyFileName(data.Product.Title))
 			source, err = Audio(ctx, x, downloadURL, dir, VerifyFileName(data.Info.Title))
 			if err != nil {
 				global.LOG.Error("download audio", zap.Error(err), zap.String("taskId", x.TaskId))
 				return err
 			}
 		}
-		ciphertext, rewriteHls, err1 := RewritePlay(ctx, data.Info.Audio.URL, x.TaskId)
-		if err1 != nil {
-			global.LOG.Error("download rewritePlay", zap.Error(err1), zap.String("taskId", x.TaskId))
-			return err1
+		if len(x.RewriteHls) == 0 {
+			ciphertext, rewriteHls, err1 := RewritePlay(ctx, data.Info.Audio.URL, x.TaskId)
+			if err1 != nil {
+				global.LOG.Error("download rewritePlay", zap.Error(err1), zap.String("taskId", x.TaskId))
+				return err1
+			}
+			x.RewriteHls = rewriteHls
+			x.Ciphertext = ciphertext
 		}
-		x.RewriteHls = rewriteHls
-		x.Ciphertext = ciphertext
 	}
 
 	if global.CONF.Site.Download {
@@ -138,37 +141,40 @@ func Video(ctx context.Context, x *model.Task, hlsURL, dir, fileName string) (st
 	retryCtx, retryCancel := context.WithTimeout(ctx, time.Minute*30)
 	defer retryCancel()
 
-	var hlsRaw []byte
-	err := zhttp.R.
-		Before(func(r *http.Request) {
-			r.Header.Set("Accept", "application/json, text/plain, */*")
-			r.Header.Set("User-Agent", zhttp.RandomUserAgent())
-			r.Header.Set("Referer", r.URL.String())
-			r.Header.Set("Origin", "https://time.geekbang.org")
-		}).
-		After(func(r *http.Response) error {
-			if zhttp.IsHTTPSuccessStatus(r.StatusCode) {
-				raw, err := io.ReadAll(r.Body)
-				if err != nil {
-					return err
-				}
-				hlsRaw = raw
-				return nil
-			}
-			if zhttp.IsHTTPStatusSleep(r.StatusCode) {
-				time.Sleep(time.Second * 10)
-			}
-			if zhttp.IsHTTPStatusRetryable(r.StatusCode) {
-				return fmt.Errorf("http status: %s", r.Status)
-			}
-			return zhttp.BreakRetryError(fmt.Errorf("break http status: %s", r.Status))
-		}).
-		DoWithRetry(retryCtx, http.MethodGet, hlsURL, nil)
-	if err != nil {
-		return "", err
-	}
+	hlsRaw := x.RewriteHls
 	if len(hlsRaw) == 0 {
-		return "", fmt.Errorf("[%s] hls file is zero", hlsURL)
+		err := zhttp.R.
+			Before(func(r *http.Request) {
+				r.Header.Set("Accept", "application/json, text/plain, */*")
+				r.Header.Set("User-Agent", zhttp.RandomUserAgent())
+				r.Header.Set("Referer", r.URL.String())
+				r.Header.Set("Origin", "https://time.geekbang.org")
+			}).
+			After(func(r *http.Response) error {
+				if zhttp.IsHTTPSuccessStatus(r.StatusCode) {
+					raw, err := io.ReadAll(r.Body)
+					if err != nil {
+						return err
+					}
+					hlsRaw = raw
+					return nil
+				}
+				if zhttp.IsHTTPStatusSleep(r.StatusCode) {
+					time.Sleep(time.Second * 10)
+				}
+				if zhttp.IsHTTPStatusRetryable(r.StatusCode) {
+					return fmt.Errorf("http status: %s, %s", r.Status, r.Request.URL.String())
+				}
+				return zhttp.BreakRetryError(fmt.Errorf(
+					"break http status: %s,%s", r.Status, r.Request.URL.String()))
+			}).
+			DoWithRetry(retryCtx, http.MethodGet, hlsURL, nil)
+		if err != nil {
+			return "", err
+		}
+		if len(hlsRaw) == 0 {
+			return "", fmt.Errorf("[%s] hls file is zero", hlsURL)
+		}
 	}
 
 	var (
@@ -184,12 +190,14 @@ func Video(ctx context.Context, x *model.Task, hlsURL, dir, fileName string) (st
 			break
 		}
 		l, rl := string(line), string(line)
-		srcURL, destName := "", ""
+		srcURL, destName, isKey := "", "", false
 		if strings.HasPrefix(l, "#EXT-X-KEY:") {
+			isKey = true
 			sps := strings.Split(l, `"`)
 			srcURL = sps[1]
 			destName = path.Join(dir, "key.key")
-			l = fmt.Sprintf(`%s"file:///%s"`, sps[0], global.Storage.GetKey(destName, true))
+			realDestPath := global.Storage.GetKey(destName, true)
+			l = fmt.Sprintf(`%s"file:///%s"`, sps[0], realDestPath)
 			token, _, er := global.JWT.TokenGenerator(func(claims jwt.MapClaims) {
 				claims["task_id"] = x.TaskId
 			})
@@ -197,9 +205,25 @@ func Video(ctx context.Context, x *model.Task, hlsURL, dir, fileName string) (st
 				return "", er
 			}
 			rl = fmt.Sprintf(`%s"{host}/v2/task/kms?Ciphertext=%s"`, sps[0], token)
+			if len(x.Ciphertext) > 0 {
+				cipher, err := base64.StdEncoding.DecodeString(x.Ciphertext)
+				if err != nil {
+					return "", err
+				}
+				if err = os.WriteFile(realDestPath, cipher, os.ModePerm); err != nil {
+					return "", err
+				}
+				srcURL, destName = "", ""
+			}
 		} else if strings.HasSuffix(l, ".ts") {
-			srcURL = hlsURL[:strings.LastIndex(hlsURL, "/")+1] + l
-			destName = path.Join(dir, l)
+			playHost := hlsURL[:strings.LastIndex(hlsURL, "/")+1]
+			if !strings.HasPrefix(l, "https://") {
+				srcURL = playHost + l
+				destName = path.Join(dir, l)
+			} else {
+				srcURL = l
+				destName = path.Join(dir, strings.TrimPrefix(l, playHost))
+			}
 			rl = srcURL
 		}
 		rewriteBuff.WriteString(rl + "\n")
@@ -207,22 +231,22 @@ func Video(ctx context.Context, x *model.Task, hlsURL, dir, fileName string) (st
 		if len(srcURL) == 0 || len(destName) == 0 {
 			continue
 		}
-		ts = append(ts, Part{srcURL, destName})
+		ts = append(ts, Part{srcURL, destName, isKey})
 	}
 
 	if len(ts) == 0 {
 		return "", fmt.Errorf("[%s] part is zero", hlsURL)
 	}
-	for idx, t := range ts {
-		dowloadURL, destName := t.Src, t.Dest
-		err = zhttp.R.
+	for _, t := range ts {
+		dowloadURL, destName, isKey := t.Src, t.Dest, t.IsKey
+		err := zhttp.R.
 			Before(func(r *http.Request) {
 				r.Header.Set("Accept", "application/json, text/plain, */*")
 				r.Header.Set("User-Agent", zhttp.RandomUserAgent())
 			}).
 			After(func(r *http.Response) error {
 				if zhttp.IsHTTPSuccessStatus(r.StatusCode) {
-					if idx == 0 {
+					if isKey {
 						raw, err := io.ReadAll(r.Body)
 						if err != nil {
 							return err
@@ -241,9 +265,10 @@ func Video(ctx context.Context, x *model.Task, hlsURL, dir, fileName string) (st
 					time.Sleep(time.Second * 10)
 				}
 				if zhttp.IsHTTPStatusRetryable(r.StatusCode) {
-					return fmt.Errorf("http status: %s", r.Status)
+					return fmt.Errorf("http status: %s, %s", r.Status, r.Request.URL.String())
 				}
-				return zhttp.BreakRetryError(fmt.Errorf("break http status: %s", r.Status))
+				return zhttp.BreakRetryError(fmt.Errorf(
+					"break http status: %s,%s", r.Status, r.Request.URL.String()))
 			}).
 			DoWithRetry(retryCtx, http.MethodGet, dowloadURL, nil)
 		if err != nil {

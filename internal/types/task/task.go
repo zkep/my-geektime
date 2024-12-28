@@ -76,7 +76,7 @@ type RetryRequest struct {
 	// task pid
 	Pid string `json:"pid,omitempty" form:"pid" binding:"required"`
 	// task ids
-	Ids string `json:"ids,omitempty" form:"ids" binding:"required"`
+	Ids string `json:"ids,omitempty" form:"ids"`
 }
 
 type TaskInfoRequest struct {

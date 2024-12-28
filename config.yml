@@ -50,5 +50,5 @@ site:
   play:
     type: origin  #  origin | local
     proxy_url:
-      # - https://res001.geekbang.org
+      - https://res001.geekbang.org
 

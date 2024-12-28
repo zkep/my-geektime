@@ -56,7 +56,7 @@ site:                      # 站点配置
     # 使用源站播放，如果site.download 设置为false，默认是不会下载音视频（如果你的磁盘有限），播放时会直接用极客时间的播放链接
     # 如果发现播放的时候没有下载权限，请配置proxy_url，则会重写header的orgin代理下载分片
     proxy_url:  
-      # - https://res001.geekbang.org
+      - https://res001.geekbang.org
 
 
 ```
