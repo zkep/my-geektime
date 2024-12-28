@@ -21,8 +21,18 @@
           {
             "label": "极客课程",
             "visibleOn": "${ls:role_id===1}",
-            "url": "/product/pvip",
-            "schemaApi": "get:/pages/product.json"
+            "children": [
+              {
+                "label": "体系/公开/线下大会",
+                "url": "/product/pvip",
+                "schemaApi": "get:/pages/pvip.json"
+              },
+              {
+                "label": "每日一课/大厂案例",
+                "url": "/product/lesson",
+                "schemaApi": "get:/pages/product.json"
+              }
+            ]
           },
           {
             "label": "用户列表",

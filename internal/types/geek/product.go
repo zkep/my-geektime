@@ -2,23 +2,10 @@ package geek
 
 import "encoding/json"
 
-type ProductListRequest struct {
-	Desc           bool   `json:"desc" form:"desc"`
-	Expire         int    `json:"expire" form:"expire"`
-	LastLearn      int    `json:"last_learn" form:"last_learn"`
-	LearnStatus    int    `json:"learn_status" form:"learn_status"`
-	Prev           int    `json:"prev" form:"prev"`
-	Size           int    `json:"size" form:"size"`
-	Sort           int    `json:"sort" form:"sort"`
-	Type           string `json:"type" form:"type"`
-	WithLearnCount int    `json:"with_learn_count" form:"with_learn_count"`
-	Page           int    `json:"-" form:"page"`
-	PerPage        int    `json:"-"  form:"perPage"`
-}
-
 type ProductListResponse struct {
 	HasNext bool             `json:"hasNext,omitempty"`
 	Count   int              `json:"count,omitempty"`
+	Score   int              `json:"score,omitempty"`
 	Rows    []ProductListRow `json:"rows"`
 }
 
@@ -510,13 +497,14 @@ type ArticleInfoRaw struct {
 }
 
 type DailyProductRequest struct {
-	Type    string `json:"type" form:"type"`
-	Size    int    `json:"size" form:"size"`
-	Prev    int    `json:"prev" form:"prev"`
-	Orderby string `json:"orderby" form:"orderby"`
-	LabelID int    `json:"label_id" form:"label_id"`
-	Page    int    `json:"-" form:"page"`
-	PerPage int    `json:"-"  form:"perPage"`
+	Type      string `json:"type" form:"type"`
+	Size      int    `json:"size" form:"size"`
+	Prev      int    `json:"prev" form:"prev"`
+	Orderby   string `json:"orderby" form:"orderby"`
+	LabelID   int32  `json:"label_id" form:"label_id"`
+	Direction int32  `json:"-"  form:"direction"`
+	Page      int    `json:"-" form:"page"`
+	PerPage   int    `json:"-"  form:"perPage"`
 }
 
 type DailyProductResponse struct {
@@ -884,6 +872,7 @@ type ArticleInfo struct {
 
 type ArticleCover struct {
 	Default string `json:"default,omitempty"`
+	Square  string `json:"square,omitempty"`
 }
 
 type ArticleAuthor struct {

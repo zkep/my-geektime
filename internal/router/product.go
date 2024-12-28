@@ -11,6 +11,7 @@ func product(_, private *gin.RouterGroup) {
 	p := private.Group("/product", middleware.AccessToken())
 	{
 		p.GET("/pvip/list", api.PvipProductList)
+		p.GET("/list", api.ProductList)
 		p.GET("/articles", api.Articles)
 		p.GET("/article/info", api.ArticleInfo)
 		p.POST("/download", api.Download)

@@ -248,28 +248,29 @@ func (p *Product) Download(c *gin.Context) {
 	global.OK(c, resp)
 }
 
-func (p *Product) DailyProductList(c *gin.Context) {
+func (p *Product) ProductList(c *gin.Context) {
 	var req geek.DailyProductRequest
 	if err := c.ShouldBind(&req); err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	req.Size = req.PerPage
-	req.Prev = req.Page
 	identity := c.GetString(global.Identity)
 	accessToken := c.GetString(global.AccessToken)
-	resp, err := service.GetDailyProduct(c, identity, accessToken, req)
+	resp, err := service.GetProduct(c, identity, accessToken, req)
 	if err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
 	ret := geek.ProductListResponse{Rows: make([]geek.ProductListRow, 0)}
+	ret.Score = resp.Data.Page.Score
 	ret.Count = resp.Data.Page.Count
 	if resp.Data.Page.Count == 0 {
 		ret.HasNext = resp.Data.Page.More
 	}
+	converter := md.NewConverter("", true, nil)
 	for _, v := range resp.Data.List {
-		ret.Rows = append(ret.Rows, geek.ProductListRow{
+		row := geek.ProductListRow{
 			ID:            v.ID,
 			Title:         v.Title,
 			Subtitle:      v.Subtitle,
@@ -290,7 +291,13 @@ func (p *Product) DailyProductList(c *gin.Context) {
 			Author:        v.Author,
 			Cover:         v.Cover,
 			Article:       v.Article,
-		})
+		}
+		if len(row.IntroHTML) > 0 {
+			if markdown, err := converter.ConvertString(row.IntroHTML); err == nil {
+				row.IntroHTML = markdown
+			}
+		}
+		ret.Rows = append(ret.Rows, row)
 	}
-	global.OK(c, resp)
+	global.OK(c, ret)
 }

@@ -38,6 +38,9 @@ func GetArticleInfo(ctx context.Context, uid, accessToken string,
 			go func(info geek.ArticleInfoResponse) {
 				aid := fmt.Sprintf("%d", info.Data.Info.ID)
 				pid := fmt.Sprintf("%d", info.Data.Info.Pid)
+				if info.Data.Info.Cover.Square != "" {
+					info.Data.Info.Cover.Default = info.Data.Info.Cover.Square
+				}
 				article := model.Article{
 					Aid:   aid,
 					Pid:   pid,
@@ -156,7 +159,7 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 	return &resp, nil
 }
 
-func GetDailyProduct(ctx context.Context, uid, accessToken string,
+func GetProduct(ctx context.Context, uid, accessToken string,
 	req geek.DailyProductRequest) (*geek.DailyProductResponse, error) {
 	raw, _ := json.Marshal(req)
 	var resp geek.DailyProductResponse
@@ -174,12 +177,21 @@ func GetDailyProduct(ctx context.Context, uid, accessToken string,
 				for _, value := range resp.Data.List {
 					itemRaw, _ := json.Marshal(value)
 					product := model.Product{
-						Pid:    fmt.Sprintf("%d", value.ID),
-						Uid:    uid,
-						Title:  value.Share.Title,
-						Cover:  value.Share.Cover,
-						Raw:    itemRaw,
-						Source: value.Type,
+						Pid:        fmt.Sprintf("%d", value.ID),
+						Uid:        uid,
+						Title:      value.Share.Title,
+						Cover:      value.Share.Cover,
+						Raw:        itemRaw,
+						Source:     value.Type,
+						OtherForm:  2,
+						OtherGroup: req.Direction,
+						OtherTag:   req.LabelID,
+					}
+					switch req.Type {
+					case "d":
+						product.OtherType = 6
+					case "q":
+						product.OtherType = 7
 					}
 					if err := global.DB.
 						Model(&model.Product{}).
