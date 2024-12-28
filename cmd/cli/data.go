@@ -209,8 +209,7 @@ type Option struct {
 var (
 	ProductTypes = []Option{
 		{"体系课", 1},
-		{"公开课", 4},
-		{"线下大会", 5},
+		//{"公开课", 4},
 	}
 
 	ProductForms = []Option{

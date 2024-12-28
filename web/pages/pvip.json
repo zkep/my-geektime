@@ -575,7 +575,17 @@
         },
         "api": {
           "method": "get",
-          "url": "/v2/product/pvip/list"
+          "url": "/v2/product/pvip/list",
+          "data": {
+            "perPage": 20,
+            "page": "$page",
+            "sort": "$sort",
+            "direction": "$direction",
+            "product_type": "$product_type",
+            "product_form": "$product_form",
+            "tag": "${ product_type===5 ? 0 : tag }",
+            "with_articles": true
+          }
         },
         "autoFillHeight": false,
         "defaultParams": {
