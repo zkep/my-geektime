@@ -4,7 +4,7 @@ go 1.23.3
 
 require (
 	github.com/JohannesKaufmann/html-to-markdown v1.6.0
-	github.com/gin-contrib/static v1.1.2
+	github.com/gin-contrib/static v1.1.3
 	github.com/gin-contrib/timeout v1.0.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/glebarez/sqlite v1.11.0
