@@ -54,18 +54,6 @@ docker-compose up -d
 服务启动后浏览器访问:  http://127.0.0.1
 
 
-## docker 安装
-${directory} 是宿主机的音视频下载目录，替换成你自己的文件目录即可
-```shell
-docker run -d --restart always \
--p 8090:8090 \
---name mygeektime \
--v config.yml:/config.yml \
--v ${directory}:/repo  \
-zkep/mygeektime:latest server   
-```
-服务启动后浏览器访问:  http://127.0.0.1:8090
-
 ## [二进制包安装](https://github.com/zkep/mygeektime/releases)
 下载对应操作系统的二进制包，下面以MacOS为例
 ```shell
