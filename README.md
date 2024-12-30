@@ -24,7 +24,39 @@ mkdocs serve
 
 ### 安装
 
-#### docker compose 方式
+#### docker 方式
+
+##### docker 使用默认配置启动
+```shell
+docker run  -d  --restart always \
+--name mygeektime  \
+-p 8090:8090 \
+zkep/mygeektime:latest  server
+```
+浏览器访问:  http://127.0.0.1:8090
+
+##### docker 自定义配置启动
+```shell
+docker run  -d  --restart always \
+--name mygeektime  \
+-p 8090:8090 \
+-v config.yml:/config.yml \
+zkep/mygeektime:latest  server --config=config.yml
+```
+浏览器访问:  http://127.0.0.1:8090
+
+##### docker 挂载下载目录启动
+使用宿主机目录替换下面的 ${directory}
+```shell
+docker run -d --restart always \
+-p 8090:8090 \
+--name mygeektime \
+-v ${directory}:/repo  \
+zkep/mygeektime:latest server   
+```
+浏览器访问:  http://127.0.0.1:8090
+
+#### docker compose 方式, 该方式会启动 nginx，mysql，redis等依赖服务
 
 ```shell
 git clone https://github.com/zkep/mygeektime.git
@@ -34,28 +66,6 @@ cd mygeektime/docker
 docker-compose up -d
 ```
 浏览器访问:  http://127.0.0.1
-
-
-#### docker 方式
-```shell
-docker run  -d  --restart always \
---name mygeektime  \
--p 8090:8090 \
--v repo:/repo \
--v config.yml:/config.yml \
-zkep/mygeektime:latest  server --config=config.yml
-```
-
-##### docker 挂载下载目录
-使用宿主机目录替换下面的 ${directory}
-```shell
-docker run -d --restart always \
--p 8090:8090 \
---name mygeektime \
--v config.yml:/config.yml \
--v ${directory}:/repo  \
-zkep/mygeektime:latest server   
-```
 
 
 #### golang 方式

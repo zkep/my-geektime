@@ -22,27 +22,25 @@ browser web url:  http://127.0.0.1:8000/
 
 #### Install
 
-#### install with docker compose
 
-```shell
-git clone https://github.com/zkep/mygeektime.git
-
-cd mygeektime/docker
-
-docker-compose up -d
-```
-
-browser web url:  http://127.0.0.1
-
-#### install with  docker 
+#### install with  docker
 ```shell
 docker run  -d  --restart always \
 --name mygeektime  \
 -p 8090:8090 \
--v repo:/repo \
+zkep/mygeektime:latest  server 
+```
+browser web url:  http://127.0.0.1:8090
+
+#### docker with config
+```shell
+docker run  -d  --restart always \
+--name mygeektime  \
+-p 8090:8090 \
 -v config.yml:/config.yml \
 zkep/mygeektime:latest  server --config=config.yml
 ```
+browser web url:  http://127.0.0.1:8090
 
 ##### docker with specify download directory
 replace ${directory} with you local directory
@@ -54,7 +52,20 @@ docker run  -d  --restart always \
 -v ${directory}:/repo  \
 zkep/mygeektime:latest  server   
 ```
-browser web url:  http://127.0.0.1:8090  
+browser web url:  http://127.0.0.1:8090
+
+
+#### install with docker compose
+
+```shell
+git clone https://github.com/zkep/mygeektime.git
+
+cd mygeektime/docker
+
+docker-compose up -d
+```
+
+browser web url:  http://127.0.0.1
 
 
 #### install with golang
