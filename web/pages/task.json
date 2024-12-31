@@ -953,10 +953,6 @@
                             "label": "课程ID: "
                           },
                           {
-                            "type": "divider",
-                            "visibleOn": "${ ls:role_id === 1 }"
-                          },
-                          {
                             "name": "status",
                             "type": "static-mapping",
                             "visibleOn": "${ ls:role_id === 1 }",
@@ -971,18 +967,11 @@
                             }
                           },
                           {
-                            "type": "divider",
-                            "visibleOn": "${ ls:role_id === 1 }"
-                          },
-                          {
                             "name": "created_at",
                             "type": "date",
                             "format": "YYYY-MM-DD HH:mm:ss",
                             "label": "创建时间: ",
                             "visibleOn": "${ ls:role_id === 1 }"
-                          },
-                          {
-                            "type": "divider"
                           },
                           {
                             "name": "updated_at",
