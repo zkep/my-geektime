@@ -15,8 +15,8 @@ message User {
   string email = 3 [(gogoproto.moretags) = "gorm:\"index;size:20;comment:email\""];
   // user_name
   string user_name = 4 [(gogoproto.moretags) = "gorm:\"index;size:255;comment:user name\""];
-  // nike_name
-  string nike_name = 5 [(gogoproto.moretags) = "gorm:\"size:255;comment:nike name\""];
+  // nick_name
+  string nick_name = 5 [(gogoproto.moretags) = "gorm:\"size:255;comment:nick name\""];
   // password
   string password = 6 [(gogoproto.moretags) = "gorm:\"size:128;comment:password\""];
   // avatar

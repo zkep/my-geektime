@@ -165,7 +165,7 @@ func (b *Base) Register(c *gin.Context) {
 		info.Uid = utils.HalfUUID()
 		info.Email = req.Email
 		info.UserName = req.Email
-		info.NikeName = req.Email
+		info.NickName = req.Email
 		info.Password = utils.BcryptHash(req.Password)
 		if err = global.DB.Create(&info).Error; err != nil {
 			global.FAIL(c, "fail.msg", err.Error())
@@ -206,7 +206,7 @@ func (b *Base) Register(c *gin.Context) {
 		}
 		info.Uid = utils.HalfUUID()
 		info.UserName = req.Account
-		info.NikeName = req.Account
+		info.NickName = req.Account
 		info.Password = utils.BcryptHash(req.Password)
 		if err := global.DB.Create(&info).Error; err != nil {
 			global.FAIL(c, "fail.msg", err.Error())

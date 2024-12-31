@@ -51,7 +51,7 @@ func (u *User) List(c *gin.Context) {
 		ret.Rows = append(ret.Rows, user.User{
 			Uid:         l.Uid,
 			UserName:    l.UserName,
-			NikeName:    l.NikeName,
+			NickName:    l.NickName,
 			Avatar:      l.Avatar,
 			Status:      l.Status,
 			AccessToken: l.AccessToken,

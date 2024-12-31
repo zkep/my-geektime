@@ -26,7 +26,7 @@ func SaveCookie(cookies string, identity string, auth *geek.AuthResponse) func(r
 		}
 		user := model.User{
 			Uid:         identity,
-			NikeName:    auth.Data.Nick,
+			NickName:    auth.Data.Nick,
 			Avatar:      auth.Data.Avatar,
 			AccessToken: cookies,
 		}

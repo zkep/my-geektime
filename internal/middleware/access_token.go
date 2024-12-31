@@ -17,7 +17,7 @@ func AccessToken() gin.HandlerFunc {
 			First(&u).Error; err != nil {
 			c.AbortWithStatusJSON(http.StatusOK, gin.H{
 				"status": http.StatusInternalServerError,
-				"msg":    "no auth ! please refesh geektime cookie. ",
+				"msg":    "no auth ! please refresh geektime cookie. ",
 			})
 			return
 		}

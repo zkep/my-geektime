@@ -665,13 +665,6 @@
                         "visibleOn": "${ video.hls_medias === undefined && video_preview.medias !== undefined }"
                       },
                       {
-                        "type": "audio",
-                        "autoPlay": false,
-                        "rates": [1.0, 1.2, 1.5, 2.0],
-                        "src": "${audio.download_url}",
-                        "visibleOn": "${ audio.download_url !== undefined }"
-                      },
-                      {
                         "type": "video",
                         "muted": true,
                         "autoPlay": false,

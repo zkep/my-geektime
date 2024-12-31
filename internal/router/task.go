@@ -13,6 +13,7 @@ func task(public, private *gin.RouterGroup) {
 		private.GET("/task/download", api.Download)
 		private.DELETE("/task/delete", api.Delete)
 		private.POST("/task/retry", api.Retry)
+		private.GET("/task/export", api.Export)
 	}
 	{
 		public.GET("/task/kms", api.Kms)

@@ -38,7 +38,7 @@
 
 后续会支持更多，敬请期待
 
-*注意⚠️*  默认是会进行音视频下载，全站缓存需要考虑下磁盘是否足够，保守估计2T
+*注意⚠️*  默认是会进行音视频下载，全站缓存需要考虑下磁盘是否足够，保守估计1~2T
 
 如果磁盘不足，可以暂时将该参数设置为false， 不会下载资源，但是不影响在线播放
 
@@ -54,5 +54,5 @@ site:                      # 站点配置
 # docker compose 运行容器名为  mygeektime-server-1
 docker exec -it mygeektime  bash 
 # 容器里执行如下命令
-mygeektime cli data --config=config.yml
+mygeektime cli data 
 ```

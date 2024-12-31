@@ -27,8 +27,8 @@ type User struct {
 	Uid string `json:"uid,omitempty"`
 	// user_name
 	UserName string `json:"user_name,omitempty"`
-	// nike_name
-	NikeName string `json:"nike_name,omitempty"`
+	// nick_name
+	NickName string `json:"nick_name,omitempty"`
 	// avatar
 	Avatar string `json:"avatar,omitempty"`
 	// access_token

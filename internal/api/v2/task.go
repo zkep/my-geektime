@@ -1,12 +1,14 @@
 package v2
 
 import (
+	"archive/tar"
 	"bufio"
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -480,5 +482,100 @@ func (t *Task) PlayPart(c *gin.Context) {
 		}).Do(http.MethodGet, req.P, nil); err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
+	}
+}
+
+func (t *Task) Export(c *gin.Context) {
+	var req task.TaskExportRequest
+	if err := c.ShouldBind(&req); err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	var l model.Task
+	if err := global.DB.Model(&model.Task{}).
+		Where(&model.Task{TaskId: req.Pid}).First(&l).Error; err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	var product geek.ProductBase
+	if err := json.Unmarshal(l.Raw, &product); err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	switch req.Type {
+	case "markdown":
+		dirName := service.VerifyFileName(product.Title)
+		archiveName := fmt.Sprintf("%s.tar.gz", dirName)
+		buf := new(bytes.Buffer)
+		archiveWriter := tar.NewWriter(buf)
+
+		defer func() { _ = archiveWriter.Close() }()
+
+		converter := md.NewConverter("", true, nil)
+		var ls []model.Task
+		if err := global.DB.Model(&model.Task{}).
+			Where(&model.Task{TaskPid: req.Pid}).
+			Order("id asc").
+			Find(&ls).Error; err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		indexMarkdown, err1 := converter.ConvertString(product.IntroHTML)
+		if err1 != nil {
+			global.FAIL(c, "fail.msg", err1.Error())
+			return
+		}
+		indexMarkdown += "\n\n"
+		for _, x := range ls {
+			var articleData geek.ArticleData
+			if err := json.Unmarshal(x.Raw, &articleData); err != nil {
+				global.FAIL(c, "fail.msg", err.Error())
+				return
+			}
+			if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
+				articleData.Info.Content = articleData.Info.Cshort
+			}
+
+			if markdown, err2 := converter.ConvertString(articleData.Info.Content); err2 != nil {
+				global.FAIL(c, "fail.msg", err2.Error())
+				return
+			} else if len(markdown) > 0 {
+				baseName := service.VerifyFileName(articleData.Info.Title)
+				fileName := baseName + ".md"
+				hdr := &tar.Header{
+					Name: fileName,
+					Mode: 0600,
+					Size: int64(len(markdown)),
+				}
+				if err := archiveWriter.WriteHeader(hdr); err != nil {
+					log.Fatal(err)
+				}
+
+				if _, err := archiveWriter.Write([]byte(markdown)); err != nil {
+					global.FAIL(c, "fail.msg", err.Error())
+					return
+				}
+				indexMarkdown += fmt.Sprintf("\n * [%s](./%s) \n", baseName, fileName)
+			}
+		}
+
+		hdr := &tar.Header{
+			Name: "index.md",
+			Mode: 0600,
+			Size: int64(len(indexMarkdown)),
+		}
+		if err := archiveWriter.WriteHeader(hdr); err != nil {
+			log.Fatal(err)
+		}
+
+		if _, err := archiveWriter.Write([]byte(indexMarkdown)); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+
+		c.Header("Content-Type", "application/octet-stream")
+		c.Header("Content-Disposition", "attachment; filename="+url.QueryEscape(archiveName))
+		c.Header("Content-Transfer-Encoding", "binary")
+		c.Data(200, "application/octet-stream", buf.Bytes())
 	}
 }

@@ -675,10 +675,18 @@
                 "type": "divider"
               },
               {
-                "type": "tpl",
-                "label": "任务统计: ",
-                "tpl": "<div>${statistics.items.1>0?'排队中: '+ statistics.items.1 + '<br/>':''} ${statistics.items.2>0?'处理中: '+ statistics.items.2 +'<br/>':''} ${statistics.items.3 >0 ?'已缓存: '+ statistics.items.3 +'<br/>':''} ${statistics.items.4 >0 ?'异常: '+ statistics.items.4 +'<br/>':''}<div>",
-                "visibleOn": "${ ls:role_id === 1 }"
+                "type": "property",
+                "title": "",
+                "mode": "simple",
+                "separator": "",
+                "items": [
+                  {
+                    "type": "tpl",
+                    "label": "",
+                    "content": "<div>${statistics.items.1>0?'排队中: '+ statistics.items.1 + '<br/>':''} ${statistics.items.2>0?'处理中: '+ statistics.items.2 +'<br/>':''} ${statistics.items.3 >0 ?'已缓存: '+ statistics.items.3 +'<br/>':''} ${statistics.items.4 >0 ?'异常: '+ statistics.items.4 +'<br/>':''}<div>",
+                    "visibleOn": "${ ls:role_id === 1 }"
+                  }
+                ]
               },
               {
                 "type": "divider",
@@ -688,7 +696,9 @@
                 "name": "status",
                 "type": "static-mapping",
                 "visibleOn": "${ ls:role_id === 1 }",
-                "label": "任务状态: ",
+                "label": "状态: ",
+                "canAccessSuperData": false,
+                "classNameExpr": "${ status =='4' ? 'text-danger' : '' }",
                 "map": {
                   "1": "排队中",
                   "2": "处理中",
@@ -697,18 +707,10 @@
                 }
               },
               {
-                "type": "divider",
-                "visibleOn": "${ ls:role_id === 1 }"
-              },
-              {
                 "name": "created_at",
                 "type": "date",
                 "format": "YYYY-MM-DD HH:mm:ss",
                 "label": "创建时间: ",
-                "visibleOn": "${ ls:role_id === 1 }"
-              },
-              {
-                "type": "divider",
                 "visibleOn": "${ ls:role_id === 1 }"
               },
               {
@@ -735,6 +737,14 @@
                   }
                 },
                 "confirmText": "确定要缓存【音视频】到本地磁盘么？"
+              },
+              {
+                "label": "导出Markdown",
+                "icon": "fa-solid fa-columns",
+                "type": "action",
+                "size": "sm",
+                "actionType": "download",
+                "api": "/v2/task/export?pid=${task_id}&type=markdown"
               },
               {
                 "type": "button",
@@ -1114,13 +1124,6 @@
                                       "src": "${article.video_preview.medias|last|pick:url}",
                                       "poster": "${article.video.cover}",
                                       "visibleOn": "${ play_url === undefined && article.video.hls_medias === undefined && article.video_preview.medias !== undefined }"
-                                    },
-                                    {
-                                      "type": "audio",
-                                      "autoPlay": false,
-                                      "rates": [1.0, 1.2, 1.5, 2.0],
-                                      "src": "${article.audio.download_url}",
-                                      "visibleOn": "${ article.audio.download_url !== undefined }"
                                     },
                                     {
                                       "type": "video",

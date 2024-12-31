@@ -125,3 +125,10 @@ type TaskPlayPartRequest struct {
 	// part
 	P string `json:"p,omitempty" form:"p" binding:"required"`
 }
+
+type TaskExportRequest struct {
+	// task pid
+	Pid string `json:"pid,omitempty" form:"pid" binding:"required"`
+	// type
+	Type string `json:"type,omitempty" form:"type" binding:"required"`
+}
