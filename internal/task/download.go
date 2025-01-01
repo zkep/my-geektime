@@ -14,7 +14,6 @@ import (
 	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/internal/types/task"
 	"github.com/zkep/mygeektime/internal/types/user"
-	"github.com/zkep/mygeektime/lib/pool"
 	"go.uber.org/zap"
 )
 
@@ -27,24 +26,23 @@ func TaskHandler(ctx context.Context, t time.Time) error {
 	global.LOG.Debug("task handler Start", zap.Time("time", t))
 	_, loaded := lock.LoadOrStore(keyLock, t)
 	if loaded {
-		if err := iterators(ctx, global.GPool, true); err != nil {
+		if err := iterators(ctx, true); err != nil {
 			global.LOG.Error("task handler iterators", zap.Error(err), zap.Bool("loaded", loaded))
 		}
 		return nil
 	}
 	defer lock.Delete(keyLock)
-	if err := iterators(ctx, global.GPool, false); err != nil {
+	if err := iterators(ctx, false); err != nil {
 		global.LOG.Error("task handler iterators", zap.Error(err), zap.Bool("loaded", loaded))
 	}
 	global.LOG.Debug("task handler End", zap.Time("time", time.Now()))
 	return nil
 }
 
-func iterators(ctx context.Context, gpool *pool.GPool, loaded bool) error {
+func iterators(ctx context.Context, loaded bool) error {
 	timeCtx, timeCancel := context.WithTimeout(ctx, time.Hour)
 	defer timeCancel()
 	hasMore, page, psize := true, 1, 5
-	batch := gpool.NewBatch()
 	for hasMore {
 		var ls []*model.Task
 		tx := global.DB.Model(&model.Task{})
@@ -69,18 +67,11 @@ func iterators(ctx context.Context, gpool *pool.GPool, loaded bool) error {
 		page++
 		for _, value := range ls {
 			x := value
-			batch.Queue(func(pctx context.Context) (any, error) {
-				if err := worker(pctx, x); err != nil {
-					global.LOG.Error("task handler worker", zap.Error(err), zap.String("taskid", x.TaskId))
-					return nil, err
-				}
-				return nil, nil
-			})
+			if err := worker(timeCtx, x); err != nil {
+				global.LOG.Error("task handler worker", zap.Error(err), zap.String("taskid", x.TaskId))
+				return err
+			}
 		}
-	}
-	if _, err := batch.Wait(timeCtx); err != nil {
-		global.LOG.Error("task handler wait", zap.Error(err))
-		return err
 	}
 	return nil
 }
@@ -125,6 +116,11 @@ func worker(ctx context.Context, x *model.Task) error {
 			Status:     int32(status),
 			Statistics: raw,
 			UpdatedAt:  time.Now().Unix(),
+		}
+		if status == service.TASK_STATUS_FINISHED {
+			dir := global.Storage.GetKey(x.TaskId, false)
+			message := task.TaskMessage{Object: dir}
+			m.Message, _ = json.Marshal(message)
 		}
 		if err := global.DB.Where(&model.Task{Id: x.Id}).Updates(&m).Error; err != nil {
 			global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))

@@ -40,6 +40,8 @@ type Task struct {
 	Subtitle string `json:"subtitle,omitempty"`
 	// IntroHTML
 	IntroHTML string `json:"intro_html,omitempty"`
+	// dir
+	Dir string `json:"dir,omitempty"`
 	// IsVideo
 	IsVideo bool `json:"is_video,omitempty"`
 	// IsAudio

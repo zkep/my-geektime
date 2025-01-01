@@ -689,6 +689,14 @@
                 ]
               },
               {
+                "type": "action",
+                "level": "success",
+                "actionType": "url",
+                "url": "${dir}",
+                "label": "下载目录",
+                "visibleOn": "${ dir !== undefined }"
+              },
+              {
                 "type": "divider",
                 "visibleOn": "${ ls:role_id === 1 }"
               },

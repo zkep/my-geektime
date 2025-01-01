@@ -117,6 +117,13 @@ func (t *Task) List(c *gin.Context) {
 			row.Sale = product.Price.Sale
 			row.SaleType = product.Price.SaleType
 			row.IsAudio = product.IsAudio
+			var taskMessage task.TaskMessage
+			if len(l.Message) > 0 {
+				_ = json.Unmarshal(l.Message, &taskMessage)
+				if len(taskMessage.Object) > 0 {
+					row.Dir = global.Storage.GetUrl(taskMessage.Object)
+				}
+			}
 		case service.TASK_TYPE_ARTICLE:
 			var articelInfo geek.ArticleData
 			if len(l.Raw) > 0 {
