@@ -42,7 +42,7 @@ func TaskHandler(ctx context.Context, t time.Time) error {
 func iterators(ctx context.Context, loaded bool) error {
 	timeCtx, timeCancel := context.WithTimeout(ctx, time.Hour)
 	defer timeCancel()
-	hasMore, page, psize := true, 1, 10
+	hasMore, page, psize := true, 1, 6
 	orderTasks, batchTasks := make([]*model.Task, 0, psize), make([]*model.Task, 0, psize)
 	for hasMore {
 		var ls []*model.Task
