@@ -689,7 +689,7 @@
             },
             {
               "type": "button",
-              "label": "下载",
+              "label": "缓存",
               "level": "info",
               "icon": "fa fa-download",
               "actionType": "ajax",
@@ -701,7 +701,7 @@
                   "ids": "${article.id | trim}"
                 }
               },
-              "confirmText": "下载 [${share.title}] 会提交下载任务，\n 请在[我的课程]查看下载情况"
+              "confirmText": "缓存 [${share.title}]，\n 请在[我的课程]查看详情"
             }
           ]
         },

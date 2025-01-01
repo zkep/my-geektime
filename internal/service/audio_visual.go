@@ -135,7 +135,7 @@ func Download(ctx context.Context, x *model.Task) error {
 }
 
 func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, error) {
-	retryCtx, retryCancel := context.WithTimeout(ctx, time.Minute*30)
+	retryCtx, retryCancel := context.WithTimeout(ctx, time.Minute*10)
 	defer retryCancel()
 
 	if len(req.Parts) == 0 {
@@ -171,16 +171,15 @@ func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, er
 		_ = os.RemoveAll(destDir)
 		return concatPath, nil
 	}
-
 	batch := global.GPool.NewBatch()
 	for _, t := range req.Parts {
 		partURL, destName := t.Src, t.Dest
 		if partStat, _ := global.Storage.Stat(destName); partStat != nil && partStat.Size() > 0 {
 			continue
 		}
-		global.LOG.Info("video part start", zap.String("part", path.Base(destName)))
 		batch.Queue(func(pctx context.Context) (any, error) {
-			err = zhttp.R.
+			global.LOG.Info("video part start", zap.String("part", path.Base(destName)))
+			err = zhttp.NewRequest().
 				Before(func(r *http.Request) {
 					r.Header.Set("Accept", "application/json, text/plain, */*")
 					r.Header.Set("User-Agent", zhttp.RandomUserAgent())
@@ -212,7 +211,7 @@ func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, er
 		})
 	}
 
-	if _, err = batch.Wait(ctx); err != nil {
+	if _, err = batch.Wait(retryCtx); err != nil {
 		return "", err
 	}
 
@@ -234,8 +233,8 @@ func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, er
 	if err != nil {
 		return "", fmt.Errorf("%s,%s", err.Error(), string(output))
 	}
-	_ = os.RemoveAll(destDir)
 	global.LOG.Info("video", zap.String("removeAll", destDir))
+	_ = os.RemoveAll(destDir)
 	return concatPath, nil
 }
 
@@ -243,7 +242,7 @@ func Audio(ctx context.Context, _ *model.Task, dowloadURL, dir, fileName string)
 	retryCtx, retryCancel := context.WithTimeout(ctx, time.Minute*5)
 	defer retryCancel()
 	destName := path.Join(dir, fmt.Sprintf("%s.mp3", fileName))
-	err := zhttp.R.
+	err := zhttp.NewRequest().
 		Before(func(r *http.Request) {
 			r.Header.Set("Accept", "application/json, text/plain, */*")
 			r.Header.Set("Sec-Ch-Ua", `"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"`)
@@ -388,17 +387,15 @@ func RewritePlay(ctx context.Context, req PlayMetaRequest) (*PlayMeta, error) {
 			playHost := req.DowloadURL[:strings.LastIndex(req.DowloadURL, "/")+1]
 			if !strings.HasPrefix(l, "https://") {
 				meta.Parts = append(meta.Parts, Part{playHost + l, path.Join(req.Dir, l), false})
-				l = playHost + l
-				rl = l
+				rl = playHost + l
 			} else {
 				tsPath := strings.TrimPrefix(l, playHost)
 				if strings.HasPrefix(tsPath, playHost) {
-					tsPath = strings.TrimPrefix(tsPath, playHost)
-					l = strings.TrimPrefix(l, playHost)
+					rl = tsPath
 				}
+				l = l[strings.LastIndex(l, "/")+1:]
 				destName := path.Join(req.Dir, req.Filename, tsPath)
-				meta.Parts = append(meta.Parts, Part{l, destName, false})
-				rl = l
+				meta.Parts = append(meta.Parts, Part{rl, destName, false})
 			}
 		}
 		meta.Spec = append(meta.Spec, []byte(rl+"\n")...)

@@ -734,7 +734,7 @@
                 "type": "button",
                 "icon": "fa-solid fa-download",
                 "visibleOn": "${ ls:role_id === 1}",
-                "label": "缓存",
+                "label": "下载",
                 "level": "info",
                 "actionType": "ajax",
                 "api": {
@@ -744,7 +744,7 @@
                     "pid": "${task_id}"
                   }
                 },
-                "confirmText": "确定要缓存【音视频】到本地磁盘么？"
+                "confirmText": "确定要下载【音视频】到本地磁盘么？"
               },
               {
                 "label": "导出Markdown",
@@ -772,7 +772,7 @@
               {
                 "type": "button",
                 "icon": "fa fa-eye",
-                "label": "在线看",
+                "label": "播放",
                 "level": "light",
                 "actionType": "drawer",
                 "drawer": {
@@ -893,7 +893,7 @@
                       "keepItemSelectionOnPageChange": true,
                       "bulkActions": [
                         {
-                          "label": "批量缓存",
+                          "label": "批量下载",
                           "actionType": "ajax",
                           "visibleOn": "${ ls:role_id === 1 }",
                           "api": {
@@ -904,7 +904,7 @@
                               "ids": "${ids | raw}"
                             }
                           },
-                          "confirmText": "确定要批量缓存【音视频】到本地吗？"
+                          "confirmText": "确定要批量下载【音视频】到本地吗？"
                         },
                         {
                           "label": "批量删除",
@@ -953,9 +953,6 @@
                             "visibleOn": "${ ls:role_id === 1 }"
                           },
                           {
-                            "type": "divider"
-                          },
-                          {
                             "name": "other_id",
                             "type": "static",
                             "label": "课程ID: "
@@ -973,6 +970,15 @@
                               "3": "已缓存",
                               "4": "异常"
                             }
+                          },
+                          {
+                            "type": "action",
+                            "level": "success",
+                            "actionType": "url",
+                            "url": "${object}",
+                            "label": "下载地址",
+                            "canAccessSuperData": false,
+                            "visibleOn": "${ object !== undefined }"
                           },
                           {
                             "name": "created_at",
@@ -993,7 +999,7 @@
                             "type": "button",
                             "icon": "fa-solid fa-download",
                             "visibleOn": "${ ls:role_id === 1}",
-                            "label": "缓存",
+                            "label": "下载",
                             "level": "info",
                             "actionType": "ajax",
                             "api": {
@@ -1004,7 +1010,7 @@
                                 "ids": "${task_id}"
                               }
                             },
-                            "confirmText": "确定要缓存【音视频】到本地磁盘么？"
+                            "confirmText": "确定要下载【音视频】到本地磁盘么？"
                           },
                           {
                             "type": "button",
@@ -1025,7 +1031,7 @@
                           {
                             "type": "button",
                             "icon": "fa fa-eye",
-                            "label": "在线看",
+                            "label": "播放",
                             "level": "light",
                             "actionType": "drawer",
                             "visibleOn": "${status !='1'}",

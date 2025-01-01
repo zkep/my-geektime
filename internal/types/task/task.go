@@ -42,6 +42,8 @@ type Task struct {
 	IntroHTML string `json:"intro_html,omitempty"`
 	// dir
 	Dir string `json:"dir,omitempty"`
+	// object
+	Object string `json:"object,omitempty"`
 	// IsVideo
 	IsVideo bool `json:"is_video,omitempty"`
 	// IsAudio

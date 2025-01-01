@@ -8,6 +8,6 @@ import (
 )
 
 func GPool(ctx context.Context) error {
-	global.GPool = pool.NewLimitPool(ctx, 6)
+	global.GPool = pool.NewLimitPool(ctx, 100)
 	return nil
 }

@@ -133,6 +133,13 @@ func (t *Task) List(c *gin.Context) {
 			row.Subtitle = articelInfo.Info.Subtitle
 			row.IntroHTML = articelInfo.Info.Summary
 			row.IsVideo = articelInfo.Info.IsVideo
+			var taskMessage task.TaskMessage
+			if len(l.Message) > 0 {
+				_ = json.Unmarshal(l.Message, &taskMessage)
+				if len(taskMessage.Object) > 0 {
+					row.Object = global.Storage.GetUrl(taskMessage.Object)
+				}
+			}
 		}
 		if len(row.IntroHTML) > 0 {
 			if markdown, err := converter.ConvertString(row.IntroHTML); err == nil {
