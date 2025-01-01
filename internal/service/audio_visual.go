@@ -171,48 +171,39 @@ func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, er
 		_ = os.RemoveAll(destDir)
 		return concatPath, nil
 	}
-	batch := global.GPool.NewBatch()
 	for _, t := range req.Parts {
 		partURL, destName := t.Src, t.Dest
 		if partStat, _ := global.Storage.Stat(destName); partStat != nil && partStat.Size() > 0 {
 			continue
 		}
-		batch.Queue(func(pctx context.Context) (any, error) {
-			global.LOG.Info("video part start", zap.String("part", path.Base(destName)))
-			err = zhttp.NewRequest().
-				Before(func(r *http.Request) {
-					r.Header.Set("Accept", "application/json, text/plain, */*")
-					r.Header.Set("User-Agent", zhttp.RandomUserAgent())
-				}).
-				After(func(r *http.Response) error {
-					if zhttp.IsHTTPSuccessStatus(r.StatusCode) {
-						if partStat, err1 := global.Storage.Put(destName, r.Body); err1 != nil {
-							return err1
-						} else if partStat.Size() <= 0 {
-							return fmt.Errorf("[%s] is empty", destName)
-						}
-						global.LOG.Info("video part end", zap.String("part", path.Base(destName)))
-						return nil
+		err = zhttp.NewRequest().
+			Before(func(r *http.Request) {
+				r.Header.Set("Accept", "application/json, text/plain, */*")
+				r.Header.Set("User-Agent", zhttp.RandomUserAgent())
+			}).
+			After(func(r *http.Response) error {
+				if zhttp.IsHTTPSuccessStatus(r.StatusCode) {
+					if partStat, err1 := global.Storage.Put(destName, r.Body); err1 != nil {
+						return err1
+					} else if partStat.Size() <= 0 {
+						return fmt.Errorf("[%s] is empty", destName)
 					}
-					if zhttp.IsHTTPStatusSleep(r.StatusCode) {
-						time.Sleep(time.Second * 10)
-					}
-					if zhttp.IsHTTPStatusRetryable(r.StatusCode) {
-						return fmt.Errorf("http status: %s, %s", r.Status, r.Request.URL.String())
-					}
-					return zhttp.BreakRetryError(fmt.Errorf(
-						"break http status: %s,%s", r.Status, r.Request.URL.String()))
-				}).
-				DoWithRetry(pctx, http.MethodGet, partURL, nil)
-			if err != nil {
-				return "", err
-			}
-			return nil, nil
-		})
-	}
-
-	if _, err = batch.Wait(retryCtx); err != nil {
-		return "", err
+					global.LOG.Info("video part end", zap.String("part", path.Base(destName)))
+					return nil
+				}
+				if zhttp.IsHTTPStatusSleep(r.StatusCode) {
+					time.Sleep(time.Second * 10)
+				}
+				if zhttp.IsHTTPStatusRetryable(r.StatusCode) {
+					return fmt.Errorf("http status: %s, %s", r.Status, r.Request.URL.String())
+				}
+				return zhttp.BreakRetryError(fmt.Errorf(
+					"break http status: %s,%s", r.Status, r.Request.URL.String()))
+			}).
+			DoWithRetry(retryCtx, http.MethodGet, partURL, nil)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	ffmpeg_command := []string{
