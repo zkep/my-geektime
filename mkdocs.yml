@@ -56,6 +56,7 @@ nav:
       - guide/register.md
       - guide/data_default.md
       - guide/data_geektime.md
+      - guide/docs_online.md
   - "高级🌰":
       - examples/natter.md
   - "FQA 🙋":
