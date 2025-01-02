@@ -16,12 +16,11 @@ FROM ubuntu:24.04
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -yqq update && \
-    apt-get install -yq --no-install-recommends python3 && rm -rf /var/lib/apt/lists/*
+    apt-get install -yq --no-install-recommends python3 python3-pip && rm -rf /var/lib/apt/lists/*
 
 RUN pip install mkdocs-material
 
 COPY --from=builder /app/mygeektime /usr/bin/mygeektime
-
 COPY --from=ffmpeg /usr/share/fonts /usr/share/fonts
 COPY --from=ffmpeg /usr/share/fontconfig /usr/share/fontconfig
 COPY --from=ffmpeg /usr/bin/fc-* /usr/bin/
