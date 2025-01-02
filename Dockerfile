@@ -18,7 +18,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get -yqq update && \
     apt-get install -yq --no-install-recommends python3 pipx && rm -rf /var/lib/apt/lists/*
 
-RUN pipx install mkdocs-material
+RUN pipx install mkdocs-material --include-deps
 
 COPY --from=builder /app/mygeektime /usr/bin/mygeektime
 COPY --from=ffmpeg /usr/share/fonts /usr/share/fonts
