@@ -30,6 +30,9 @@ git clone https://github.com/zkep/mygeektime.git
 
 cd mygeektime/docker
 
+# download default data
+# wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
+
 docker-compose up -d
 ```
 
