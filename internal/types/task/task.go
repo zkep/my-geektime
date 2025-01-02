@@ -42,6 +42,8 @@ type Task struct {
 	IntroHTML string `json:"intro_html,omitempty"`
 	// dir
 	Dir string `json:"dir,omitempty"`
+	// doc
+	Doc string `json:"doc,omitempty"`
 	// object
 	Object string `json:"object,omitempty"`
 	// IsVideo
@@ -72,8 +74,9 @@ type TaskStatistics struct {
 }
 
 type TaskMessage struct {
-	Object string `json:"object"`
-	Text   string `json:"text"`
+	Object string `json:"object,omitempty"`
+	Text   string `json:"text,omitempty"`
+	Doc    string `json:"doc,omitempty"`
 }
 
 type RetryRequest struct {

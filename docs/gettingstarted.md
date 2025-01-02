@@ -42,9 +42,6 @@ zkep/mygeektime:latest server
 # 下载本项目
 git clone https://github.com/zkep/mygeektime.git
 
-# gitee 也会同步更新，没有网络环境的小伙伴可以用这个方式
-# git clone https://gitee.com/zkep/mygeektime.git
-
 # 切入docker compose 文件目录
 cd mygeektime/docker
 
@@ -64,7 +61,6 @@ tar -zxvf mygeektime_Darwin_arm64.tar.gz
 
 # 切入解压目录
 cd mygeektime_Darwin_arm64
-
 
 # 默认配置启动服务
 ./mygeektime server 

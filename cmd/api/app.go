@@ -107,6 +107,9 @@ func (app *App) newHttpServer(f *config.Config) error {
 	if err := app.docterFfmpeg(); err != nil {
 		return err
 	}
+	if err := app.docterMkdocs(); err != nil {
+		return err
+	}
 	addr := fmt.Sprintf("%s:%d", f.Server.HTTPAddr, f.Server.HTTPPort)
 	srv := &http.Server{
 		Addr:              addr,
@@ -134,6 +137,22 @@ func (app *App) docterFfmpeg() error {
 		fmt.Println(color.Blue("https://ffmpeg.org/download.html"))
 		fmt.Println()
 		return err
+	}
+	return nil
+}
+
+func (app *App) docterMkdocs() error {
+	if _, err := exec.LookPath("mkdocs"); err != nil {
+		fmt.Println("Please install mkdocs: ")
+		fmt.Println("pip install mkdocs-material")
+		fmt.Println()
+		fmt.Println(color.Blue("https://github.com/mkdocs/mkdocs"))
+		fmt.Println("install mkdocs-material, Please wait .....")
+		err = exec.CommandContext(app.ctx, "pip", "install", "mkdocs-material").Run()
+		if err != nil {
+			return err
+		}
+		fmt.Println("pip install mkdocs-material succeed")
 	}
 	return nil
 }

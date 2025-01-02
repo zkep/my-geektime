@@ -8,9 +8,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
+	"os/exec"
+	"path"
 	"regexp"
 	"strings"
 	"time"
@@ -25,6 +29,7 @@ import (
 	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/internal/types/task"
 	"github.com/zkep/mygeektime/lib/zhttp"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -122,6 +127,9 @@ func (t *Task) List(c *gin.Context) {
 				_ = json.Unmarshal(l.Message, &taskMessage)
 				if len(taskMessage.Object) > 0 {
 					row.Dir = global.Storage.GetUrl(taskMessage.Object)
+				}
+				if len(taskMessage.Doc) > 0 {
+					row.Doc = global.Storage.GetUrl(taskMessage.Doc)
 				}
 			}
 		case service.TASK_TYPE_ARTICLE:
@@ -516,6 +524,13 @@ func (t *Task) Export(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
+	var taskMessage task.TaskMessage
+	if len(l.Message) > 0 {
+		if err := json.Unmarshal(l.Message, &taskMessage); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+	}
 	switch req.Type {
 	case "markdown":
 		dirName := service.VerifyFileName(product.Title)
@@ -591,5 +606,100 @@ func (t *Task) Export(c *gin.Context) {
 		c.Header("Content-Disposition", "attachment; filename="+url.QueryEscape(archiveName))
 		c.Header("Content-Transfer-Encoding", "binary")
 		c.Data(200, "application/octet-stream", buf.Bytes())
+	case "docsite":
+		converter := md.NewConverter("", true, nil)
+		var ls []model.Task
+		if err := global.DB.Model(&model.Task{}).
+			Where(&model.Task{TaskPid: req.Pid}).
+			Order("id asc").
+			Find(&ls).Error; err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		indexMarkdown, err1 := converter.ConvertString(product.IntroHTML)
+		if err1 != nil {
+			global.FAIL(c, "fail.msg", err1.Error())
+			return
+		}
+		docs := service.Mkdocs{
+			SiteName: product.Title,
+			Navs:     make([]service.Nav, 0, len(ls)),
+		}
+		for _, x := range ls {
+			var articleData geek.ArticleData
+			if err := json.Unmarshal(x.Raw, &articleData); err != nil {
+				global.FAIL(c, "fail.msg", err.Error())
+				return
+			}
+			if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
+				articleData.Info.Content = articleData.Info.Cshort
+			}
+			if markdown, err2 := converter.ConvertString(articleData.Info.Content); err2 != nil {
+				global.FAIL(c, "fail.msg", err2.Error())
+				return
+			} else if len(markdown) > 0 {
+				baseName := service.VerifyFileName(articleData.Info.Title)
+				var itemMessage task.TaskMessage
+				if len(x.Message) > 0 {
+					_ = json.Unmarshal(x.Message, &itemMessage)
+					if len(itemMessage.Object) > 0 {
+						object := global.Storage.GetUrl(itemMessage.Object)
+						playTpl := `<video id="video" controls="" preload="none"><source id="mp4" src="%s"></video><br/> %s`
+						if articleData.Info.Audio.URL != "" {
+							playTpl = `<audio id="audio" controls="" preload="none"><source id="mp3" src="%s"></audio><br/> %s`
+						}
+						markdown = fmt.Sprintf(playTpl, object, markdown)
+					}
+				}
+				fileName := baseName + ".md"
+				fpath := path.Join(x.TaskPid, "docs", fileName)
+				if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(markdown)))); err != nil {
+					global.FAIL(c, "fail.msg", err.Error())
+					return
+				}
+				docs.Navs = append(docs.Navs, service.Nav{Items: []string{fileName}})
+			}
+		}
+		fpath := path.Join(l.TaskId, "docs", "index.md")
+		if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(indexMarkdown)))); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		tpl, err := template.New("template").Parse(service.MkdocsYML)
+		if err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		var buf bytes.Buffer
+		if err = tpl.Execute(&buf, docs); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		mkdocsPath := path.Join(l.TaskId, "mkdocs.yml")
+		if _, err = global.Storage.Put(mkdocsPath, io.NopCloser(&buf)); err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		realDir := global.Storage.GetKey(l.TaskId, true)
+		cmd := exec.CommandContext(c, "mkdocs", "build")
+		cmd.Dir = realDir
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			global.LOG.Error("docsite", zap.Error(err), zap.String("output", string(output)))
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		docDir := path.Join(l.TaskId, "site")
+		docURL := global.Storage.GetKey(docDir, false)
+		taskMessage.Doc = docURL
+		l.Message, _ = json.Marshal(taskMessage)
+		if err = global.DB.Model(&model.Task{}).
+			Where(&model.Task{Id: l.Id}).
+			UpdateColumn("message", l.Message).Error; err != nil {
+			global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", l.TaskId))
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		global.OK(c, map[string]any{})
 	}
 }

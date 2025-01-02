@@ -159,7 +159,7 @@ func doProduct(_ context.Context, x *model.Task) error {
 		message := task.TaskMessage{Object: dirURL}
 		m.Message, _ = json.Marshal(message)
 	}
-	if err := global.DB.Where(&model.Task{Id: x.Id}).Updates(&m).Error; err != nil {
+	if err := global.DB.Model(&model.Task{}).Where(&model.Task{Id: x.Id}).Updates(&m).Error; err != nil {
 		global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
 		return err
 	}
