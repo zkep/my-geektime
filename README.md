@@ -24,7 +24,7 @@ mkdocs serve
 
 ### 安装
 
-#### 推荐，docker compose 方式, 该方式会启动mysql，redis等依赖服务
+#### docker compose 方式, 该方式会启动mysql，redis等依赖服务
 
 ```shell
 git clone https://github.com/zkep/mygeektime.git
