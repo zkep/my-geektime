@@ -50,12 +50,8 @@ type Part struct {
 	IsKey bool
 }
 
-func Download(ctx context.Context, x *model.Task) error {
+func Download(ctx context.Context, x *model.Task, data geek.ArticleData) error {
 	t0 := time.Now()
-	var data geek.ArticleData
-	if err := json.Unmarshal(x.Raw, &data); err != nil {
-		return err
-	}
 	var (
 		source      string
 		downloadURL string

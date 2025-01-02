@@ -172,7 +172,11 @@ func doArticle(ctx context.Context, x *model.Task) error {
 		Status:    service.TASK_STATUS_RUNNING,
 		UpdatedAt: time.Now().Unix(),
 	}
-	if len(x.RewriteHls) == 0 {
+	var data geek.ArticleData
+	if err := json.Unmarshal(x.Raw, &data); err != nil {
+		return err
+	}
+	if len(x.RewriteHls) == 0 && (len(data.Info.Audio.URL) > 0 || data.Info.IsVideo) {
 		aid, err := strconv.ParseInt(x.OtherId, 10, 64)
 		if err != nil {
 			return err
@@ -200,7 +204,7 @@ func doArticle(ctx context.Context, x *model.Task) error {
 		return err
 	}
 	status := service.TASK_STATUS_FINISHED
-	if err := service.Download(ctx, x); err != nil {
+	if err := service.Download(ctx, x, data); err != nil {
 		global.LOG.Error("worker download", zap.Error(err), zap.String("taskId", x.TaskId))
 		status = service.TASK_STATUS_ERROR
 		message := task.TaskMessage{Text: err.Error()}
