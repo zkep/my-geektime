@@ -13,6 +13,9 @@ git clone https://github.com/zkep/mygeektime.git
 # 切入docker compose 文件目录
 cd mygeektime/docker
 
+# 下载默认数据表
+# wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
+
 # 后台启动服务
 docker-compose up -d
 ```
