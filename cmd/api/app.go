@@ -148,7 +148,11 @@ func (app *App) docterMkdocs() error {
 		fmt.Println()
 		fmt.Println(color.Blue("https://github.com/mkdocs/mkdocs"))
 		fmt.Println("install mkdocs-material, Please wait .....")
-		err = exec.CommandContext(app.ctx, "pip", "install", "mkdocs-material").Run()
+		name := "pip"
+		if _, pipxErr := exec.LookPath("pipx"); pipxErr == nil {
+			name = "pipx"
+		}
+		err = exec.CommandContext(app.ctx, name, "install", "mkdocs-material").Run()
 		if err != nil {
 			return err
 		}
