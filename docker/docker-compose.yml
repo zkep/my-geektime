@@ -52,22 +52,6 @@ services:
     depends_on:
       - mysql
       - redis
-  nginx:
-    image: nginx:latest
-    hostname: nginx
-    restart: always
-    networks:
-      - mygeektime
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/html:/usr/share/nginx/html
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/logs:/var/logs/nginx
-    ports:
-      - 80:80
-      - 443:443
-    depends_on:
-      - server
 
 
 

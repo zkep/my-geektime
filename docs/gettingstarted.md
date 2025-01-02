@@ -5,9 +5,22 @@
 * 如果，你的本地已经有redis，mysql等服务了，也可以考虑docker方式和二进制发行包方式
 * 再如果，你也是技术爱好者，恰好懂golang和amis的话，也可以clone源码安装调试
 
+#### docker compose 方式, 该方式会启动mysql，redis等依赖服务
+```shell
+# 下载本项目
+git clone https://github.com/zkep/mygeektime.git
+
+# 切入docker compose 文件目录
+cd mygeektime/docker
+
+# 后台启动服务
+docker-compose up -d
+```
+服务启动后浏览器访问:  http://127.0.0.1:8090
+
 #### docker 方式
 
-##### docker 使用默认配置启动,默认使用sqlite数据库，如果使用其他数据库，使用下面的自定义配置启动
+##### docker 使用默认配置启动,默认使用sqlite数据库,推荐下面的自定义配置启动
 ```shell
 docker run  -d  --restart always \
 --name mygeektime  \
@@ -33,22 +46,10 @@ docker run -d --restart always \
 -p 8090:8090 \
 --name mygeektime \
 -v ${directory}:/repo  \
-zkep/mygeektime:latest server   
+-v config.yml:/config.yml \
+zkep/mygeektime:latest  server --config=config.yml
 ```
 浏览器访问:  http://127.0.0.1:8090
-
-#### docker compose 方式, 该方式会启动 nginx，mysql，redis等依赖服务
-```shell
-# 下载本项目
-git clone https://github.com/zkep/mygeektime.git
-
-# 切入docker compose 文件目录
-cd mygeektime/docker
-
-# 后台启动服务
-docker-compose up -d
-```
-服务启动后浏览器访问:  http://127.0.0.1
 
 
 ## [二进制包安装](https://github.com/zkep/mygeektime/releases)
