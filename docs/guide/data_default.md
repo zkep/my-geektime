@@ -6,7 +6,7 @@
 ## [releases下载sql文件导入mysql](https://github.com/zkep/mygeektime/releases)
 
 
-* 方式1: docker compose 方式启动在启动前，将tasks.sql 放入 docker/mysql/init 目录即可
+* 方式1: docker compose 在启动前，将tasks.sql 放入 docker/mysql/init 目录即可
 ```shell
 wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O docker/mysql/init/tasks.sql
 
