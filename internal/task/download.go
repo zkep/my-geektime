@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"path"
 	"strconv"
 	"sync"
 	"time"
@@ -153,8 +154,9 @@ func doProduct(_ context.Context, x *model.Task) error {
 		UpdatedAt:  time.Now().Unix(),
 	}
 	if status == service.TASK_STATUS_FINISHED {
-		dir := global.Storage.GetKey(x.TaskId, false)
-		message := task.TaskMessage{Object: dir}
+		dir := path.Join(x.TaskId, service.VerifyFileName(x.TaskName))
+		dirURL := global.Storage.GetKey(dir, false)
+		message := task.TaskMessage{Object: dirURL}
 		m.Message, _ = json.Marshal(message)
 	}
 	if err := global.DB.Where(&model.Task{Id: x.Id}).Updates(&m).Error; err != nil {
