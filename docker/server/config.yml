@@ -40,8 +40,8 @@ site:
     type: name # email | name | none
     email:
       subject: "我的极客时间邮箱验证码"
-      body: "验证码： <b>%s</b> <br/><br/> <b>👏 扫下方微信二维码，欢迎加入技术交流群</b>"
-      attach: wechat.jpg
+      body: "验证码： <b>%s</b> <br/><br/>"
+      attach:
   login:
     type: name # email | name
     guest:

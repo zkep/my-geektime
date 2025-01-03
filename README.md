@@ -31,7 +31,6 @@ git clone https://github.com/zkep/mygeektime.git
 
 cd mygeektime/docker
 
-# 下载默认数据表
 # wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
 
 docker-compose up -d
@@ -119,6 +118,3 @@ make && make install
 * [gorm](https://github.com/go-gorm/gorm)
 * [FFmpeg](https://ffmpeg.org/download.html)
 
-#### 扫码加入实战交流群
-
-<img src="./web/public/wechat.jpg"  width="200" />
