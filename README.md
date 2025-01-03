@@ -2,24 +2,18 @@
  
 
 ## 我的极客时间
-极客时间课程在线文档
+极客时间课程在线文档，不仅仅是下载器，还是在线文档，支持部署为在线服务，分享给你爱学习的小伙伴
 
 ---
+特点：
+ * 支持极客时间VIP账号一次缓存数据，永久观看
+ * 支持一键发布为在线文档
+ * 支持下载音视频资源到本地目录
+ * 支持用户管理，轻松搭建共享服务
 
-### [文档](https://zkep.github.io/mygeektime/)
+### [项目文档](https://zkep.github.io/mygeektime/)
 
 ### [在线体验](https://mygeektime.anyfun.tech)
-
-### 查看本地文档
-```shell
-git clone https://github.com/zkep/mygeektime.git
-
-pip install mkdocs-material
-
-mkdocs serve
-
-```
-浏览器访问:  http://127.0.0.1:8000/
 
 
 ### 安装
@@ -31,6 +25,7 @@ git clone https://github.com/zkep/mygeektime.git
 
 cd mygeektime/docker
 
+# 没有极客时间VIP的用户，执行下面命令，可以导入一些默认课程数据
 # wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
 
 docker-compose up -d

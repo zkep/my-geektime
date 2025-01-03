@@ -10,18 +10,8 @@ This is a tool to obtain the geektime  articles docs
 
 ### [Show Time](https://mygeektime.anyfun.tech)
 
-### Local Docs
-```shell
-git clone https://github.com/zkep/mygeektime.git
-
-pip install mkdocs-material
-
-mkdocs serve
-```
-browser web url:  http://127.0.0.1:8000/
 
 #### Install
-
 
 #### install with docker compose
 
