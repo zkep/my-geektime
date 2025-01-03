@@ -51,4 +51,5 @@ site:
     type: origin  #  origin | local
     proxy_url:
       - https://res001.geekbang.org
+      # - https://media001.geekbang.org
 

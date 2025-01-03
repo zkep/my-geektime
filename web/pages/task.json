@@ -1086,22 +1086,6 @@
                                       },
                                       "buttons": [
                                         {
-                                          "label": "下载音频",
-                                          "type": "action",
-                                          "actionType": "download",
-                                          "size": "sm",
-                                          "api": "/v2/task/download?id=${task_id}&type=audio",
-                                          "visibleOn": "${ article.audio.download_url !== undefined  && message.object !=='' }"
-                                        },
-                                        {
-                                          "label": "下载视频",
-                                          "type": "action",
-                                          "actionType": "download",
-                                          "size": "sm",
-                                          "api": "/v2/task/download?id=${task_id}&type=video",
-                                          "visibleOn": "${ article.video.cover !== undefined && message.object !=='' }"
-                                        },
-                                        {
                                           "label": "导出Markdown",
                                           "type": "action",
                                           "size": "sm",
