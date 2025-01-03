@@ -19,7 +19,8 @@ import (
 )
 
 type DataFlags struct {
-	Config string `name:"config" description:"Path to config file"`
+	Config string  `name:"config" description:"Path to config file"`
+	Ids    []int32 `name:"id" description:"1: 体系课，4:公开课" default:"1"`
 }
 
 func (app *App) Data(f *DataFlags) error {
@@ -70,7 +71,12 @@ func (app *App) Data(f *DataFlags) error {
 	if err := json.Unmarshal([]byte(TagJSON), &tags); err != nil {
 		return err
 	}
-	for _, typ := range ProductTypes {
+	for _, id := range f.Ids {
+		typ, ok := ProductTypes[id]
+		if !ok {
+			fmt.Printf("not found product id [%d]", id)
+			continue
+		}
 		for _, form := range ProductForms {
 			for _, tag := range tags {
 				for _, opt := range tag.Options {
@@ -82,7 +88,7 @@ func (app *App) Data(f *DataFlags) error {
 					for hasNext {
 						req := geek.PvipProductRequest{
 							TagIds:       []int32{opt.Value},
-							ProductType:  typ.Value,
+							ProductType:  id,
 							ProductForm:  form.Value,
 							Sort:         8,
 							Size:         psize,
@@ -206,10 +212,15 @@ type Option struct {
 	Value int32  `json:"value"`
 }
 
+type TagMap struct {
+	Label   string           `json:"label"`
+	Options map[int32]string `json:"options"`
+}
+
 var (
-	ProductTypes = []Option{
-		{"体系课", 1},
-		{"公开课", 4},
+	ProductTypes = map[int32]Option{
+		1: {"体系课", 1},
+		4: {"公开课", 4},
 	}
 
 	ProductForms = []Option{

@@ -59,7 +59,8 @@ func (app *App) Run() {
 	subCLI := c.NewSubCommand("cli", "This is command")
 	subCLI.NewSubCommandFunction("config", "generate config file templete", cliApp.Config)
 	subCLI.NewSubCommandFunction("data", "init geektime data", cliApp.Data)
-
+	subCLI.NewSubCommandFunction("docs", "make geektime docs", cliApp.Docs)
+	subCLI.NewSubCommandFunction("docs-local", "make geektime local docs", cliApp.LocalDoc)
 	if err := c.Run(); err != nil {
 		fmt.Println(color.Red(err.Error()))
 	}

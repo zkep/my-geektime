@@ -49,11 +49,11 @@ markdown_extensions:
   - pymdownx.superfences
 
 nav:
-  {{ range $idx, $nav := .Navs }}
+  {{- range $idx, $nav := .Navs }}
    {{ if $nav.Name }}
     - {{ $nav.Name }}:
-   {{ end }}
-       {{ range $idx, $item := $nav.Items }}
-          - {{ $item }}
-       {{ end }}
+   {{- end }}
+       {{- range $idx, $item := $nav.Items -}}
+          - {{ $item -}}
+       {{- end }}
   {{ end }}
