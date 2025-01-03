@@ -1,7 +1,7 @@
 English | [中文](./README.md)
 
 ### my geektime
-This is a tool to obtain the geektime video or articles with you geektime account
+This is a tool to obtain the geektime  articles docs
 
 ---
 
