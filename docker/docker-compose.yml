@@ -1,0 +1,50 @@
+name: mygeektime
+networks:
+  mygeektime:
+    driver: bridge
+services:
+  mysql:
+    image: mysql:latest
+    hostname: "mysql"
+    restart: always
+    networks:
+      - mygeektime
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=mygeektime
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql/init/tasks.sql:/docker-entrypoint-initdb.d/tasks.sql
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 33060:3306
+  redis:
+    image: redis:latest
+    hostname: redis
+    restart: always
+    networks:
+      - mygeektime
+    volumes:
+      - ./redis/data:/data
+    command: redis-server --requirepass 123456
+    ports:
+      - 63790:6379
+  server:
+    hostname: mygeektime
+    image: zkep/mygeektime:latest
+    privileged: true
+    restart: always
+    networks:
+      - mygeektime
+    command: server --config=config.yml
+    ports:
+      - 8090:8090
+    environment:
+      - GIN_MODE=test
+    volumes:
+      -  ./server/repo:/repo
+      -  ./server/config.yml:/config.yml
+    depends_on:
+      - mysql
+      - redis

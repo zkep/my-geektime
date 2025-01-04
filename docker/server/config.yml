@@ -1,0 +1,54 @@
+server:
+  app_name: My Geek Time
+  run_mode: debug
+  http_addr: 0.0.0.0
+  http_port: 8090
+jwt:
+  secret: mygeektime-secret
+  expires: 86400
+i18n:
+  directory: i18n
+  default_lang: zh-CN
+redis:
+  addr: redis:6379
+  password: 123456
+  pool_size: 20
+  max_open_conns: 10
+database:
+  driver: mysql   # mysql|postgres|sqlite
+  source: root:123456@tcp(mysql:3306)/mygeektime?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
+  # source:  mygeektime.db
+  # source: host=mygeektime-postgres user=postgres password=postgres dbname=mygeektime port=5432 sslmode=disable TimeZone=Asia/Shanghai
+  max_idle_conns: 10
+  max_open_conns: 10
+email:
+  host: smtp.qq.com
+  port: 587
+  from:
+  user:
+  password:
+storage: # mp4 or mp3 save folder
+  driver: local
+  directory: repo  # Customize download folder, default to execute repo directory under the directory
+  bucket: object
+  host: http://127.0.0.1:8090  # Keep the port consistent with the http_port in the server
+browser:
+  open_browser: false
+site:
+  download: true
+  register:
+    type: name # email | name | none
+    email:
+      subject: "我的极客时间邮箱验证码"
+      body: "验证码： <b>%s</b> <br/><br/>"
+      attach:
+  login:
+    type: name # email | name
+    guest:
+      name:
+      password:
+  play:
+    type: origin  #  origin | local
+    proxy_url:
+      - https://res001.geekbang.org
+      # - https://media001.geekbang.org
