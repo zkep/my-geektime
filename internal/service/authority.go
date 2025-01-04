@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/types/geek"
 	"github.com/zkep/mygeektime/lib/zhttp"
+	"go.uber.org/zap"
 )
 
 const (
@@ -21,7 +23,12 @@ const (
 
 func SaveCookie(cookies string, identity string, auth *geek.AuthResponse) func(r *http.Response) error {
 	return func(r *http.Response) error {
-		if err := json.NewDecoder(r.Body).Decode(auth); err != nil {
+		raw, err := io.ReadAll(r.Body)
+		if err != nil {
+			return err
+		}
+		if err = json.Unmarshal(raw, auth); err != nil {
+			global.LOG.Error("SaveCookie", zap.Error(err), zap.String("raw", string(raw)))
 			return err
 		}
 		user := model.User{

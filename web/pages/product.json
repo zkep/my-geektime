@@ -689,10 +689,84 @@
             },
             {
               "type": "button",
+              "icon": "fa fa-eye",
+              "label": "缓存",
+              "level": "light",
+              "actionType": "drawer",
+              "visibleOn": "${ ls:access_token === undefined }",
+              "drawer": {
+                "resizable": true,
+                "closeOnOutside": true,
+                "actions": [],
+                "size": "md",
+                "title": "cookie登录",
+                "body": [
+                  "请先保存【极客时间VIP登录凭据】，该登录凭据是全站共享的基础,下载期间避免失效，失效后下载会找不到下载链接  ",
+                  "<a href='https://zkep.github.io/mygeektime/guide/data_geektime/' target='_blank'>查看详细文档</a>",
+                  {
+                    "type": "form",
+                    "title": "",
+                    "actions": [],
+                    "wrapWithPanel": false,
+                    "api": {
+                      "url": "/v2/base/refresh/cookie?waitSeconds=3",
+                      "method": "post",
+                      "data": {
+                        "cookie": "${cookie}"
+                      },
+                      "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"access_token\", \"${cookie}\");\n}\nreturn payload;"
+                    },
+                    "body": [
+                      {
+                        "label": "Cookie",
+                        "type": "textarea",
+                        "showCounter": true,
+                        "clearable": true,
+                        "required": true,
+                        "placeholder": "请输入极客时间Cookie",
+                        "name": "cookie",
+                        "validations": {
+                          "minLength": 50
+                        },
+                        "validationErrors": {
+                          "minLength": "Cookie不少于$1个字符"
+                        },
+                        "borderMode": "half",
+                        "style": {
+                          "margin": 20
+                        }
+                      },
+                      {
+                        "type": "flex",
+                        "alignItems": "center",
+                        "style": {
+                          "height": "100%",
+                          "backgroundColor": "#fff"
+                        },
+                        "items": [
+                          {
+                            "label": "刷 新｜Refresh",
+                            "level": "light",
+                            "size": "lg",
+                            "type": "submit",
+                            "style": {
+                              "margin": 20
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "type": "button",
               "label": "缓存",
               "level": "info",
               "icon": "fa fa-download",
               "actionType": "ajax",
+              "visibleOn": "${ ls:access_token !== undefined }",
               "api": {
                 "url": "/v2/product/download",
                 "method":"post",

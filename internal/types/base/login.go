@@ -33,3 +33,18 @@ type SendEmailRequest struct {
 type RefreshCookieRequest struct {
 	Cookie string `json:"cookie,omitempty" binding:"required,min=100,max=5000"`
 }
+
+type User struct {
+	// uid
+	Uid string `json:"uid,omitempty"`
+	// user_name
+	UserName string `json:"user_name,omitempty"`
+	// nick_name
+	NickName string `json:"nick_name,omitempty"`
+	// avatar
+	Avatar string `json:"avatar,omitempty"`
+	// access_token
+	AccessToken string `json:"access_token,omitempty"`
+	// role_id
+	RoleId int32 `json:"role_id,omitempty"`
+}

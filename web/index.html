@@ -135,6 +135,7 @@
                                                                             localStorage.setItem("uname", payload.user.user_name);
                                                                             localStorage.setItem("uid", payload.user.uid);
                                                                             localStorage.setItem("role_id", payload.user.role_id);
+                                                                            localStorage.setItem("access_token", payload.user.access_token);
                                                                             localStorage.setItem("avatar", payload.user.avatar);
                                                                             location.href="/";
                                                                         }
@@ -655,7 +656,8 @@
                                                 size: "md",
                                                 title: "cookie登录",
                                                 body: [
-                                                    "极客时间登录凭据，是全站共享的基础，需要定期刷新，避免失效，失效后下载会找不到下载链接",
+                                                    "【极客时间VIP登录凭据】，该登录凭据是全站共享的基础,下载期间避免失效，失效后下载会找不到下载链接  ",
+                                                    "<a href='https://zkep.github.io/mygeektime/guide/data_geektime/' target='_blank'>查看详细文档</a>",
                                                     {
                                                         type: "form",
                                                         title: "",

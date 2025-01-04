@@ -26,7 +26,7 @@ git clone https://github.com/zkep/mygeektime.git
 cd mygeektime/docker
 
 # 没有极客时间VIP的用户，执行下面命令，下载默认数据
-# wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
+wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
 
 docker-compose up -d
 ```

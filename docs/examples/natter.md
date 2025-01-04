@@ -5,9 +5,9 @@
 
 ```bash
 
-git clone https://github.com/zkep/mygeektime.git
+git clone https://github.com/MikeWang000000/Natter
 
-cd docker natter 
+cd  Natter 
 # 使用内置转发，对外开放本机 8090 端口：
 
 python3 natter.py -p 8090

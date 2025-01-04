@@ -106,8 +106,14 @@ func (b *Base) Login(c *gin.Context) {
 		"status": 0,
 		"msg":    "OK",
 		"token":  token,
-		"user":   info,
-		"role":   info.RoleId,
+		"user": base.User{
+			Uid:         info.Uid,
+			UserName:    info.UserName,
+			NickName:    info.NickName,
+			Avatar:      info.Avatar,
+			AccessToken: info.AccessToken,
+			RoleId:      info.RoleId,
+		},
 		"expire": expire.Format(time.RFC3339),
 	})
 	c.SetCookie(global.Analogjwt, token, int(expire.Unix()), "/", "", false, false)
