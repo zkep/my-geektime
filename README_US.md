@@ -34,3 +34,7 @@ browser web url:  http://127.0.0.1:8090
 * [amis](https://github.com/baidu/amis)
 * [gorm](https://github.com/go-gorm/gorm)
 * [FFmpeg](https://ffmpeg.org/download.html)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=zkep/mygeektime&type=Timeline)](https://star-history.com/#zkep/mygeektime&Timeline)
