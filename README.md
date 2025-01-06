@@ -6,7 +6,7 @@
 
 ---
 注意⚠️： 如果只是单纯的看 markdown ｜ pdf 文档，推荐 https://github.com/uaxe/geektime-docs 项目
-目前该项目在组织下，欢迎大家共同维护，我的极客时间项目对音视频更友好
+, 目前该项目在uaxe(你的斧头)组织下，欢迎大家共同维护，我的极客时间项目对音视频更友好
 
 
 特点：
@@ -31,7 +31,7 @@ git clone https://github.com/zkep/mygeektime.git
 
 cd mygeektime/docker
 
-# 没有极客时间VIP的用户，执行下面命令，下载默认数据
+# 没有极客时间VIP的用户，执行下面命令，下载默认数据，默认数据不全，仅仅为了演示功能
 wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
 
 docker-compose up -d

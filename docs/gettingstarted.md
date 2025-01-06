@@ -5,7 +5,7 @@
 * 如果，你的本地已经有redis，mysql等服务了，也可以考虑docker方式和二进制发行包方式
 * 再如果，你也是技术爱好者，恰好懂golang和amis的话，也可以clone源码安装调试
 
-#### docker compose 方式, 该方式会启动mysql，redis等依赖服务
+#### docker compose 方式，推荐指数 🌟🌟🌟🌟🌟
 ```shell
 # 下载本项目
 git clone https://github.com/zkep/mygeektime.git
@@ -21,28 +21,7 @@ docker-compose up -d
 ```
 服务启动后浏览器访问:  http://127.0.0.1:8090
 
-#### docker 方式
-
-##### docker 使用默认配置启动,默认使用sqlite数据库,推荐下面的自定义配置启动
-```shell
-docker run  -d  --restart always \
---name mygeektime  \
--p 8090:8090 \
-zkep/mygeektime:latest  server
-```
-浏览器访问:  http://127.0.0.1:8090
-
-##### docker 自定义配置启动
-```shell
-docker run  -d  --restart always \
---name mygeektime  \
--p 8090:8090 \
--v config.yml:/config.yml \
-zkep/mygeektime:latest  server --config=config.yml
-```
-浏览器访问:  http://127.0.0.1:8090
-
-##### docker 挂载下载目录启动
+#### docker 方式，推荐指数 🌟🌟🌟
 使用宿主机目录替换下面的 ${directory}
 ```shell
 docker run -d --restart always \
@@ -55,7 +34,7 @@ zkep/mygeektime:latest  server --config=config.yml
 浏览器访问:  http://127.0.0.1:8090
 
 
-## [二进制包安装](https://github.com/zkep/mygeektime/releases)
+#### [二进制包安装](https://github.com/zkep/mygeektime/releases) ，推荐指数 🌟🌟
 下载对应操作系统的二进制包，下面以MacOS为例
 ```shell
 # 下载

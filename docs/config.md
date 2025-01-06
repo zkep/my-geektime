@@ -19,13 +19,13 @@ redis:                    # redis服务配置，如果开启了用户邮箱注�
   pool_size: 20
   max_open_conns: 10
 database:                 # 数据库配置，默认是sqlite，可以自定义为mysql，postgres
-  driver:  sqlite         # mysql|postgres|sqlite
-  source:  mygeektime.db 
-  # source: root:123456@tcp(127.0.0.1:3306)/mygeektime?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
+  driver:  mysql         # mysql|postgres|sqlite
+  # source:  mygeektime.db 
+  source: root:123456@tcp(127.0.0.1:3306)/mygeektime?charset=utf8&parseTime=True&loc=Local&timeout=1000ms
   # source: host=127.0.0.1 user=postgres password=postgres dbname=mygeektime port=5432 sslmode=disable TimeZone=Asia/Shanghai
   max_idle_conns: 10
   max_open_conns: 10
-email:                    # 邮箱服务器配置
+email:                    # 邮箱服务器配置，邮箱注册必须填写
   host: smtp.qq.com
   port: 587
   from:
@@ -44,9 +44,8 @@ site:                      # 站点配置
      type: name            # email | name | none
      email:                # 邮箱验证码内容
         subject: "我的极客时间邮箱验证码"
-        body: "验证码： <b>%s</b> <br/><br/> <b>👏 扫下方微信二维码，欢迎加入技术交流群</b>"
-        attach: web/public/wechat.jpg
-  login:                   # 登录配置，默认用户名登录，与注册方式应该相同
+        body: "验证码： <b>%s</b> <br/><br/>"
+  login:                   # 登录配置，默认用户名登录，与注册方式相同
     type: name             # email | name
     guest:                 # 是否开启访客模式，填写默认name，passwrod视为开启，同时数据库users表应该有该记录
       name:                # 可以是邮箱和登录名
