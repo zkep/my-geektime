@@ -5,9 +5,10 @@
 极客时间课程在线文档，不仅仅是下载器，还是在线文档，支持部署为在线服务，分享给你爱学习的小伙伴
 
 ---
-注意⚠️： 如果只是单纯的看 markdown ｜ pdf 文档，推荐 https://github.com/uaxe/geektime-docs 项目
-, 目前该项目在uaxe(你的斧头)组织下，欢迎大家共同维护，我的极客时间项目对音视频更友好
+### 注意⚠️： 
 
+* 看 markdown文档，推荐: https://github.com/uaxe/geektime-docs 🌟🌟🌟
+* 看 pdf文档，推荐:  https://github.com/uaxe/geektime-pdfs 🌟🌟🌟
 
 特点：
  * 支持极客时间VIP账号一次缓存数据，永久观看
@@ -16,10 +17,7 @@
  * 支持用户管理，轻松搭建共享服务
 
 
-
-### [项目文档](https://zkep.github.io/mygeektime/)
-
-### [在线体验](https://mygeektime.anyfun.tech)
+### [项目文档](https://zkep.github.io/mygeektime/) | [在线体验](https://mygeektime.anyfun.tech)
 
 
 ### 安装

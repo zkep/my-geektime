@@ -192,6 +192,7 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 				continue
 			}
 			group.Label = strings.Replace(group.Label, "/", "|", 2)
+			product.Title = strings.Replace(product.Title, "/", "|", 2)
 			err := service.MakeDocsiteLocal(l.TaskId, group.Label, product.Title, product.IntroHTML)
 			if err != nil {
 				global.LOG.Error("Docs MakeDocsite", zap.Error(err))

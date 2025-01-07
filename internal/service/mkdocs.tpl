@@ -1,4 +1,4 @@
-site_name: {{.SiteName}}
+site_name: {{ .SiteName }}
 
 theme:
   name: material
@@ -51,9 +51,9 @@ markdown_extensions:
 nav:
   {{- range $idx, $nav := .Navs }}
    {{ if $nav.Name }}
-    - {{ $nav.Name }}:
+    - {{ $nav.Name  }}:
    {{- end }}
        {{- range $idx, $item := $nav.Items -}}
-          - {{ $item -}}
+          - {{  $item  -}}
        {{- end }}
   {{ end }}

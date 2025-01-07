@@ -46,9 +46,8 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 	if err1 != nil {
 		return "", err1
 	}
-	title = html.EscapeString(VerifyFileName(title))
 	docs := Mkdocs{
-		SiteName: title,
+		SiteName: VerifyFileName(title),
 		Navs:     make([]Nav, 0, len(ls)),
 	}
 	for _, x := range ls {
@@ -62,7 +61,7 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 		if markdown, err2 := converter.ConvertString(articleData.Info.Content); err2 != nil {
 			return "", err2
 		} else if len(markdown) > 0 {
-			baseName := html.EscapeString(VerifyFileName(articleData.Info.Title))
+			baseName := VerifyFileName(articleData.Info.Title)
 			var itemMessage task.TaskMessage
 			if len(x.Message) > 0 {
 				_ = json.Unmarshal(x.Message, &itemMessage)
@@ -96,8 +95,9 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 	if err = tpl.Execute(&buf, docs); err != nil {
 		return "", err
 	}
+	buff := bytes.NewBufferString(html.UnescapeString(buf.String()))
 	mkdocsPath := path.Join(taskId, "mkdocs.yml")
-	if _, err = global.Storage.Put(mkdocsPath, io.NopCloser(&buf)); err != nil {
+	if _, err = global.Storage.Put(mkdocsPath, io.NopCloser(buff)); err != nil {
 		return "", err
 	}
 	realDir := global.Storage.GetKey(taskId, true)
@@ -126,9 +126,8 @@ func MakeDocsiteLocal(taskId, group, title, introHTML string) error {
 	if err1 != nil {
 		return err1
 	}
-	title = html.EscapeString(VerifyFileName(title))
 	docs := Mkdocs{
-		SiteName: title,
+		SiteName: VerifyFileName(title),
 		Navs:     make([]Nav, 0, len(ls)),
 	}
 	for _, x := range ls {
@@ -142,7 +141,7 @@ func MakeDocsiteLocal(taskId, group, title, introHTML string) error {
 		if markdown, err2 := converter.ConvertString(articleData.Info.Content); err2 != nil {
 			return err2
 		} else if len(markdown) > 0 {
-			baseName := html.EscapeString(VerifyFileName(articleData.Info.Title))
+			baseName := VerifyFileName(articleData.Info.Title)
 			fileName := baseName + ".md"
 			fpath := path.Join(group, title, "docs", fileName)
 			if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(markdown)))); err != nil {
@@ -163,8 +162,9 @@ func MakeDocsiteLocal(taskId, group, title, introHTML string) error {
 	if err = tpl.Execute(&buf, docs); err != nil {
 		return err
 	}
+	buff := bytes.NewBufferString(html.UnescapeString(buf.String()))
 	mkdocsPath := path.Join(group, title, "mkdocs.yml")
-	if _, err = global.Storage.Put(mkdocsPath, io.NopCloser(&buf)); err != nil {
+	if _, err = global.Storage.Put(mkdocsPath, io.NopCloser(buff)); err != nil {
 		return err
 	}
 

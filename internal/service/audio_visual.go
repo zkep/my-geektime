@@ -25,22 +25,8 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	SpecialCharacters = map[string]string{
-		"|": "_",
-		"?": "_",
-		"？": "_",
-		"：": "_",
-		"/": "_",
-		"*": "_",
-		" ": "",
-	}
-)
-
 func VerifyFileName(name string) string {
-	for src, dest := range SpecialCharacters {
-		name = strings.ReplaceAll(name, src, dest)
-	}
+	name = strings.Replace(name, "/", "|", 2)
 	return name
 }
 
