@@ -26,7 +26,8 @@ import (
 )
 
 func VerifyFileName(name string) string {
-	name = strings.Replace(name, "/", "|", 2)
+	name = strings.ReplaceAll(name, "/", "|")
+	name = strings.ReplaceAll(name, ":", "：")
 	return name
 }
 
