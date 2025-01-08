@@ -9,6 +9,7 @@
 
 * 看 markdown文档，推荐: https://github.com/uaxe/geektime-docs 🌟🌟🌟
 * 看 pdf文档，推荐:  https://github.com/uaxe/geektime-pdfs 🌟🌟🌟
+* 看 音视频，推荐:  https://github.com/zkep/mygeektime 🌟🌟🌟🌟🌟
 
 特点：
  * 支持极客时间VIP账号一次缓存数据，永久观看
