@@ -5,7 +5,6 @@
 极客时间课程在线文档，不仅仅是下载器，还是在线文档，支持部署为在线服务，分享给你爱学习的小伙伴
 
 ---
-### 注意⚠️： 
 
 * 看 markdown文档，推荐: https://github.com/uaxe/geektime-docs 🌟🌟🌟
 * 看 pdf文档，推荐:  https://github.com/uaxe/geektime-pdfs 🌟🌟🌟
