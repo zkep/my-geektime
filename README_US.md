@@ -29,7 +29,6 @@ browser web url:  http://127.0.0.1:8090
 #### thanks
 * [gin](https://github.com/gin-gonic/gin)
 * [amis](https://github.com/baidu/amis)
-* [gorm](https://github.com/go-gorm/gorm)
 * [FFmpeg](https://ffmpeg.org/download.html)
 
 ## Star History

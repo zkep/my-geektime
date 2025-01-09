@@ -1,7 +1,7 @@
 # 快速开始 ⚡️
 
 ## 安装
-* 目前支持三种安装方式, 首推docker compose 方式
+* 目前支持三种安装方式, 首推 docker compose 方式
 * 如果，你的本地已经有redis，mysql等服务了，也可以考虑docker方式和二进制发行包方式
 * 再如果，你也是技术爱好者，恰好懂golang和amis的话，也可以clone源码安装调试
 
@@ -14,7 +14,7 @@ git clone https://github.com/zkep/mygeektime.git
 cd mygeektime/docker
 
 # 下载默认数据表
-# wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
+wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
 
 # 后台启动服务
 docker-compose up -d

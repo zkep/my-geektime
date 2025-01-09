@@ -41,7 +41,6 @@ docker-compose up -d
 #### 感谢
 * [gin](https://github.com/gin-gonic/gin)
 * [amis](https://github.com/baidu/amis)
-* [gorm](https://github.com/go-gorm/gorm)
 * [FFmpeg](https://ffmpeg.org/download.html)
 
 ## Star History

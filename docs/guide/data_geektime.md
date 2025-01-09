@@ -24,36 +24,3 @@
 
 <img src="../../images/source_detail.png" />
 
-
-## 全站缓存
-如果这种web方式不能满足你的缓存需求，可以考虑命令行方式
-
-目前仅支持了： 
-
- * 体系课
-
- * 公开课
-
- * 线下大会
-
-后续会支持更多，敬请期待
-
-*注意⚠️*  默认是会进行音视频下载，全站缓存需要考虑下磁盘是否足够，保守估计1T
-
-如果磁盘不足，可以暂时将该参数设置为false， 不会下载资源，但是不影响在线播放
-
-```yaml
-site:                      # 站点配置
-  download: true           # 是否下载音视频，默认是
-```
-
-### docker 安装启动方式，执行命令
-```shell
-# 进入mygeektime命令行
-# docker 直接运行容器名称为 mygeektime
-# docker compose 运行容器名为  mygeektime-server-1
-docker exec -it mygeektime  bash 
-
-# 容器里执行如下命令, 1: 体系课，4:公开课
-mygeektime cli data --id=1 
-```
