@@ -50,6 +50,8 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 		SiteName: VerifyFileName(title),
 		Navs:     make([]Nav, 0, len(ls)),
 	}
+	intro := fmt.Sprintf("%s.md", title)
+	docs.Navs = append(docs.Navs, Nav{Items: []string{intro}})
 	for _, x := range ls {
 		var articleData geek.ArticleData
 		if err := json.Unmarshal(x.Raw, &articleData); err != nil {
@@ -83,8 +85,12 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 			docs.Navs = append(docs.Navs, Nav{Items: []string{fileName}})
 		}
 	}
-	fpath := path.Join(taskId, "docs", "index.md")
+	fpath := path.Join(taskId, "docs", intro)
 	if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(indexMarkdown)))); err != nil {
+		return "", err
+	}
+	indexPath := path.Join(taskId, "docs", "index.md")
+	if _, err := global.Storage.Put(indexPath, io.NopCloser(bytes.NewBuffer([]byte(title)))); err != nil {
 		return "", err
 	}
 	tpl, err := template.New("template").Parse(MkdocsYML)
@@ -130,6 +136,8 @@ func MakeDocsiteLocal(taskId, group, title, introHTML string) error {
 		SiteName: VerifyFileName(title),
 		Navs:     make([]Nav, 0, len(ls)),
 	}
+	intro := fmt.Sprintf("%s.md", title)
+	docs.Navs = append(docs.Navs, Nav{Items: []string{intro}})
 	for _, x := range ls {
 		var articleData geek.ArticleData
 		if err := json.Unmarshal(x.Raw, &articleData); err != nil {
@@ -150,8 +158,12 @@ func MakeDocsiteLocal(taskId, group, title, introHTML string) error {
 			docs.Navs = append(docs.Navs, Nav{Items: []string{fileName}})
 		}
 	}
-	fpath := path.Join(group, title, "docs", "index.md")
+	fpath := path.Join(group, title, "docs", intro)
 	if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(indexMarkdown)))); err != nil {
+		return err
+	}
+	indexPath := path.Join(group, title, "docs", "index.md")
+	if _, err := global.Storage.Put(indexPath, io.NopCloser(bytes.NewBuffer([]byte(title)))); err != nil {
 		return err
 	}
 	tpl, err := template.New("template").Parse(MkdocsYML)

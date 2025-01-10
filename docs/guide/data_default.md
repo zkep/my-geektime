@@ -17,7 +17,20 @@ cd docker
 # 启动
 docker-compose up  -d
 ```
-* 方式2: 将tasks.sql导入到mysql
+* 方式2:
+```shell
+docker cp tasks.sql mysql:/
+
+docker exec -it mysql bash
+
+mysql -uroot -p123456
+
+use mygeektime;
+
+source tasks.sql;
+```
+
+* 方式3: 将tasks.sql导入到mysql
 ```shell
 mysqldump -uroot -P3306 -p123456 mygeektime < tasks.sql
 ```

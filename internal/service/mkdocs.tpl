@@ -28,9 +28,6 @@ theme:
     edit: material/pencil
     logo: material/console-line
 
-extra_css:
-  - static/css/extra.css
-
 extra:
   homepage:
   version:
