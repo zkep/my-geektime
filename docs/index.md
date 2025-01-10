@@ -26,5 +26,8 @@
 
  **如果这个项目有帮助到你，也希望不要吝啬你的 star ✨，可以让更多的人使用起来，发现问题，持续改进**
 
+### 技术交流群
+<img src="images/wechat.jpg" width="300" />
+
 [快速开始](./gettingstarted.md) 👉
 

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"strings"
 
 	"github.com/zkep/mygeektime/internal/config"
 	"github.com/zkep/mygeektime/internal/global"
@@ -191,8 +190,8 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 			if !ok {
 				continue
 			}
-			group.Label = strings.Replace(group.Label, "/", "|", 2)
-			product.Title = strings.Replace(product.Title, "/", "|", 2)
+			group.Label = service.VerifyFileName(group.Label)
+			product.Title = service.VerifyFileName(product.Title)
 			err := service.MakeDocsiteLocal(l.TaskId, group.Label, product.Title, product.IntroHTML)
 			if err != nil {
 				global.LOG.Error("Docs MakeDocsite", zap.Error(err))
