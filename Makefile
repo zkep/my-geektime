@@ -24,5 +24,6 @@ run: build
 
 website:
 	pip install mkdocs-material
-	mkdocs gh-deploy --force
+	mkdocs gh-deploy --force --no-history
+
 
