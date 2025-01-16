@@ -173,10 +173,7 @@ func doArticle(ctx context.Context, x *model.Task) error {
 		UpdatedAt: time.Now().Unix(),
 	}
 	var data geek.ArticleData
-	if err := json.Unmarshal(x.Raw, &data); err != nil {
-		return err
-	}
-	if len(x.RewriteHls) == 0 && (len(data.Info.Audio.URL) > 0 || data.Info.IsVideo) {
+	if len(x.RewriteHls) == 0 {
 		aid, err := strconv.ParseInt(x.OtherId, 10, 64)
 		if err != nil {
 			return err
@@ -192,12 +189,17 @@ func doArticle(ctx context.Context, x *model.Task) error {
 		if err1 != nil {
 			return err1
 		}
+		data = article.Data
 		var info geek.ArticleInfoRaw
 		if err = json.Unmarshal(article.Raw, &info); err != nil {
 			return err
 		}
 		m.Raw = info.Data
 		x.Raw = info.Data
+	} else {
+		if err := json.Unmarshal(x.Raw, &data); err != nil {
+			return err
+		}
 	}
 	if err := global.DB.Where(&model.Task{Id: x.Id}).Updates(m).Error; err != nil {
 		global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
