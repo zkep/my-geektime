@@ -31,15 +31,6 @@ browser web url:  http://127.0.0.1:8090
 * [amis](https://github.com/baidu/amis)
 * [FFmpeg](https://ffmpeg.org/download.html)
 
-### Sponsor
-
-<picture>
-  <img
-    alt="sponsor"
-    src="docs/images/sponsor.jpg"
-    width="350px"
-  />
-</picture>
 
 ## Star History
 
@@ -59,5 +50,16 @@ browser web url:  http://127.0.0.1:8090
   <img
     alt="Star History Chart"
     src="https://api.star-history.com/svg?repos=zkep/mygeektime&type=Date"
+  />
+</picture>
+
+
+### Sponsor
+
+<picture>
+  <img
+    alt="sponsor"
+    src="docs/images/sponsor.jpg"
+    width="350px"
   />
 </picture>

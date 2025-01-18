@@ -42,16 +42,6 @@ docker-compose up -d
 * [amis](https://github.com/baidu/amis)
 * [FFmpeg](https://ffmpeg.org/download.html)
 
-### 赞赏
-欢迎赞赏👏
-
-<picture>
-  <img
-    alt="sponsor"
-    src="docs/images/sponsor.jpg"
-    width="350px"
-  />
-</picture>
 
 ###  Star 历史
 
@@ -74,5 +64,15 @@ docker-compose up -d
   />
 </picture>
 
+### 赞赏
+欢迎赞赏👏
+
+<picture>
+  <img
+    alt="sponsor"
+    src="docs/images/sponsor.jpg"
+    width="350px"
+  />
+</picture>
 
 
