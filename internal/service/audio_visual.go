@@ -87,6 +87,9 @@ func Download(ctx context.Context, x *model.Task, data geek.ArticleData) error {
 		}
 		x.RewriteHls = meta.Spec
 		x.Ciphertext = meta.Ciphertext
+		if len(x.Ciphertext) == 0 {
+			x.RewriteHls = nil
+		}
 		if global.CONF.Site.Download {
 			if data.Info.IsVideo {
 				source, err = Video(ctx, dir, fileName, meta)
@@ -274,7 +277,7 @@ func RewritePlay(ctx context.Context, req PlayMetaRequest) (*PlayMeta, error) {
 	retryCtx, retryCancel := context.WithTimeout(ctx, time.Minute*30)
 	defer retryCancel()
 	if len(req.Spec) == 0 {
-		err := zhttp.R.
+		err := zhttp.NewRequest().
 			Before(func(r *http.Request) {
 				r.Header.Set("Accept", "application/json, text/plain, */*")
 				r.Header.Set("User-Agent", zhttp.RandomUserAgent())
@@ -331,7 +334,7 @@ func RewritePlay(ctx context.Context, req PlayMetaRequest) (*PlayMeta, error) {
 			l = fmt.Sprintf(`%s"file:///%s"`, sps[0], meta.KeyPath)
 			rl = fmt.Sprintf(`%s"{host}/v2/task/kms?Ciphertext=%s"`, sps[0], token)
 			if len(req.Ciphertext) == 0 {
-				err := zhttp.R.
+				err := zhttp.NewRequest().
 					Before(func(r *http.Request) {
 						r.Header.Set("Accept", "application/json, text/plain, */*")
 						r.Header.Set("User-Agent", zhttp.RandomUserAgent())
@@ -343,6 +346,9 @@ func RewritePlay(ctx context.Context, req PlayMetaRequest) (*PlayMeta, error) {
 							raw, err := io.ReadAll(r.Body)
 							if err != nil {
 								return err
+							}
+							if len(raw) == 0 {
+								return fmt.Errorf("cipher key is empty %v", r.Request.URL)
 							}
 							req.Ciphertext = raw
 							return nil

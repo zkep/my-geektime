@@ -42,7 +42,18 @@ docker-compose up -d
 * [amis](https://github.com/baidu/amis)
 * [FFmpeg](https://ffmpeg.org/download.html)
 
-## Star History
+### 赞赏
+欢迎赞赏👏
+
+<picture>
+  <img
+    alt="sponsor"
+    src="docs/images/sponsor.jpg"
+    width="350px"
+  />
+</picture>
+
+###  Star 历史
 
 <picture>
   <source
@@ -62,3 +73,6 @@ docker-compose up -d
     src="https://api.star-history.com/svg?repos=zkep/mygeektime&type=Date"
   />
 </picture>
+
+
+

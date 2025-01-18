@@ -1,14 +1,12 @@
 package v2
 
 import (
-	"archive/tar"
 	"bufio"
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -337,7 +335,7 @@ func (t *Task) Download(c *gin.Context) {
 			fileName = baseName + ".mp3"
 		}
 		if len(req.Url) > 0 {
-			err := zhttp.R.Client(global.HttpClient).
+			err := zhttp.NewRequest().Client(global.HttpClient).
 				Before(func(r *http.Request) {
 					r.Header.Set("Accept", "application/json, text/plain, */*")
 					r.Header.Set("Content-Type", "application/json")
@@ -482,7 +480,7 @@ func (t *Task) PlayPart(c *gin.Context) {
 		return
 	}
 
-	if err := zhttp.R.
+	if err := zhttp.NewRequest().
 		Before(func(r *http.Request) {
 			r.Header.Set("origin", "https://www.geekbang.org")
 			r.Header.Set("referer", "https://www.geekbang.org")
@@ -531,73 +529,14 @@ func (t *Task) Export(c *gin.Context) {
 	case "markdown":
 		dirName := service.VerifyFileName(product.Title)
 		archiveName := fmt.Sprintf("%s.tar.gz", dirName)
-		buf := new(bytes.Buffer)
-		archiveWriter := tar.NewWriter(buf)
-
-		defer func() { _ = archiveWriter.Close() }()
-
-		converter := md.NewConverter("", true, nil)
-		var ls []model.Task
-		if err := global.DB.Model(&model.Task{}).
-			Where(&model.Task{TaskPid: req.Pid}).
-			Order("id asc").
-			Find(&ls).Error; err != nil {
+		//buf := new(bytes.Buffer)
+		//archiveWriter := tar.NewWriter(buf)
+		//defer func() { _ = archiveWriter.Close() }()
+		buf, err := service.MakeDocArchive(c, l.TaskId, product.Title, product.IntroHTML)
+		if err != nil {
 			global.FAIL(c, "fail.msg", err.Error())
 			return
 		}
-		indexMarkdown, err1 := converter.ConvertString(product.IntroHTML)
-		if err1 != nil {
-			global.FAIL(c, "fail.msg", err1.Error())
-			return
-		}
-		indexMarkdown += "\n\n"
-		for _, x := range ls {
-			var articleData geek.ArticleData
-			if err := json.Unmarshal(x.Raw, &articleData); err != nil {
-				global.FAIL(c, "fail.msg", err.Error())
-				return
-			}
-			if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
-				articleData.Info.Content = articleData.Info.Cshort
-			}
-
-			if markdown, err2 := converter.ConvertString(articleData.Info.Content); err2 != nil {
-				global.FAIL(c, "fail.msg", err2.Error())
-				return
-			} else if len(markdown) > 0 {
-				baseName := service.VerifyFileName(articleData.Info.Title)
-				fileName := baseName + ".md"
-				hdr := &tar.Header{
-					Name: fileName,
-					Mode: 0600,
-					Size: int64(len(markdown)),
-				}
-				if err := archiveWriter.WriteHeader(hdr); err != nil {
-					log.Fatal(err)
-				}
-
-				if _, err := archiveWriter.Write([]byte(markdown)); err != nil {
-					global.FAIL(c, "fail.msg", err.Error())
-					return
-				}
-				indexMarkdown += fmt.Sprintf("\n * [%s](./%s) \n", baseName, fileName)
-			}
-		}
-
-		hdr := &tar.Header{
-			Name: "index.md",
-			Mode: 0600,
-			Size: int64(len(indexMarkdown)),
-		}
-		if err := archiveWriter.WriteHeader(hdr); err != nil {
-			log.Fatal(err)
-		}
-
-		if _, err := archiveWriter.Write([]byte(indexMarkdown)); err != nil {
-			global.FAIL(c, "fail.msg", err.Error())
-			return
-		}
-
 		c.Header("Content-Type", "application/octet-stream")
 		c.Header("Content-Disposition", "attachment; filename="+url.QueryEscape(archiveName))
 		c.Header("Content-Transfer-Encoding", "binary")

@@ -14,20 +14,6 @@ type Requests struct {
 	Error  error
 }
 
-var (
-	R = &Requests{
-		client: http.DefaultClient,
-		before: func(_ *http.Request) {},
-		after: func(r *http.Response) error {
-			if r.StatusCode != 200 {
-				return errors.New(r.Status)
-			}
-			return nil
-		},
-		Error: nil,
-	}
-)
-
 func NewRequest() *Requests {
 	return &Requests{
 		client: http.DefaultClient,

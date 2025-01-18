@@ -14,7 +14,7 @@ import (
 
 func Request(ctx context.Context, method, url string,
 	body io.Reader, accessToken string, after func(raw []byte) error) error {
-	return zhttp.R.Client(global.HttpClient).
+	return zhttp.NewRequest().Client(global.HttpClient).
 		Before(func(r *http.Request) {
 			r.Header.Set("Accept", "application/json, text/plain, */*")
 			r.Header.Set("Content-Type", "application/json")

@@ -7,7 +7,7 @@ import (
 )
 
 func TestClient(t *testing.T) {
-	err := zhttp.R.Do("GET", "https://github.com/", nil)
+	err := zhttp.NewRequest().Do("GET", "https://github.com/", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

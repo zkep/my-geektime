@@ -55,7 +55,7 @@ func Authority(cookies string, after func(*http.Response) error) error {
 	t := time.Now().UnixMilli()
 	authUrl := fmt.Sprintf("%s?t=%d&v_t=%d", authURL, t, t)
 
-	err := zhttp.R.Client(global.HttpClient).
+	err := zhttp.NewRequest().Client(global.HttpClient).
 		Before(func(r *http.Request) {
 			r.Header.Set("Accept", "application/json, text/plain, */*")
 			r.Header.Set("Referer", refererURL)
