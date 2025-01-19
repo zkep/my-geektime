@@ -87,9 +87,6 @@ func Download(ctx context.Context, x *model.Task, data geek.ArticleData) error {
 		}
 		x.RewriteHls = meta.Spec
 		x.Ciphertext = meta.Ciphertext
-		if len(x.Ciphertext) == 0 {
-			x.RewriteHls = nil
-		}
 		if global.CONF.Site.Download {
 			if data.Info.IsVideo {
 				source, err = Video(ctx, dir, fileName, meta)
@@ -177,7 +174,7 @@ func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, er
 					} else if partStat.Size() <= 0 {
 						return fmt.Errorf("[%s] is empty", destName)
 					}
-					global.LOG.Info("video part end", zap.String("part", path.Base(destName)))
+					global.LOG.Info("video part end", zap.String("part", destName))
 					return nil
 				}
 				if zhttp.IsHTTPStatusSleep(r.StatusCode) {
@@ -202,12 +199,11 @@ func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, er
 		"concat,file,http,https,tcp,tls,crypto",
 		"-i",
 		path.Join(destDir, "index.m3u8"),
-		"-hls_key_info_file",
-		path.Join(destDir, "key.key"),
-		"-c",
-		"copy",
-		concatPath,
 	}
+	if len(req.KeyPath) > 0 {
+		ffmpeg_command = append(ffmpeg_command, "-hls_key_info_file", path.Join(destDir, "key.key"))
+	}
+	ffmpeg_command = append(ffmpeg_command, "-c", "copy", concatPath)
 	global.LOG.Info("video", zap.String("concatPath", concatPath))
 	output, err := exec.CommandContext(retryCtx, "ffmpeg", ffmpeg_command...).CombinedOutput()
 	if err != nil {
@@ -257,11 +253,12 @@ func Audio(ctx context.Context, _ *model.Task, dowloadURL, dir, fileName string)
 }
 
 type PlayMeta struct {
-	Spec       []byte
-	LocalSpec  []byte
-	KeyPath    string
-	Ciphertext string
-	Parts      []Part
+	Spec         []byte
+	LocalSpec    []byte
+	KeyPath      string
+	Ciphertext   string
+	CipherMethod string
+	Parts        []Part
 }
 
 type PlayMetaRequest struct {
@@ -321,7 +318,8 @@ func RewritePlay(ctx context.Context, req PlayMetaRequest) (*PlayMeta, error) {
 			break
 		}
 		l, rl := string(line), string(line)
-		if strings.HasPrefix(l, "#EXT-X-KEY:") {
+		if strings.HasPrefix(l, "#EXT-X-KEY:METHOD=AES-128") {
+			meta.CipherMethod = "AES-128"
 			sps := strings.Split(l, `"`)
 			token, _, er := global.JWT.TokenGenerator(func(claims jwt.MapClaims) {
 				claims["task_id"] = req.TaskId
@@ -369,7 +367,8 @@ func RewritePlay(ctx context.Context, req PlayMetaRequest) (*PlayMeta, error) {
 		} else if strings.HasSuffix(l, ".ts") {
 			playHost := req.DowloadURL[:strings.LastIndex(req.DowloadURL, "/")+1]
 			if !strings.HasPrefix(l, "https://") {
-				meta.Parts = append(meta.Parts, Part{playHost + l, path.Join(req.Dir, l), false})
+				destName := path.Join(req.Dir, req.Filename, l)
+				meta.Parts = append(meta.Parts, Part{playHost + l, destName, false})
 				rl = playHost + l
 			} else {
 				tsPath := strings.TrimPrefix(l, playHost)
