@@ -1,6 +1,7 @@
 package task
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -173,6 +174,11 @@ func doArticle(ctx context.Context, x *model.Task) error {
 		UpdatedAt: time.Now().Unix(),
 	}
 	var data geek.ArticleData
+	if len(x.RewriteHls) > 0 && len(x.Ciphertext) == 0 {
+		if bytes.Contains(x.RewriteHls, []byte("{host}/v2/task/kms")) {
+			x.RewriteHls = []byte(``)
+		}
+	}
 	if len(x.RewriteHls) == 0 {
 		aid, err := strconv.ParseInt(x.OtherId, 10, 64)
 		if err != nil {
