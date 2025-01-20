@@ -8,7 +8,7 @@ option go_package = "model";
 // Task
 message Task {
   // id
-  int64 id = 1 [(gogoproto.moretags) = "gorm:\"index:,composite:idx_tasks_status_deleted_at_id;primaryKey;autoIncrement;comment:id\""];
+  int64 id = 1 [(gogoproto.moretags) = "gorm:\"index:,priority:3,composite:idx_tasks_status_deleted_at_id;primaryKey;autoIncrement;comment:id\""];
   // task id
   string task_id = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:task id\""];
   // task pid
@@ -42,11 +42,11 @@ message Task {
   // message
   bytes statistics = 23 [(gogoproto.moretags) = "gorm:\"comment:statistics\""];
   // status
-  int32 status = 24 [(gogoproto.moretags) = "gorm:\"index:,composite:idx_tasks_status_deleted_at_id;default:1;size:2;comment:status 1 normal\""];
+  int32 status = 24 [(gogoproto.moretags) = "gorm:\"index:,priority:1,composite:idx_tasks_status_deleted_at_id;default:1;size:2;comment:status 1 normal\""];
   // created_at
   int64 created_at = 25 [(gogoproto.moretags) = "gorm:\"index;comment:created at\""];
   // updated_at
   int64 updated_at = 26 [(gogoproto.moretags) = "gorm:\"index;comment:updated at\""];
   // deleted_at
-  int64 deleted_at = 27 [(gogoproto.moretags) = "gorm:\"index:,composite:idx_tasks_status_deleted_at_id;comment:deleted at\""];
+  int64 deleted_at = 27 [(gogoproto.moretags) = "gorm:\"index:,priority:2,composite:idx_tasks_status_deleted_at_id;comment:deleted at\""];
 }
