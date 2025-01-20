@@ -529,9 +529,6 @@ func (t *Task) Export(c *gin.Context) {
 	case "markdown":
 		dirName := service.VerifyFileName(product.Title)
 		archiveName := fmt.Sprintf("%s.tar.gz", dirName)
-		//buf := new(bytes.Buffer)
-		//archiveWriter := tar.NewWriter(buf)
-		//defer func() { _ = archiveWriter.Close() }()
 		buf, err := service.MakeDocArchive(c, l.TaskId, product.Title, product.IntroHTML)
 		if err != nil {
 			global.FAIL(c, "fail.msg", err.Error())

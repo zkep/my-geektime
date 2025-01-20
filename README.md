@@ -64,7 +64,7 @@ docker-compose up -d
   />
 </picture>
 
-### 赞赏
+### 微信赞赏
 欢迎赞赏👏
 
 <picture>
