@@ -155,7 +155,11 @@ func doProduct(_ context.Context, x *model.Task) error {
 		UpdatedAt:  time.Now().Unix(),
 	}
 	if status == service.TASK_STATUS_FINISHED {
-		dir := path.Join(x.TaskId, service.VerifyFileName(x.TaskName))
+		var product geek.ProductBase
+		if len(x.Raw) > 0 {
+			_ = json.Unmarshal(x.Raw, &product)
+		}
+		dir := path.Join(x.TaskId, service.VerifyFileName(product.Title))
 		dirURL := global.Storage.GetKey(dir, false)
 		message := task.TaskMessage{Object: dirURL}
 		m.Message, _ = json.Marshal(message)
@@ -174,8 +178,11 @@ func doArticle(ctx context.Context, x *model.Task) error {
 		UpdatedAt: time.Now().Unix(),
 	}
 	var data geek.ArticleData
-	if len(x.RewriteHls) > 0 && len(x.Ciphertext) == 0 {
-		if bytes.Contains(x.RewriteHls, []byte("{host}/v2/task/kms")) {
+	if len(x.RewriteHls) > 0 {
+		if len(x.Ciphertext) == 0 && bytes.Contains(x.RewriteHls, []byte("{host}/v2/task/kms")) {
+			x.RewriteHls = []byte(``)
+		}
+		if !bytes.Contains(x.RewriteHls, []byte("#EXTM3U")) {
 			x.RewriteHls = []byte(``)
 		}
 	}
