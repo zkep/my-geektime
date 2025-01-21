@@ -45,6 +45,7 @@ func Download(ctx context.Context, x *model.Task, data geek.ArticleData) error {
 	var (
 		source      string
 		downloadURL string
+		playURL     string
 		err         error
 	)
 	fileName := VerifyFileName(data.Info.Title)
@@ -60,13 +61,15 @@ func Download(ctx context.Context, x *model.Task, data geek.ArticleData) error {
 			return data.Info.Video.HlsMedias[i].Size > data.Info.Video.HlsMedias[j].Size
 		})
 		downloadURL = data.Info.Video.HlsMedias[0].URL
+		playURL = downloadURL
 	} else if data.Info.Audio.DownloadURL != "" {
 		downloadURL = data.Info.Audio.DownloadURL
+		playURL = data.Info.Audio.URL
 	}
 
-	if len(downloadURL) > 0 {
+	if len(downloadURL) > 0 && len(playURL) > 0 {
 		rewritePlayReq := PlayMetaRequest{
-			DowloadURL: downloadURL,
+			DowloadURL: playURL,
 			Dir:        dir,
 			Filename:   fileName,
 			TaskId:     x.TaskId,

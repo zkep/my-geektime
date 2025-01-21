@@ -43,26 +43,6 @@ docker-compose up -d
 * [FFmpeg](https://ffmpeg.org/download.html)
 
 
-###  Star 历史
-
-<picture>
-  <source
-    media="(prefers-color-scheme: dark)"
-    srcset="
-      https://api.star-history.com/svg?repos=zkep/mygeektime&type=Date&theme=dark
-    "
-  />
-  <source
-    media="(prefers-color-scheme: light)"
-    srcset="
-      https://api.star-history.com/svg?repos=zkep/mygeektime&type=Date
-    "
-  />
-  <img
-    alt="Star History Chart"
-    src="https://api.star-history.com/svg?repos=zkep/mygeektime&type=Date"
-  />
-</picture>
 
 ### 微信赞赏
 欢迎赞赏👏
@@ -74,5 +54,3 @@ docker-compose up -d
     width="350px"
   />
 </picture>
-
-
