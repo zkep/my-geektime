@@ -43,6 +43,7 @@ docker-compose up -d
 * [FFmpeg](https://ffmpeg.org/download.html)
 
 
+### 加v：zkeper 拉你进技术交流群
 
 ### 微信赞赏
 欢迎赞赏👏

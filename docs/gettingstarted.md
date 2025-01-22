@@ -3,7 +3,6 @@
 ## 安装
 * 目前支持三种安装方式, 首推 docker compose 方式
 * 如果，你的本地已经有redis，mysql等服务了，也可以考虑docker方式和二进制发行包方式
-* 再如果，你也是技术爱好者，恰好懂golang和amis的话，也可以clone源码安装调试
 
 #### docker compose 方式，推荐指数 🌟🌟🌟🌟🌟
 ```shell
