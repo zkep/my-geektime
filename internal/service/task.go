@@ -46,6 +46,24 @@ func VerifyFileName(name string) string {
 	return strings.TrimSpace(name)
 }
 
+type PlayMeta struct {
+	Spec         []byte
+	LocalSpec    []byte
+	KeyPath      string
+	Ciphertext   string
+	CipherMethod string
+	Parts        []Part
+}
+
+type PlayMetaRequest struct {
+	DowloadURL string
+	Dir        string
+	Filename   string
+	TaskId     string
+	Ciphertext []byte
+	Spec       []byte
+}
+
 type Part struct {
 	Src   string
 	Dest  string

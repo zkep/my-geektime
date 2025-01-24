@@ -20,24 +20,6 @@ import (
 	"go.uber.org/zap"
 )
 
-type PlayMeta struct {
-	Spec         []byte
-	LocalSpec    []byte
-	KeyPath      string
-	Ciphertext   string
-	CipherMethod string
-	Parts        []Part
-}
-
-type PlayMetaRequest struct {
-	DowloadURL string
-	Dir        string
-	Filename   string
-	TaskId     string
-	Ciphertext []byte
-	Spec       []byte
-}
-
 func playSpec(ctx context.Context, req *PlayMetaRequest) error {
 	before := func(r *http.Request) {
 		r.Header.Set("Accept", "application/json, text/plain, */*")
