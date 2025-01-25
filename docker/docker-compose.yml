@@ -33,6 +33,8 @@ services:
   server:
     hostname: mygeektime
     image: zkep/mygeektime:latest
+    # mac m1 , m2
+    # image: zkep/mygeektime:mac-m
     privileged: true
     restart: always
     networks:
