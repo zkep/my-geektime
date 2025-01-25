@@ -15,6 +15,8 @@ cd mygeektime/docker
 # 下载默认数据表
 wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
 
+# Apple M1 , M2 修改docker-compose.yml 第35行镜像改成 使用 zkep/mygeektime:mac-m
+
 # 后台启动服务
 docker-compose up -d
 ```

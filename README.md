@@ -32,6 +32,8 @@ cd mygeektime/docker
 # 没有极客时间VIP的用户，执行下面命令，下载默认数据，默认数据不全，仅仅为了演示功能
 wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
 
+# Apple M1 , M2 修改docker-compose.yml 第35行镜像改成 使用 zkep/mygeektime:mac-m
+
 docker-compose up -d
 ```
 浏览器访问:  http://127.0.0.1:8090
