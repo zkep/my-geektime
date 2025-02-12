@@ -11,15 +11,16 @@
       {
         "label": "",
         "rewrite": "/task/list",
-        "icon": "fa fa-magic",
         "children": [
           {
             "label": "我的课程",
             "url": "/task/list",
+            "icon": "fa-solid fa-pen-clip",
             "schemaApi": "get:/pages/task.json"
           },
           {
             "label": "极客课程",
+            "icon": "fa-solid fa-desktop",
             "visibleOn": "${ls:role_id===1}",
             "children": [
               {
@@ -36,6 +37,7 @@
           },
           {
             "label": "用户列表",
+            "icon": "fa-regular fa-circle-user",
             "visibleOn": "${ls:role_id===1}",
             "url": "/user/list",
             "schemaApi": "get:/pages/user.json"
