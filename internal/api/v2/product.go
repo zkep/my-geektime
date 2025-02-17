@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	md "github.com/JohannesKaufmann/html-to-markdown"
+	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
@@ -208,7 +208,6 @@ func (p *Product) ProductList(c *gin.Context) {
 	if resp.Data.Page.Count == 0 {
 		ret.HasNext = resp.Data.Page.More
 	}
-	converter := md.NewConverter("", true, nil)
 	for _, v := range resp.Data.List {
 		row := geek.ProductListRow{
 			ID:            v.ID,
@@ -233,7 +232,7 @@ func (p *Product) ProductList(c *gin.Context) {
 			Article:       v.Article,
 		}
 		if len(row.IntroHTML) > 0 {
-			if markdown, err := converter.ConvertString(row.IntroHTML); err == nil {
+			if markdown, err1 := htmltomarkdown.ConvertString(row.IntroHTML); err1 == nil {
 				row.IntroHTML = markdown
 			}
 		}
@@ -265,7 +264,6 @@ func (p *Product) PvipProductList(c *gin.Context) {
 	if resp.Data.Page.Total == 0 {
 		ret.HasNext = resp.Data.Page.More
 	}
-	converter := md.NewConverter("", true, nil)
 	for _, v := range resp.Data.Products {
 		row := geek.ProductListRow{
 			ID:            v.ID,
@@ -290,7 +288,7 @@ func (p *Product) PvipProductList(c *gin.Context) {
 			Article:       v.Article,
 		}
 		if len(row.IntroHTML) > 0 {
-			if markdown, err := converter.ConvertString(row.IntroHTML); err == nil {
+			if markdown, err1 := htmltomarkdown.ConvertString(row.IntroHTML); err1 == nil {
 				row.IntroHTML = markdown
 			}
 		}

@@ -1,7 +1,7 @@
 package v2
 
 import (
-	md "github.com/JohannesKaufmann/html-to-markdown"
+	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/service"
@@ -59,9 +59,8 @@ func (p *Product) ArticleInfo(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	converter := md.NewConverter("", true, nil)
 	if len(resp.Data.Info.Content) > 0 {
-		if markdown, err := converter.ConvertString(resp.Data.Info.Content); err == nil {
+		if markdown, err1 := htmltomarkdown.ConvertString(resp.Data.Info.Content); err1 == nil {
 			resp.Data.Info.Content = markdown
 		}
 	}

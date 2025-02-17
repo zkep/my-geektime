@@ -13,7 +13,7 @@ import (
 	"os/exec"
 	"path"
 
-	md "github.com/JohannesKaufmann/html-to-markdown"
+	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/zkep/mygeektime/internal/global"
 	"github.com/zkep/mygeektime/internal/model"
 	"github.com/zkep/mygeektime/internal/types/geek"
@@ -35,7 +35,6 @@ type Nav struct {
 }
 
 func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, error) {
-	converter := md.NewConverter("", true, nil)
 	var ls []model.Task
 	if err := global.DB.Model(&model.Task{}).
 		Where(&model.Task{TaskPid: taskId}).
@@ -43,7 +42,7 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 		Find(&ls).Error; err != nil {
 		return "", err
 	}
-	indexMarkdown, err1 := converter.ConvertString(introHTML)
+	indexMarkdown, err1 := htmltomarkdown.ConvertString(introHTML)
 	if err1 != nil {
 		return "", err1
 	}
@@ -61,7 +60,7 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 		if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
 			articleData.Info.Content = articleData.Info.Cshort
 		}
-		if markdown, err2 := converter.ConvertString(articleData.Info.Content); err2 != nil {
+		if markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content); err2 != nil {
 			return "", err2
 		} else if len(markdown) > 0 {
 			baseName := VerifyFileName(articleData.Info.Title)
@@ -121,7 +120,6 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 }
 
 func MakeDocsiteLocal(taskId, group, title, introHTML string) error {
-	converter := md.NewConverter("", true, nil)
 	var ls []model.Task
 	if err := global.DB.Model(&model.Task{}).
 		Where(&model.Task{TaskPid: taskId}).
@@ -129,7 +127,7 @@ func MakeDocsiteLocal(taskId, group, title, introHTML string) error {
 		Find(&ls).Error; err != nil {
 		return err
 	}
-	indexMarkdown, err1 := converter.ConvertString(introHTML)
+	indexMarkdown, err1 := htmltomarkdown.ConvertString(introHTML)
 	if err1 != nil {
 		return err1
 	}
@@ -147,7 +145,7 @@ func MakeDocsiteLocal(taskId, group, title, introHTML string) error {
 		if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
 			articleData.Info.Content = articleData.Info.Cshort
 		}
-		if markdown, err2 := converter.ConvertString(articleData.Info.Content); err2 != nil {
+		if markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content); err2 != nil {
 			return err2
 		} else if len(markdown) > 0 {
 			baseName := VerifyFileName(articleData.Info.Title)
@@ -191,7 +189,6 @@ func MakeDocArchive(_ context.Context, taskId, title, introHTML string) (*bytes.
 
 	defer func() { _ = archiveWriter.Close() }()
 
-	converter := md.NewConverter("", true, nil)
 	var ls []model.Task
 	if err := global.DB.Model(&model.Task{}).
 		Where(&model.Task{TaskPid: taskId}).
@@ -199,7 +196,7 @@ func MakeDocArchive(_ context.Context, taskId, title, introHTML string) (*bytes.
 		Find(&ls).Error; err != nil {
 		return nil, err
 	}
-	indexMarkdown, err1 := converter.ConvertString(introHTML)
+	indexMarkdown, err1 := htmltomarkdown.ConvertString(introHTML)
 	if err1 != nil {
 		return nil, err1
 	}
@@ -219,7 +216,7 @@ func MakeDocArchive(_ context.Context, taskId, title, introHTML string) (*bytes.
 		if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
 			articleData.Info.Content = articleData.Info.Cshort
 		}
-		if markdown, err2 := converter.ConvertString(articleData.Info.Content); err2 != nil {
+		if markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content); err2 != nil {
 			return nil, err2
 		} else if len(markdown) > 0 {
 			baseName := VerifyFileName(articleData.Info.Title)

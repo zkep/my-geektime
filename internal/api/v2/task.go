@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	md "github.com/JohannesKaufmann/html-to-markdown"
+	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 	"github.com/golang-jwt/jwt/v4"
@@ -82,7 +82,7 @@ func (t *Task) List(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	converter := md.NewConverter("", true, nil)
+
 	for _, l := range ls {
 		var statistics task.TaskStatistics
 		if len(l.Statistics) > 0 {
@@ -144,7 +144,7 @@ func (t *Task) List(c *gin.Context) {
 			}
 		}
 		if len(row.IntroHTML) > 0 {
-			if markdown, err := converter.ConvertString(row.IntroHTML); err == nil {
+			if markdown, err := htmltomarkdown.ConvertString(row.IntroHTML); err == nil {
 				row.IntroHTML = markdown
 			}
 		}
@@ -205,8 +205,7 @@ func (t *Task) Info(c *gin.Context) {
 	if len(resp.Article.Cshort) > len(resp.Article.Content) {
 		resp.Article.Content = resp.Article.Cshort
 	}
-	converter := md.NewConverter("", true, nil)
-	if markdown, err := converter.ConvertString(resp.Article.Content); err == nil {
+	if markdown, err := htmltomarkdown.ConvertString(resp.Article.Content); err == nil {
 		resp.Article.Content = markdown
 	}
 	if len(l.Ciphertext) > 0 || len(l.RewriteHls) > 0 {
@@ -315,11 +314,10 @@ func (t *Task) Download(c *gin.Context) {
 	baseName := service.VerifyFileName(articleData.Info.Title)
 	switch req.Type {
 	case "markdown":
-		converter := md.NewConverter("", true, nil)
 		if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
 			articleData.Info.Content = articleData.Info.Cshort
 		}
-		markdown, err := converter.ConvertString(articleData.Info.Content)
+		markdown, err := htmltomarkdown.ConvertString(articleData.Info.Content)
 		if err != nil {
 			global.FAIL(c, "fail.msg", err.Error())
 			return
