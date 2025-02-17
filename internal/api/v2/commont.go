@@ -43,7 +43,7 @@ func (p *Product) ArticleCommontList(c *gin.Context) {
 		req.Page = 1
 	}
 	ret := geek.ArticleCommentListResponse{
-		Rows: make([]geek.ArticleComment, 0, req.PerPage),
+		Rows: make([]geek.ArticleComment, 0, 10),
 	}
 	var ls []*model.ArticleComment
 	tx := global.DB.Model(&model.ArticleComment{})
