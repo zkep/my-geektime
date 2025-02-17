@@ -15,7 +15,6 @@ import (
 	"github.com/zkep/mygeektime/internal/router"
 	"github.com/zkep/mygeektime/lib/browser"
 	"github.com/zkep/mygeektime/lib/color"
-	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )
@@ -83,24 +82,13 @@ func (app *App) Run(f *Flags) error {
 		return err
 	}
 
-	options := []fx.Option{
-		fx.Provide(func() context.Context { return app.ctx }),
-		fx.Provide(func() *config.Config { return global.CONF }),
-	}
-
-	options = append(options,
-		// register http handler
-		fx.Invoke(app.newHttpServer),
-	)
-
-	depInj := fx.New(options...)
-	if err := depInj.Start(app.ctx); err != nil {
+	if err := app.newHttpServer(global.CONF); err != nil {
 		return err
 	}
 
 	<-app.quit
 
-	return depInj.Stop(app.ctx)
+	return nil
 }
 
 func (app *App) newHttpServer(f *config.Config) error {
