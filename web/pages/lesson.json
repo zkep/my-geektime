@@ -795,7 +795,7 @@
                                       "label": "时间",
                                       "type": "date",
                                       "format": "YYYY-MM-DD",
-                                      "width": 80
+                                      "width": 100
                                     },
                                     {
                                       "name": "discussion.likes_number",

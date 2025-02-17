@@ -885,9 +885,6 @@
                             "label": "课程"
                           },
                           {
-                            "type": "divider"
-                          },
-                          {
                             "name": "status",
                             "type": "static-mapping",
                             "visibleOn": "${ ls:role_id === 1 }",
@@ -900,9 +897,6 @@
                               "3": "已缓存",
                               "4": "异常"
                             }
-                          },
-                          {
-                            "type": "divider"
                           },
                           {
                             "type": "action",
@@ -1187,7 +1181,7 @@
                                                     "label": "时间",
                                                     "type": "date",
                                                     "format": "YYYY-MM-DD",
-                                                    "width": 80
+                                                    "width": 100
                                                   },
                                                   {
                                                     "name": "discussion.likes_number",
