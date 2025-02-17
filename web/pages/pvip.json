@@ -596,9 +596,9 @@
         "card": {
           "header": {
             "className": "word-break",
-            "title": "$title",
-            "subTitle": "$subtitle",
-            "description": "",
+            "title": "",
+            "subTitle": "${title}",
+            "description": "${subtitle}",
             "avatar": "${cover.square | raw}",
             "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
           },
@@ -610,8 +610,19 @@
               "separator": "：",
               "items": [
                 {
+                  "label": "作者",
+                  "content": "${author.name}",
+                  "span": 3
+                },
+                {
+                  "label": "作者简介",
+                  "content": "${author.intro}",
+                  "span": 3
+                },
+                {
                   "label": "ID",
-                  "content": "${id}"
+                  "content": "${id}",
+                  "span": 3
                 },
                 {
                   "label": "课程数",
@@ -636,23 +647,12 @@
                 {
                   "label": "价格",
                   "content": "免费",
-                  "span": 2,
                   "visibleOn": "${ sale_type === 6 ||  sale_type === 7 }"
                 },
                 {
                   "label": "价格",
                   "content": "¥${ROUND(sale/100,2)}",
-                  "span": 2,
                   "visibleOn": "${ sale_type !== 6 &&  sale_type !== 7 }"
-                },
-                {
-                  "label": "作者",
-                  "content": "${author.name}"
-                },
-                {
-                  "label": "作者简介",
-                  "content": "${author.intro}",
-                  "span": 3
                 }
               ]
             }
@@ -684,11 +684,17 @@
                       "body": []
                     },
                     {
+                      "type": "divider"
+                    },
+                    {
                       "type": "markdown",
                       "wrapperComponent": "pre",
                       "className": "word-break",
                       "name": "intro_html",
                       "label": "课程介绍"
+                    },
+                    {
+                      "type": "divider"
                     },
                     {
                       "type": "crud",
@@ -701,35 +707,14 @@
                         ]
                       },
                       "syncLocation": false,
-                      "filter": {
-                        "title": "",
-                        "body": [
-                          {
-                            "type": "group",
-                            "body": [
-                              {
-                                "type": "hidden",
-                                "name": "cid",
-                                "value": "${id}"
-                              },
-                              {
-                                "type": "hidden",
-                                "name": "order",
-                                "value": "earliest"
-                              },
-                              {
-                                "type": "hidden",
-                                "name": "sample",
-                                "value": false
-                              }
-                            ]
-                          }
-                        ],
-                        "actions": []
-                      },
                       "api": {
                         "method": "get",
-                        "url": "/v2/product/articles"
+                        "url": "/v2/product/articles",
+                        "data": {
+                          "sample": false,
+                          "order": "earliest",
+                          "cid": "${id}"
+                        }
                       },
                       "defaultParams": {
                         "perPage": 100
@@ -742,15 +727,25 @@
                           "className": "word-break",
                           "title": "",
                           "subTitle":  "",
-                          "description": "$article_title",
+                          "description": "",
                           "avatar": "${article_cover | raw}"
                         },
                         "body": [
+                          {
+                            "type": "text",
+                            "name": "$article_title"
+                          },
+                          {
+                            "type": "divider"
+                          },
                           {
                             "type": "tpl",
                             "label": "",
                             "className": "word-break",
                             "tpl": "$article_summary"
+                          },
+                          {
+                            "type": "divider"
                           },
                           {
                             "type": "property",
@@ -930,7 +925,7 @@
                                                 "label": "讨论列表",
                                                 "api": {
                                                   "method": "get",
-                                                  "url": "/v2/product/article/commont/discussions",
+                                                  "url": "/v2/product/article/discussions",
                                                   "data": {
                                                     "perPage": "${perPage}",
                                                     "page": "$page",

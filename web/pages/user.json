@@ -17,13 +17,7 @@
             "number"
           ]
         },
-        "syncLocation": true,
-        "filterTogglable": {
-          "label": "更多搜索",
-          "activeLabel": "收起搜索",
-          "icon": "fa fa-arrow-down mr-1",
-          "activeIcon": "fa fa-arrow-up mr-1"
-        },
+        "syncLocation": false,
         "headerToolbar": [
           "filter-toggler"
         ],

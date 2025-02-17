@@ -31,7 +31,7 @@
               {
                 "label": "每日一课/大厂案例",
                 "url": "/product/lesson",
-                "schemaApi": "get:/pages/product.json"
+                "schemaApi": "get:/pages/lesson.json"
               }
             ]
           },

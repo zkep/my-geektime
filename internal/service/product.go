@@ -292,3 +292,98 @@ func GetArticleCommentDiscussion(ctx context.Context, _, accessToken string,
 	}
 	return &resp, nil
 }
+
+func ArticleAllComment(ctx context.Context, _, accessToken string, id int64) error {
+	req := geek.ArticleCommentListRequest{Aid: id}
+	hasMore := true
+	for hasMore {
+		req.Prev++
+		raw, _ := json.Marshal(req)
+		after := func(raw []byte) error {
+			var resp geek.ArticleCommentList
+			if err := json.Unmarshal(raw, &resp); err != nil {
+				global.LOG.Error("ArticleAllComment", zap.Error(err), zap.String("raw", string(raw)))
+				return err
+			}
+			hasMore = resp.Data.Page.More
+			if resp.Code != 0 {
+				global.LOG.Warn("ArticleAllComment", zap.Any("error", resp.Error))
+				return nil
+			}
+			for _, value := range resp.Data.List {
+				itemRaw, _ := json.Marshal(value)
+				info := model.ArticleComment{
+					Aid:             req.Aid,
+					Cid:             value.ID,
+					DiscussionCount: value.DiscussionCount,
+					LikeCount:       value.LikeCount,
+					CommentCtime:    value.CommentCtime,
+					Raw:             itemRaw,
+				}
+				if err := global.DB.
+					Model(&model.ArticleComment{}).
+					Where(&model.ArticleComment{Aid: info.Aid, Cid: info.Cid}).
+					Assign(&info).
+					FirstOrCreate(&info).Error; err != nil {
+					global.LOG.Error("ArticleAllComment.AutoSync", zap.Error(err))
+				}
+				if info.DiscussionCount > 0 {
+					discussionReq := geek.DiscussionListRequest{
+						UseLikesOrder: true,
+						TargetID:      info.Cid,
+						TargetType:    1,
+						PageType:      1,
+						Size:          50,
+					}
+					hasNext := true
+					for hasNext {
+						discussionReq.Prev++
+						discussionRaw, _ := json.Marshal(discussionReq)
+						var discussionResp geek.DiscussionOriginListResponse
+						after := func(raw []byte) error {
+							if err := json.Unmarshal(raw, &discussionResp); err != nil {
+								global.LOG.Error("ArticleAllComment", zap.Error(err), zap.String("raw", string(raw)))
+								return err
+							}
+							hasNext = discussionResp.Data.Page.More
+							if discussionResp.Code != 0 {
+								global.LOG.Warn("ArticleAllComment", zap.Any("error", discussionResp.Error))
+								return nil
+							}
+							for _, x := range discussionResp.Data.List {
+								valueRaw, _ := json.Marshal(x)
+								dinfo := model.ArticleCommentDiscussion{
+									Cid:         discussionReq.TargetID,
+									Did:         x.Discussion.ID,
+									LikesNumber: x.Discussion.LikesNumber,
+									Ctime:       x.Discussion.Ctime,
+									Raw:         valueRaw,
+								}
+								if err := global.DB.
+									Model(&model.ArticleCommentDiscussion{}).
+									Where(&model.ArticleCommentDiscussion{Cid: dinfo.Cid, Did: dinfo.Did}).
+									Assign(&dinfo).
+									FirstOrCreate(&dinfo).Error; err != nil {
+									global.LOG.Error("ArticleAllComment.AutoSync", zap.Error(err))
+								}
+							}
+							return nil
+						}
+						err := Request(ctx, http.MethodPost,
+							ArticleCommentDiscussionURL, bytes.NewBuffer(discussionRaw), accessToken, after)
+						if err != nil {
+							return err
+						}
+					}
+
+				}
+			}
+			return nil
+		}
+		err := Request(ctx, http.MethodPost, ArticleCommentURL, bytes.NewBuffer(raw), accessToken, after)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

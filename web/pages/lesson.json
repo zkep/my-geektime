@@ -556,8 +556,8 @@
         "card": {
           "header": {
             "className": "word-break",
-            "title": "$title",
-            "subTitle": "$subtitle",
+            "title": "${author.name}",
+            "subTitle": "${author.intro}",
             "description": "",
             "avatar": "${cover.square | raw}",
             "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
@@ -569,6 +569,16 @@
               "mode": "simple",
               "separator": "：",
               "items": [
+                {
+                  "label": "课程",
+                  "content": "${title}",
+                  "span": 3
+                },
+                {
+                  "label": "课程简介",
+                  "content": "${subtitle}",
+                  "span": 3
+                },
                 {
                   "label": "ID",
                   "content": "${article.id}"
@@ -584,15 +594,6 @@
                   "content": "¥${ROUND(sale/100,2)}",
                   "span": 2,
                   "visibleOn": "${ sale_type !== 6 &&  sale_type !== 7 }"
-                },
-                {
-                  "label": "作者",
-                  "content": "${author.name}"
-                },
-                {
-                  "label": "作者简介",
-                  "content": "${author.intro}",
-                  "span": 3
                 }
               ]
             }
@@ -752,7 +753,7 @@
                                   "label": "讨论列表",
                                   "api": {
                                     "method": "get",
-                                    "url": "/v2/product/article/commont/discussions",
+                                    "url": "/v2/product/article/discussions",
                                     "data": {
                                       "perPage": "${perPage}",
                                       "page": "$page",

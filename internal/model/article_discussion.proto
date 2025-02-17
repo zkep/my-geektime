@@ -1,0 +1,30 @@
+syntax="proto3";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.populate_all) = true;
+option go_package = "model";
+
+// ArticleCommentDiscussion
+message ArticleCommentDiscussion {
+  // id
+  int64 id = 1 [(gogoproto.moretags) = "gorm:\"primaryKey;autoIncrement;comment:id\""];
+  // cid
+  int64 cid = 2 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:comment id\""];
+  // discussion id
+  int64 did = 3 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:discussion id\""];
+  // likes number
+  int64 likes_number = 4 [(gogoproto.moretags) = "gorm:\"index;comment:like number\""];
+  // ctime
+  int64 ctime = 5 [(gogoproto.moretags) = "gorm:\"index;comment:ctime\""];
+  // raw
+  bytes raw = 7 [(gogoproto.moretags) = "gorm:\"comment:raw\""];
+  // status
+  int32 status = 19 [(gogoproto.moretags) = "gorm:\"default:1;size:2;comment:status 1 normal\""];
+  // created_at
+  int64 created_at = 20 [(gogoproto.moretags) = "gorm:\"index;comment:created at\""];
+  // updated_at
+  int64 updated_at = 21 [(gogoproto.moretags) = "gorm:\"comment:updated at\""];
+  // deleted_at
+  int64 deleted_at = 22 [(gogoproto.moretags) = "gorm:\"comment:deleted at\""];
+}

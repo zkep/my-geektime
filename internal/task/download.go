@@ -202,6 +202,9 @@ func doArticle(ctx context.Context, x *model.Task) error {
 		if err1 != nil {
 			return err1
 		}
+		if err = service.ArticleAllComment(ctx, u.Uid, u.AccessToken, aid); err != nil {
+			global.LOG.Error("worker ArticleAllComment", zap.Error(err), zap.String("taskId", x.TaskId))
+		}
 		data = article.Data
 		var info geek.ArticleInfoRaw
 		if err = json.Unmarshal(article.Raw, &info); err != nil {
