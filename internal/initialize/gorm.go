@@ -25,6 +25,8 @@ func Gorm(_ context.Context) error {
 		&model.Article{},
 		&model.ArticleSimple{},
 		&model.Product{},
+		&model.ArticleComment{},
+		&model.ArticleCommentDiscussion{},
 	); err != nil {
 		return err
 	}

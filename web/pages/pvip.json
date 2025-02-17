@@ -18,12 +18,6 @@
           ]
         },
         "syncLocation": false,
-        "filterTogglable": {
-          "label": "更多搜索",
-          "activeLabel": "收起搜索",
-          "icon": "fa fa-arrow-down mr-1",
-          "activeIcon": "fa fa-arrow-up mr-1"
-        },
         "headerToolbar": [
           "filter-toggler"
         ],
@@ -749,8 +743,7 @@
                           "title": "",
                           "subTitle":  "",
                           "description": "$article_title",
-                          "avatar": "${article_cover | raw}",
-                          "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
+                          "avatar": "${article_cover | raw}"
                         },
                         "body": [
                           {
@@ -793,7 +786,7 @@
                               "resizable": true,
                               "closeOnOutside": true,
                               "actions": [],
-                              "size": "lg",
+                              "size": "xl",
                               "title": "课程详情",
                               "body": [
                                 {
@@ -860,6 +853,146 @@
                                       "className": "word-break",
                                       "name": "content",
                                       "label": "附件"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "crud",
+                                  "label": "评论列表",
+                                  "api": {
+                                    "method": "get",
+                                    "url": "/v2/product/article/commonts",
+                                    "data": {
+                                      "perPage": "${perPage}",
+                                      "aid": "${id}",
+                                      "page": "$page"
+                                    }
+                                  },
+                                  "defaultParams": {
+                                    "perPage": 10
+                                  },
+                                  "columns": [
+                                    {
+                                      "name": "id",
+                                      "label": "ID",
+                                      "type": "text",
+                                      "toggled": true,
+                                      "width": 150
+                                    },
+                                    {
+                                      "name": "user_header",
+                                      "label": "头像",
+                                      "text": "${user_name}",
+                                      "type": "avatar",
+                                      "src": "${user_header}",
+                                      "onError": "return true;"
+                                    },
+                                    {
+                                      "name": "user_name",
+                                      "label": "用户名",
+                                      "type": "text",
+                                      "width": 150
+                                    },
+                                    {
+                                      "name": "discussion_count",
+                                      "label": "讨论数",
+                                      "type": "text",
+                                      "width": 50
+                                    },
+                                    {
+                                      "name": "like_count",
+                                      "label": "点赞数",
+                                      "type": "text",
+                                      "width": 50
+                                    },
+                                    {
+                                      "name": "comment_content",
+                                      "label": "评论内容",
+                                      "type": "html"
+                                    },
+                                    {
+                                      "type": "operation",
+                                      "label": "操作",
+                                      "width": 100,
+                                      "buttons": [
+                                        {
+                                          "type": "button",
+                                          "label": "查看讨论",
+                                          "actionType": "dialog",
+                                          "level": "info",
+                                          "visibleOn": "${ discussion_count > 0 }",
+                                          "dialog": {
+                                            "title": "查看讨论",
+                                            "size": "lg",
+                                            "body": [
+                                              {
+                                                "type": "crud",
+                                                "label": "讨论列表",
+                                                "api": {
+                                                  "method": "get",
+                                                  "url": "/v2/product/article/commont/discussions",
+                                                  "data": {
+                                                    "perPage": "${perPage}",
+                                                    "page": "$page",
+                                                    "use_likes_order": true,
+                                                    "target_id": "${id}",
+                                                    "target_type": 1,
+                                                    "size": "${perPage}",
+                                                    "prev": "$page",
+                                                    "page_type": 1
+                                                  }
+                                                },
+                                                "defaultParams": {
+                                                  "perPage": 10
+                                                },
+                                                "columns": [
+                                                  {
+                                                    "name": "discussion.id",
+                                                    "label": "ID",
+                                                    "type": "text",
+                                                    "toggled": true,
+                                                    "width": 60
+                                                  },
+                                                  {
+                                                    "name": "author.avatar",
+                                                    "label": "头像",
+                                                    "text": "${author.nickname}",
+                                                    "type": "avatar",
+                                                    "src": "${author.avatar}",
+                                                    "onError": "return true;"
+                                                  },
+                                                  {
+                                                    "name": "author.nickname",
+                                                    "label": "昵称",
+                                                    "type": "text",
+                                                    "width": 100
+                                                  },
+                                                  {
+                                                    "name": "discussion.ctime",
+                                                    "label": "时间",
+                                                    "type": "date",
+                                                    "format": "YYYY-MM-DD",
+                                                    "width": 80
+                                                  },
+                                                  {
+                                                    "name": "discussion.likes_number",
+                                                    "label": "点赞数",
+                                                    "type": "text",
+                                                    "width": 50
+                                                  },
+                                                  {
+                                                    "name": "discussion.discussion_content",
+                                                    "label": "讨论内容",
+                                                    "type": "html"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      "toggled": true,
+                                      "placeholder": "-"
                                     }
                                   ]
                                 }

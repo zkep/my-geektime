@@ -14,10 +14,12 @@ import (
 )
 
 const (
-	ArticlesURL        = "https://time.geekbang.com/serv/v1/column/articles"
-	ArticleInfoURL     = "https://time.geekbang.org/serv/v3/article/info"
-	ProductListURL     = "https://time.geekbang.org/serv/v3/product/list"
-	PvipProductListURL = "https://time.geekbang.org/serv/v4/pvip/product_list"
+	ArticlesURL                 = "https://time.geekbang.com/serv/v1/column/articles"
+	ArticleInfoURL              = "https://time.geekbang.org/serv/v3/article/info"
+	ProductListURL              = "https://time.geekbang.org/serv/v3/product/list"
+	PvipProductListURL          = "https://time.geekbang.org/serv/v4/pvip/product_list"
+	ArticleCommentURL           = "https://time.geekbang.org/serv/v4/comment/list"
+	ArticleCommentDiscussionURL = "https://time.geekbang.org/serv/discussion/v1/root_list"
 )
 
 func GetArticleInfo(ctx context.Context, uid, accessToken string,
@@ -34,25 +36,25 @@ func GetArticleInfo(ctx context.Context, uid, accessToken string,
 			return nil
 		}
 		resp.Raw = raw
-		go func(info geek.ArticleInfoResponse) {
-			aid := fmt.Sprintf("%d", info.Data.Info.ID)
-			pid := fmt.Sprintf("%d", info.Data.Info.Pid)
-			if info.Data.Info.Cover.Square != "" {
-				info.Data.Info.Cover.Default = info.Data.Info.Cover.Square
+		go func(ret geek.ArticleInfoResponse) {
+			aid := fmt.Sprintf("%d", ret.Data.Info.ID)
+			pid := fmt.Sprintf("%d", ret.Data.Info.Pid)
+			if ret.Data.Info.Cover.Square != "" {
+				ret.Data.Info.Cover.Default = ret.Data.Info.Cover.Square
 			}
-			article := model.Article{
+			info := model.Article{
 				Aid:   aid,
 				Pid:   pid,
 				Uid:   uid,
-				Title: info.Data.Info.Title,
-				Cover: info.Data.Info.Cover.Default,
+				Title: ret.Data.Info.Title,
+				Cover: ret.Data.Info.Cover.Default,
 				Raw:   raw,
 			}
 			if err := global.DB.
 				Model(&model.Article{}).
 				Where(&model.Article{Aid: aid}).
-				Assign(&article).
-				FirstOrCreate(&article).Error; err != nil {
+				Assign(&info).
+				FirstOrCreate(&info).Error; err != nil {
 				global.LOG.Error("GetArticleInfo.AutoSync", zap.Error(err))
 			}
 		}(resp)
@@ -81,7 +83,7 @@ func GetArticles(ctx context.Context, uid, accessToken string,
 		go func() {
 			for key, value := range resp.Data.List {
 				itemRaw, _ := json.Marshal(value)
-				article := model.ArticleSimple{
+				info := model.ArticleSimple{
 					Aid:   fmt.Sprintf("%d", value.ID),
 					Pid:   req.Cid,
 					Uid:   uid,
@@ -91,15 +93,13 @@ func GetArticles(ctx context.Context, uid, accessToken string,
 					Raw:   itemRaw,
 				}
 				if value.VideoCover != "" {
-					article.Cover = value.VideoCover
+					info.Cover = value.VideoCover
 				}
 				if err := global.DB.
 					Model(&model.ArticleSimple{}).
-					Where(&model.ArticleSimple{
-						Aid: article.Aid,
-					}).
-					Assign(&article).
-					FirstOrCreate(&article).Error; err != nil {
+					Where(&model.ArticleSimple{Aid: info.Aid}).
+					Assign(&info).
+					FirstOrCreate(&info).Error; err != nil {
 					global.LOG.Error("GetArticles.AutoSync", zap.Error(err))
 				}
 			}
@@ -129,7 +129,7 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 		go func() {
 			for _, value := range resp.Data.Products {
 				itemRaw, _ := json.Marshal(value)
-				product := model.Product{
+				info := model.Product{
 					Pid:        fmt.Sprintf("%d", value.ID),
 					Uid:        uid,
 					Title:      value.Share.Title,
@@ -143,9 +143,9 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 				}
 				if err := global.DB.
 					Model(&model.Product{}).
-					Where(&model.Product{Pid: product.Pid}).
-					Assign(product).
-					FirstOrCreate(&product).Error; err != nil {
+					Where(&model.Product{Pid: info.Pid}).
+					Assign(&info).
+					FirstOrCreate(&info).Error; err != nil {
 					global.LOG.Error("GetPvipProduct.AutoSync", zap.Error(err))
 				}
 			}
@@ -175,7 +175,7 @@ func GetProduct(ctx context.Context, uid, accessToken string,
 		go func() {
 			for _, value := range resp.Data.List {
 				itemRaw, _ := json.Marshal(value)
-				product := model.Product{
+				info := model.Product{
 					Pid:        fmt.Sprintf("%d", value.ID),
 					Uid:        uid,
 					Title:      value.Share.Title,
@@ -188,15 +188,15 @@ func GetProduct(ctx context.Context, uid, accessToken string,
 				}
 				switch req.Type {
 				case "d":
-					product.OtherType = 6
+					info.OtherType = 6
 				case "q":
-					product.OtherType = 7
+					info.OtherType = 7
 				}
 				if err := global.DB.
 					Model(&model.Product{}).
-					Where(&model.Product{Pid: product.Pid}).
-					Assign(product).
-					FirstOrCreate(&product).Error; err != nil {
+					Where(&model.Product{Pid: info.Pid}).
+					Assign(info).
+					FirstOrCreate(&info).Error; err != nil {
 					global.LOG.Error("GetProduct.AutoSync", zap.Error(err))
 				}
 			}
@@ -204,6 +204,89 @@ func GetProduct(ctx context.Context, uid, accessToken string,
 		return nil
 	}
 	err := Request(ctx, http.MethodPost, ProductListURL, bytes.NewBuffer(raw), accessToken, after)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func GetArticleComment(ctx context.Context, _, accessToken string,
+	req geek.ArticleCommentListRequest) (*geek.ArticleCommentList, error) {
+	raw, _ := json.Marshal(req)
+	var resp geek.ArticleCommentList
+	after := func(raw []byte) error {
+		if err := json.Unmarshal(raw, &resp); err != nil {
+			global.LOG.Error("GetArticleComment", zap.Error(err), zap.String("raw", string(raw)))
+			return err
+		}
+		if resp.Code != 0 {
+			global.LOG.Warn("GetArticleComment", zap.Any("error", resp.Error))
+			return nil
+		}
+		go func() {
+			for _, value := range resp.Data.List {
+				itemRaw, _ := json.Marshal(value)
+				info := model.ArticleComment{
+					Aid:             req.Aid,
+					Cid:             value.ID,
+					DiscussionCount: value.DiscussionCount,
+					LikeCount:       value.LikeCount,
+					CommentCtime:    value.CommentCtime,
+					Raw:             itemRaw,
+				}
+				if err := global.DB.
+					Model(&model.ArticleComment{}).
+					Where(&model.ArticleComment{Aid: info.Aid, Cid: info.Cid}).
+					Assign(&info).
+					FirstOrCreate(&info).Error; err != nil {
+					global.LOG.Error("GetArticleComment.AutoSync", zap.Error(err))
+				}
+			}
+		}()
+		return nil
+	}
+	err := Request(ctx, http.MethodPost, ArticleCommentURL, bytes.NewBuffer(raw), accessToken, after)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func GetArticleCommentDiscussion(ctx context.Context, _, accessToken string,
+	req geek.DiscussionListRequest) (*geek.DiscussionOriginListResponse, error) {
+	raw, _ := json.Marshal(req)
+	var resp geek.DiscussionOriginListResponse
+	after := func(raw []byte) error {
+		if err := json.Unmarshal(raw, &resp); err != nil {
+			global.LOG.Error("GetArticleCommentDiscussion", zap.Error(err), zap.String("raw", string(raw)))
+			return err
+		}
+		if resp.Code != 0 {
+			global.LOG.Warn("GetArticleCommentDiscussion", zap.Any("error", resp.Error))
+			return nil
+		}
+		go func() {
+			for _, value := range resp.Data.List {
+				itemRaw, _ := json.Marshal(value)
+				info := model.ArticleCommentDiscussion{
+					Cid:         req.TargetID,
+					Did:         value.Discussion.ID,
+					LikesNumber: value.Discussion.LikesNumber,
+					Ctime:       value.Discussion.Ctime,
+					Raw:         itemRaw,
+				}
+				if err := global.DB.
+					Model(&model.ArticleCommentDiscussion{}).
+					Where(&model.ArticleCommentDiscussion{Cid: info.Cid, Did: info.Did}).
+					Assign(&info).
+					FirstOrCreate(&info).Error; err != nil {
+					global.LOG.Error("GetArticleCommentDiscussion.AutoSync", zap.Error(err))
+				}
+			}
+		}()
+		return nil
+	}
+	err := Request(ctx, http.MethodPost, ArticleCommentDiscussionURL, bytes.NewBuffer(raw), accessToken, after)
 	if err != nil {
 		return nil, err
 	}
