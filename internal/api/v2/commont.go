@@ -36,7 +36,7 @@ func (p *Product) ArticleCommontList(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	if req.PerPage <= 0 || (req.PerPage > 100) {
+	if req.PerPage <= 0 || req.PerPage > 100 {
 		req.PerPage = 10
 	}
 	if req.Page <= 0 {
