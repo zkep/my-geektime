@@ -716,6 +716,9 @@
                           "cid": "${id}"
                         }
                       },
+                      "data": {
+                        "cid": "${id}"
+                      },
                       "defaultParams": {
                         "perPage": 100
                       },
@@ -731,6 +734,11 @@
                           "avatar": "${article_cover | raw}"
                         },
                         "body": [
+                          {
+                            "type": "hidden",
+                            "name": "cid",
+                            "value": "${id}"
+                          },
                           {
                             "type": "text",
                             "name": "$article_title"
@@ -1078,7 +1086,7 @@
                               "url": "/v2/product/download",
                               "method":"post",
                               "data": {
-                                "pid": "${id}",
+                                "pid": "${cid}",
                                 "ids": "${id | trim}"
                               }
                             },
@@ -1170,7 +1178,7 @@
                             "url": "/v2/product/download",
                             "method":"post",
                             "data": {
-                              "pid": "${id}",
+                              "pid": "${cid}",
                               "ids": "${ids|raw}"
                             }
                           },
