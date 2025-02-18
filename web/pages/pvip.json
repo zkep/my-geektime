@@ -1,0 +1,1312 @@
+{
+  "status": 0,
+  "msg": "",
+  "data": {
+    "type": "page",
+    "title": " ",
+    "name": "product",
+    "toolbar": [],
+    "body": [
+      {
+        "type": "crud",
+        "name": "product-pvip",
+        "parsePrimitiveQuery": {
+          "enable": true,
+          "types": [
+            "boolean",
+            "number"
+          ]
+        },
+        "syncLocation": false,
+        "headerToolbar": [
+          "filter-toggler"
+        ],
+        "filter": {
+          "title": "条件搜索",
+          "body": [
+            {
+              "type": "list-select",
+              "name": "direction",
+              "label": "方向",
+              "clearable": true,
+              "value": 3,
+              "options":[
+                {
+                  "label": "后端/架构",
+                  "value": 3
+                },
+                {
+                  "label": "前端/移动",
+                  "value": 5
+                },
+                {
+                  "label": "计算机基础",
+                  "value": 9
+                },
+                {
+                  "label": "AI/大数据",
+                  "value": 8
+                },
+                {
+                  "label": "运维/测试",
+                  "value": 6
+                },
+                {
+                  "label": "产品/运营",
+                  "value": 7
+                },
+                {
+                  "label": "管理/成长",
+                  "value": 4
+                }
+              ],
+              "onEvent": {
+                "change": {
+                  "actions": [
+                    {
+                      "actionType": "setValue",
+                      "componentId": "pvip-tag",
+                      "args": {
+                        "msg": "${event.data.value}"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "list-select",
+              "id": "pvip-tag",
+              "name": "tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 3,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 3
+                },
+                {
+                  "label": "Java",
+                  "value": 10
+                },
+                {
+                  "label": "Go",
+                  "value": 11
+                },
+                {
+                  "label": "Python",
+                  "value": 12
+                },
+                {
+                  "label": ".Net",
+                  "value": 65
+                },
+                {
+                  "label": "C语言",
+                  "value": 64
+                },
+                {
+                  "label": "基本功",
+                  "value": 22
+                },
+                {
+                  "label": "分布式",
+                  "value": 20
+                },
+                {
+                  "label": "中间件",
+                  "value": 17
+                },
+                {
+                  "label": "区块链",
+                  "value": 23
+                },
+                {
+                  "label": "全栈",
+                  "value": 21
+                },
+                {
+                  "label": "C++",
+                  "value": 61
+                },
+                {
+                  "label": "中台",
+                  "value": 19
+                },
+                {
+                  "label": "DDD",
+                  "value": 18
+                },
+                {
+                  "label": "案例",
+                  "value": 16
+                },
+                {
+                  "label": "微服务",
+                  "value": 14
+                },
+                {
+                  "label": "数据库",
+                  "value": 13
+                },
+                {
+                  "label": "Rust",
+                  "value": 98
+                }
+              ],
+              "visibleOn": "${ direction == 3 }"
+            },
+            {
+              "id": "pvip-tag",
+              "type": "list-select",
+              "name": "tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 5,
+              "options": [
+                {
+                  "label": "全部",
+                  "value": 5
+                },
+                {
+                  "label": "JavaScript",
+                  "value": 30
+                },
+                {
+                  "label": "iOS",
+                  "value": 34
+                },
+                {
+                  "label": "Android",
+                  "value": 33
+                },
+                {
+                  "label": "Node.js",
+                  "value": 41
+                },
+                {
+                  "label": "网络",
+                  "value": 40
+                },
+                {
+                  "label": "webpack",
+                  "value": 39
+                },
+                {
+                  "label": "音视频",
+                  "value": 38
+                },
+                {
+                  "label": "浏览器",
+                  "value": 37
+                },
+                {
+                  "label": "Swift",
+                  "value": 36
+                },
+                {
+                  "label": "Kotlin",
+                  "value": 35
+                },
+                {
+                  "label": "框架",
+                  "value": 32
+                },
+                {
+                  "label": "TypeScript",
+                  "value": 31
+                },
+                {
+                  "label": "可视化",
+                  "value": 70
+                }
+              ],
+              "visibleOn": "${ direction == 5 }"
+            },
+            {
+              "id": "pvip-tag",
+              "type": "list-select",
+              "name": "tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 9,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 9
+                },
+                {
+                  "label": "算法",
+                  "value": 75
+                },
+                {
+                  "label": "网络",
+                  "value": 76
+                },
+                {
+                  "label": "数据库",
+                  "value": 78
+                },
+                {
+                  "label": "面试专场",
+                  "value": 102
+                },
+                {
+                  "label": "组成原理",
+                  "value": 83
+                },
+                {
+                  "label": "数学",
+                  "value": 82
+                },
+                {
+                  "label": "代码",
+                  "value": 81
+                },
+                {
+                  "label": "编译原理",
+                  "value": 80
+                },
+                {
+                  "label": "操作系统",
+                  "value": 79
+                },
+                {
+                  "label": "工具",
+                  "value": 77
+                }
+              ],
+              "visibleOn": "${ direction == 9 }"
+            },
+            {
+              "id": "pvip-tag",
+              "type": "list-select",
+              "name": "tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 8,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 8
+                },
+                {
+                  "label": "NLP",
+                  "value": 66
+                },
+                {
+                  "label": "机器学习",
+                  "value": 56
+                },
+                {
+                  "label": "数据分析",
+                  "value": 72
+                },
+                {
+                  "label": "大数据",
+                  "value": 60
+                },
+                {
+                  "label": "推荐系统",
+                  "value": 59
+                },
+                {
+                  "label": "AI算法",
+                  "value": 58
+                },
+                {
+                  "label": "数学",
+                  "value": 57
+                },
+                {
+                  "label": "AIGC应用",
+                  "value": 99
+                },
+                {
+                  "label": "大模型",
+                  "value": 100
+                }
+              ],
+              "visibleOn": "${ direction == 8 }"
+            },
+            {
+              "id": "pvip-tag",
+              "type": "list-select",
+              "name": "tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 6,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 6
+                },
+                {
+                  "label": "CI/CD",
+                  "value": 45
+                },
+                {
+                  "label": "云计算",
+                  "value": 67
+                },
+                {
+                  "label": "测试",
+                  "value": 47
+                },
+                {
+                  "label": "敏捷开发",
+                  "value": 50
+                },
+                {
+                  "label": "性能",
+                  "value": 49
+                },
+                {
+                  "label": "Linux",
+                  "value": 48
+                },
+                {
+                  "label": "安全",
+                  "value": 46
+                },
+                {
+                  "label": "运维管理",
+                  "value": 44
+                },
+                {
+                  "label": "DevOps",
+                  "value": 43
+                },
+                {
+                  "label": "Kubernetes",
+                  "value": 42
+                }
+              ],
+              "visibleOn": "${ direction == 6 }"
+            },
+            {
+              "id": "pvip-tag",
+              "type": "list-select",
+              "name": "tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 7,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 7
+                },
+                {
+                  "label": "产品创新",
+                  "value": 55
+                },
+                {
+                  "label": "增长",
+                  "value": 54
+                },
+                {
+                  "label": "运营",
+                  "value": 53
+                },
+                {
+                  "label": "市场",
+                  "value": 74
+                }
+              ],
+              "visibleOn": "${ direction == 7 }"
+            },
+            {
+              "id": "pvip-tag",
+              "type": "list-select",
+              "name": "tag",
+              "label": "分类",
+              "clearable": true,
+              "value": 4,
+              "options":[
+                {
+                  "label": "全部",
+                  "value": 4
+                },
+                {
+                  "label": "研发效能",
+                  "value": 26
+                },
+                {
+                  "label": "团队管理",
+                  "value": 27
+                },
+                {
+                  "label": "个人成长",
+                  "value": 28
+                },
+                {
+                  "label": "面试专场",
+                  "value": 97
+                },
+                {
+                  "label": "短视频",
+                  "value": 95
+                },
+                {
+                  "label": "英语",
+                  "value": 94
+                },
+                {
+                  "label": "写作",
+                  "value": 93
+                },
+                {
+                  "label": "摄影",
+                  "value": 92
+                },
+                {
+                  "label": "音乐",
+                  "value": 91
+                },
+                {
+                  "label": "项目管理",
+                  "value": 29
+                },
+                {
+                  "label": "新经理",
+                  "value": 25
+                },
+                {
+                  "label": "OKR",
+                  "value": 24
+                }
+              ],
+              "visibleOn": "${ direction == 4 }"
+            },
+            {
+              "type": "group",
+              "body": [
+                {
+                  "type": "list-select",
+                  "clearable": true,
+                  "label": "最新/热度",
+                  "name": "sort",
+                  "value": 8,
+                  "options": [
+                    {
+                      "label": "综合",
+                      "value": 8
+                    },
+                    {
+                      "label": "最新",
+                      "value": 1
+                    },
+                    {
+                      "label": "最热",
+                      "value": 4
+                    }
+                  ]
+                },
+                {
+                  "type": "select",
+                  "label": "课程类型",
+                  "name": "product_type",
+                  "value": 0,
+                  "options": [
+                    {
+                      "label": "全部类型",
+                      "value": 0
+                    },
+                    {
+                      "label": "体系课",
+                      "value": 1
+                    },
+                    {
+                      "label": "公开课",
+                      "value": 4
+                    },
+                    {
+                      "label": "线下大会",
+                      "value": 5
+                    }
+                  ]
+                },
+                {
+                  "type": "select",
+                  "label": "课程形式",
+                  "name": "product_form",
+                  "value": 0,
+                  "options": [
+                    {
+                      "label": "全部形式",
+                      "value": 0
+                    },
+                    {
+                      "label": "图文+音频",
+                      "value": 1
+                    },
+                    {
+                      "label": "视频",
+                      "value": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "hidden",
+                  "name": "with_articles",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": "reset",
+              "label": "重置"
+            },
+            {
+              "type": "submit",
+              "level": "primary",
+              "label": "搜索"
+            }
+          ]
+        },
+        "api": {
+          "method": "get",
+          "url": "/v2/product/pvip/list",
+          "data": {
+            "perPage": 20,
+            "page": "$page",
+            "sort": "$sort",
+            "direction": "$direction",
+            "product_type": "$product_type",
+            "product_form": "$product_form",
+            "tag": "${ product_type===5 ? 0 : tag }",
+            "with_articles": true
+          }
+        },
+        "autoFillHeight": false,
+        "defaultParams": {
+          "perPage": 20
+        },
+        "keepItemSelectionOnPageChange": true,
+        "bulkActions": [],
+        "footerToolbar": [
+          "statistics",
+          "pagination"
+        ],
+        "mode": "cards",
+        "columnsCount": 4,
+        "card": {
+          "header": {
+            "className": "word-break",
+            "title": "",
+            "subTitle": "${title}",
+            "description": "${subtitle}",
+            "avatar": "${cover.square | raw}",
+            "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
+          },
+          "body": [
+            {
+              "type": "property",
+              "title": "",
+              "mode": "simple",
+              "separator": "：",
+              "items": [
+                {
+                  "label": "作者",
+                  "content": "${author.name}",
+                  "span": 3
+                },
+                {
+                  "label": "作者简介",
+                  "content": "${author.intro}",
+                  "span": 3
+                },
+                {
+                  "label": "ID",
+                  "content": "${id}",
+                  "span": 3
+                },
+                {
+                  "label": "课程数",
+                  "content": "${article.count} 讲",
+                  "span": 2
+                },
+                {
+                  "label": "类型",
+                  "content": "${ is_audio === true ? '音频': '视频'}",
+                  "visibleOn": "${ is_audio !== undefined }"
+                },
+                {
+                  "label": "类型",
+                  "content": "${ is_video === true ? '视频': '音频'}",
+                  "visibleOn": "${ is_video !== undefined }"
+                },
+                {
+                  "label": "完结",
+                  "content": "${ is_finish === true ? '是': '否'}",
+                  "span": 2
+                },
+                {
+                  "label": "价格",
+                  "content": "免费",
+                  "visibleOn": "${ sale_type === 6 ||  sale_type === 7 }"
+                },
+                {
+                  "label": "价格",
+                  "content": "¥${ROUND(sale/100,2)}",
+                  "visibleOn": "${ sale_type !== 6 &&  sale_type !== 7 }"
+                }
+              ]
+            }
+          ],
+          "actions": [
+              {
+                "type": "button",
+                "icon": "fa fa-eye",
+                "label": "详情",
+                "level": "light",
+                "actionType": "drawer",
+                "drawer": {
+                  "resizable": true,
+                  "closeOnOutside": true,
+                  "size": "xl",
+                  "title": "课程详情",
+                  "actions": [],
+                  "body": [
+                    {
+                      "type": "card",
+                      "header": {
+                        "className": "word-break",
+                        "title": "$title",
+                        "subTitle": "$subtitle",
+                        "description": "共 ${article.count} 讲",
+                        "avatar": "${cover.square | raw}",
+                        "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
+                      },
+                      "body": []
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "type": "markdown",
+                      "wrapperComponent": "pre",
+                      "className": "word-break",
+                      "name": "intro_html",
+                      "label": "课程介绍"
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "type": "crud",
+                      "name": "articles-list",
+                      "parsePrimitiveQuery": {
+                        "enable": true,
+                        "types": [
+                          "boolean",
+                          "number"
+                        ]
+                      },
+                      "syncLocation": false,
+                      "api": {
+                        "method": "get",
+                        "url": "/v2/product/articles",
+                        "data": {
+                          "sample": false,
+                          "order": "earliest",
+                          "cid": "${id}"
+                        }
+                      },
+                      "defaultParams": {
+                        "perPage": 100
+                      },
+                      "mode": "cards",
+                      "columnsCount": 4,
+                      "checkOnItemClick": true,
+                      "card": {
+                        "header": {
+                          "className": "word-break",
+                          "title": "",
+                          "subTitle":  "",
+                          "description": "",
+                          "avatar": "${article_cover | raw}"
+                        },
+                        "body": [
+                          {
+                            "type": "text",
+                            "name": "$article_title"
+                          },
+                          {
+                            "type": "divider"
+                          },
+                          {
+                            "type": "tpl",
+                            "label": "",
+                            "className": "word-break",
+                            "tpl": "$article_summary"
+                          },
+                          {
+                            "type": "divider"
+                          },
+                          {
+                            "type": "property",
+                            "title": "",
+                            "mode": "simple",
+                            "separator": "：",
+                            "items": [
+                              {
+                                "label": "ID",
+                                "content": "${id}"
+                              },
+                              {
+                                "label": "视频大小",
+                                "content": "${ FLOOR(video_size/1048576, 2) } M",
+                                "visibleOn": "${ video_size !== undefined }"
+                              },
+                              {
+                                "label": "音频大小",
+                                "content": "${ FLOOR(audio_size/1048576, 2) } M",
+                                "visibleOn": "${ audio_size !== undefined }"
+                              }
+                            ]
+                          }
+                        ],
+                        "actions": [
+                          {
+                            "type": "button",
+                            "icon": "fa fa-eye",
+                            "label": "详情",
+                            "level": "light",
+                            "actionType": "drawer",
+                            "drawer": {
+                              "resizable": true,
+                              "closeOnOutside": true,
+                              "actions": [],
+                              "size": "xl",
+                              "title": "课程详情",
+                              "body": [
+                                {
+                                  "type": "service",
+                                  "api": {
+                                    "method": "get",
+                                    "url": "/v2/product/article/info?id=${id}"
+                                  },
+                                  "body": [
+                                    {
+                                      "type": "property",
+                                      "title": "${title}",
+                                      "mode": "simple",
+                                      "separator": "：",
+                                      "items": [
+                                        {
+                                          "label": "ID",
+                                          "content": "${id}"
+                                        },
+                                        {
+                                          "label": "视频大小",
+                                          "content": "${ FLOOR(video_size/1048576, 2) } M",
+                                          "visibleOn": "${ video_size !== undefined }"
+                                        },
+                                        {
+                                          "label": "音频大小",
+                                          "content": "${ FLOOR(audio_size/1048576, 2) } M",
+                                          "visibleOn": "${ audio_size !== undefined }"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "video",
+                                      "muted": true,
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
+                                      "src": "${video.hls_medias|last|pick:url}",
+                                      "poster": "${cover.default}",
+                                      "visibleOn": "${ video.hls_medias !== undefined }"
+                                    },
+                                    {
+                                      "type": "video",
+                                      "muted": true,
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
+                                      "src": "${video_preview.medias|last|pick:url}",
+                                      "poster": "${cover.default}",
+                                      "visibleOn": "${ video.hls_medias === undefined && video_preview.medias !== undefined }"
+                                    },
+                                    {
+                                      "type": "video",
+                                      "muted": true,
+                                      "autoPlay": false,
+                                      "rates": [1.0, 1.2, 1.5, 2.0],
+                                      "src": "${audio.url}",
+                                      "poster": "${cover.default}",
+                                      "visibleOn": "${ audio.url !== undefined }"
+                                    },
+                                    {
+                                      "type": "divider"
+                                    },
+                                    {
+                                      "type": "markdown",
+                                      "className": "word-break",
+                                      "name": "content",
+                                      "label": "附件"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "crud",
+                                  "label": "评论列表",
+                                  "api": {
+                                    "method": "get",
+                                    "url": "/v2/product/article/commonts",
+                                    "data": {
+                                      "perPage": "${perPage}",
+                                      "aid": "${id}",
+                                      "page": "$page"
+                                    }
+                                  },
+                                  "defaultParams": {
+                                    "perPage": 10
+                                  },
+                                  "columns": [
+                                    {
+                                      "name": "id",
+                                      "label": "ID",
+                                      "type": "text",
+                                      "toggled": true,
+                                      "width": 150
+                                    },
+                                    {
+                                      "name": "user_header",
+                                      "label": "头像",
+                                      "text": "${user_name}",
+                                      "type": "avatar",
+                                      "src": "${user_header}",
+                                      "onError": "return true;"
+                                    },
+                                    {
+                                      "name": "user_name",
+                                      "label": "用户名",
+                                      "type": "text",
+                                      "width": 150
+                                    },
+                                    {
+                                      "name": "discussion_count",
+                                      "label": "讨论数",
+                                      "type": "text",
+                                      "width": 50
+                                    },
+                                    {
+                                      "name": "like_count",
+                                      "label": "点赞数",
+                                      "type": "text",
+                                      "width": 50
+                                    },
+                                    {
+                                      "name": "comment_content",
+                                      "label": "评论内容",
+                                      "type": "html"
+                                    },
+                                    {
+                                      "type": "operation",
+                                      "label": "操作",
+                                      "width": 100,
+                                      "buttons": [
+                                        {
+                                          "type": "button",
+                                          "label": "查看讨论",
+                                          "actionType": "dialog",
+                                          "level": "info",
+                                          "visibleOn": "${ discussion_count > 0 }",
+                                          "dialog": {
+                                            "title": "查看讨论",
+                                            "size": "lg",
+                                            "body": [
+                                              {
+                                                "type": "crud",
+                                                "label": "讨论列表",
+                                                "api": {
+                                                  "method": "get",
+                                                  "url": "/v2/product/article/discussions",
+                                                  "data": {
+                                                    "perPage": "${perPage}",
+                                                    "page": "$page",
+                                                    "use_likes_order": true,
+                                                    "target_id": "${id}",
+                                                    "target_type": 1,
+                                                    "size": "${perPage}",
+                                                    "prev": "$page",
+                                                    "page_type": 1
+                                                  }
+                                                },
+                                                "defaultParams": {
+                                                  "perPage": 10
+                                                },
+                                                "columns": [
+                                                  {
+                                                    "name": "discussion.id",
+                                                    "label": "ID",
+                                                    "type": "text",
+                                                    "toggled": true,
+                                                    "width": 60
+                                                  },
+                                                  {
+                                                    "name": "author.avatar",
+                                                    "label": "头像",
+                                                    "text": "${author.nickname}",
+                                                    "type": "avatar",
+                                                    "src": "${author.avatar}",
+                                                    "onError": "return true;"
+                                                  },
+                                                  {
+                                                    "name": "author.nickname",
+                                                    "label": "昵称",
+                                                    "type": "text",
+                                                    "width": 100
+                                                  },
+                                                  {
+                                                    "name": "discussion.ctime",
+                                                    "label": "时间",
+                                                    "type": "date",
+                                                    "format": "YYYY-MM-DD",
+                                                    "width": 100
+                                                  },
+                                                  {
+                                                    "name": "discussion.likes_number",
+                                                    "label": "点赞数",
+                                                    "type": "text",
+                                                    "width": 50
+                                                  },
+                                                  {
+                                                    "name": "discussion.discussion_content",
+                                                    "label": "讨论内容",
+                                                    "type": "html"
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      "toggled": true,
+                                      "placeholder": "-"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "button",
+                            "icon": "fa fa-eye",
+                            "label": "缓存",
+                            "level": "light",
+                            "actionType": "drawer",
+                            "visibleOn": "${ ls:access_token === undefined }",
+                            "drawer": {
+                              "resizable": true,
+                              "closeOnOutside": true,
+                              "actions": [],
+                              "size": "md",
+                              "title": "cookie登录",
+                              "body": [
+                                "请先保存【极客时间VIP登录凭据】，该登录凭据是全站共享的基础,下载期间避免失效，失效后下载会找不到下载链接  ",
+                                "<a href='https://zkep.github.io/mygeektime/guide/data_geektime/' target='_blank'>查看详细文档</a>",
+                                {
+                                  "type": "form",
+                                  "title": "",
+                                  "actions": [],
+                                  "wrapWithPanel": false,
+                                  "api": {
+                                    "url": "/v2/base/refresh/cookie?waitSeconds=3",
+                                    "method": "post",
+                                    "data": {
+                                      "cookie": "${cookie}"
+                                    },
+                                    "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"access_token\", \"${cookie}\");\n}\nreturn payload;"
+                                  },
+                                  "body": [
+                                    {
+                                      "label": "Cookie",
+                                      "type": "textarea",
+                                      "showCounter": true,
+                                      "clearable": true,
+                                      "required": true,
+                                      "placeholder": "请输入极客时间Cookie",
+                                      "name": "cookie",
+                                      "validations": {
+                                        "minLength": 50
+                                      },
+                                      "validationErrors": {
+                                        "minLength": "Cookie不少于$1个字符"
+                                      },
+                                      "borderMode": "half",
+                                      "style": {
+                                        "margin": 20
+                                      }
+                                    },
+                                    {
+                                      "type": "flex",
+                                      "alignItems": "center",
+                                      "style": {
+                                        "height": "100%",
+                                        "backgroundColor": "#fff"
+                                      },
+                                      "items": [
+                                        {
+                                          "label": "刷 新｜Refresh",
+                                          "level": "light",
+                                          "size": "lg",
+                                          "type": "submit",
+                                          "style": {
+                                            "margin": 20
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "button",
+                            "label": "缓存",
+                            "level": "info",
+                            "icon": "fa fa-download",
+                            "visibleOn": "${ ls:access_token !== undefined  }",
+                            "actionType": "ajax",
+                            "api": {
+                              "url": "/v2/product/download",
+                              "method":"post",
+                              "data": {
+                                "pid": "${id}",
+                                "ids": "${id | trim}"
+                              }
+                            },
+                            "confirmText": "缓存 [${share.title}]，\n 请在[我的课程]查看详情"
+                          }
+                        ]
+                      },
+                      "keepItemSelectionOnPageChange": false,
+                      "bulkActions": [
+                        {
+                          "type": "button",
+                          "icon": "fa fa-eye",
+                          "label": "批量缓存",
+                          "level": "light",
+                          "actionType": "drawer",
+                          "visibleOn": "${ ls:access_token === undefined }",
+                          "drawer": {
+                            "resizable": true,
+                            "closeOnOutside": true,
+                            "actions": [],
+                            "size": "md",
+                            "title": "cookie登录",
+                            "body": [
+                              "请先保存【极客时间VIP登录凭据】，该登录凭据是全站共享的基础,下载期间避免失效，失效后下载会找不到下载链接  ",
+                              "<a href='https://zkep.github.io/mygeektime/guide/data_geektime/' target='_blank'>查看详细文档</a>",
+                              {
+                                "type": "form",
+                                "title": "",
+                                "actions": [],
+                                "wrapWithPanel": false,
+                                "api": {
+                                  "url": "/v2/base/refresh/cookie?waitSeconds=3",
+                                  "method": "post",
+                                  "data": {
+                                    "cookie": "${cookie}"
+                                  },
+                                  "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"access_token\", \"${cookie}\");\n}\nreturn payload;"
+                                },
+                                "body": [
+                                  {
+                                    "label": "Cookie",
+                                    "type": "textarea",
+                                    "showCounter": true,
+                                    "clearable": true,
+                                    "required": true,
+                                    "placeholder": "请输入极客时间Cookie",
+                                    "name": "cookie",
+                                    "validations": {
+                                      "minLength": 50
+                                    },
+                                    "validationErrors": {
+                                      "minLength": "Cookie不少于$1个字符"
+                                    },
+                                    "borderMode": "half",
+                                    "style": {
+                                      "margin": 20
+                                    }
+                                  },
+                                  {
+                                    "type": "flex",
+                                    "alignItems": "center",
+                                    "style": {
+                                      "height": "100%",
+                                      "backgroundColor": "#fff"
+                                    },
+                                    "items": [
+                                      {
+                                        "label": "刷 新｜Refresh",
+                                        "level": "light",
+                                        "size": "lg",
+                                        "type": "submit",
+                                        "style": {
+                                          "margin": 20
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "label": "批量缓存",
+                          "level": "info",
+                          "actionType": "ajax",
+                          "visibleOn": "${ ls:access_token !== undefined }",
+                          "api": {
+                            "url": "/v2/product/download",
+                            "method":"post",
+                            "data": {
+                              "pid": "${id}",
+                              "ids": "${ids|raw}"
+                            }
+                          },
+                          "confirmText": "缓存 [${share.title}]，\n 请在[我的课程]查看详情"
+                        }
+                      ],
+                      "headerToolbar": [
+                        "filter-toggler",
+                        "bulkActions",
+                        {
+                          "type": "tpl",
+                          "tpl": "当前有 ${count} 条数据。",
+                          "className": "v-middle"
+                        },
+                        "pagination",
+                        "switch-per-page"
+                      ],
+                      "footerToolbar": [
+                        "statistics",
+                        "switch-per-page",
+                        "pagination"
+                      ],
+                      "affixHeader": true,
+                      "columnsTogglable": "auto",
+                      "placeholder": "暂无数据",
+                      "tableClassName": "table-db table-striped",
+                      "headerClassName": "crud-table-header",
+                      "footerClassName": "crud-table-footer",
+                      "toolbarClassName": "crud-table-toolbar",
+                      "combineNum": 0,
+                      "bodyClassName": "panel-default"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "button",
+                "icon": "fa fa-eye",
+                "label": "缓存",
+                "level": "light",
+                "actionType": "drawer",
+                "visibleOn": "${ ls:access_token === undefined }",
+                "drawer": {
+                  "resizable": true,
+                  "closeOnOutside": true,
+                  "actions": [],
+                  "size": "md",
+                  "title": "cookie登录",
+                  "body": [
+                    "请先保存【极客时间VIP登录凭据】，该登录凭据是全站共享的基础,下载期间避免失效，失效后下载会找不到下载链接  ",
+                    "<a href='https://zkep.github.io/mygeektime/guide/data_geektime/' target='_blank'>查看详细文档</a>",
+                    {
+                      "type": "form",
+                      "title": "",
+                      "actions": [],
+                      "wrapWithPanel": false,
+                      "api": {
+                        "url": "/v2/base/refresh/cookie?waitSeconds=3",
+                        "method": "post",
+                        "data": {
+                          "cookie": "${cookie}"
+                        },
+                        "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"access_token\", \"${cookie}\");\n}\nreturn payload;"
+                      },
+                      "body": [
+                        {
+                          "label": "Cookie",
+                          "type": "textarea",
+                          "showCounter": true,
+                          "clearable": true,
+                          "required": true,
+                          "placeholder": "请输入极客时间Cookie",
+                          "name": "cookie",
+                          "validations": {
+                            "minLength": 50
+                          },
+                          "validationErrors": {
+                            "minLength": "Cookie不少于$1个字符"
+                          },
+                          "borderMode": "half",
+                          "style": {
+                            "margin": 20
+                          }
+                        },
+                        {
+                          "type": "flex",
+                          "alignItems": "center",
+                          "style": {
+                            "height": "100%",
+                            "backgroundColor": "#fff"
+                          },
+                          "items": [
+                            {
+                              "label": "刷 新｜Refresh",
+                              "level": "light",
+                              "size": "lg",
+                              "type": "submit",
+                              "style": {
+                                "margin": 20
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "button",
+                "label": "缓存",
+                "level": "info",
+                "icon": "fa fa-download",
+                "actionType": "ajax",
+                "visibleOn": "${ ls:access_token !== undefined }",
+                "confirmText": "缓存 [${share.title}],\n 请在 [我的课程] 查看详情",
+                "api": {
+                  "url": "/v2/product/download",
+                  "method":"post",
+                  "data": {
+                    "pid": "${id}"
+                  }
+                }
+              }
+            ]
+        },
+        "affixHeader": true,
+        "columnsTogglable": "auto",
+        "placeholder": "暂无数据",
+        "tableClassName": "table-db table-striped",
+        "headerClassName": "crud-table-header",
+        "footerClassName": "crud-table-footer",
+        "toolbarClassName": "crud-table-toolbar",
+        "combineNum": 0,
+        "bodyClassName": "panel-default"
+      }
+    ]
+  }
+}
