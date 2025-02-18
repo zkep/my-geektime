@@ -5,6 +5,7 @@ type Site struct {
 	Register Register `json:"register" yaml:"register"`
 	Login    Login    `json:"login" yaml:"login"`
 	Play     Play     `json:"play" yaml:"play"`
+	Proxy    Proxy    `json:"proxy" yaml:"proxy"`
 }
 
 type (
@@ -32,5 +33,11 @@ type (
 	Play struct {
 		Type     string   `json:"type" yaml:"type"`
 		ProxyUrl []string `json:"proxy_url" yaml:"proxy_url"`
+	}
+
+	Proxy struct {
+		Urls     []string `json:"urls" yaml:"urls"`
+		ProxyUrl string   `yaml:"proxy_url" json:"proxy_url"`
+		Cache    bool     `json:"cache" yaml:"cache"`
 	}
 )

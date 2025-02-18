@@ -41,6 +41,8 @@ func (p *Product) Articles(c *gin.Context) {
 		if row.VideoCover != "" && row.ArticleCover == "" {
 			row.ArticleCover = row.VideoCover
 		}
+		row.VideoCover = service.URLProxyReplace(row.VideoCover)
+		row.ArticleCover = service.URLProxyReplace(row.ArticleCover)
 		ret.Rows = append(ret.Rows, row)
 	}
 	global.OK(c, ret)
@@ -59,7 +61,12 @@ func (p *Product) ArticleInfo(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
+	resp.Data.Info.Author.Avatar = service.URLProxyReplace(resp.Data.Info.Author.Avatar)
+	resp.Data.Info.Video.Cover = service.URLProxyReplace(resp.Data.Info.Video.Cover)
 	if len(resp.Data.Info.Content) > 0 {
+		if contextHTML, err1 := service.HtmlURLProxyReplace(resp.Data.Info.Content); err1 == nil {
+			resp.Data.Info.Content = contextHTML
+		}
 		if markdown, err1 := htmltomarkdown.ConvertString(resp.Data.Info.Content); err1 == nil {
 			resp.Data.Info.Content = markdown
 		}

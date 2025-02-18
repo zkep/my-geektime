@@ -39,5 +39,7 @@ func NewRouter(assets embed.FS) *gin.Engine {
 
 	user(public, private)
 
+	file(public, private)
+
 	return e
 }

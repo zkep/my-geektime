@@ -52,4 +52,8 @@ site:
     proxy_url:
       - https://res001.geekbang.org
       # - https://media001.geekbang.org
-
+  proxy:
+    cache: true
+    proxy_url: http://127.0.0.1:8090/v2/file/proxy?url={url}
+    urls:
+      - https://static001.geekbang.org/resource/image

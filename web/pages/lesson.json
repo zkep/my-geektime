@@ -609,7 +609,7 @@
                 "resizable": true,
                 "closeOnOutside": true,
                 "actions": [],
-                "size": "lg",
+                "width": "60%",
                 "title": "课程详情",
                 "body": [
                   {

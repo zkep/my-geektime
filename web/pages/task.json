@@ -683,6 +683,15 @@
                     "api": "/v2/task/export?pid=${task_id}&type=markdown"
                   },
                   {
+                    "label": "重新生成文档",
+                    "icon": "fa-solid fa-columns",
+                    "type": "action",
+                    "size": "sm",
+                    "actionType": "download",
+                    "api": "/v2/task/export?pid=${task_id}&type=docsite",
+                    "visibleOn": "${ doc !== undefined }"
+                  },
+                  {
                     "type": "button",
                     "icon": "fa-solid fa-trash",
                     "visibleOn": "${ ls:role_id === 1 }",
@@ -953,7 +962,7 @@
                               "resizable": true,
                               "closeOnOutside": true,
                               "actions": [],
-                              "size": "xl",
+                              "width": "60%",
                               "title": "",
                               "body": [
                                 {

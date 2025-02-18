@@ -143,7 +143,14 @@ func (t *Task) List(c *gin.Context) {
 				}
 			}
 		}
+
+		row.Cover = service.URLProxyReplace(row.Cover)
+		row.Author.Avatar = service.URLProxyReplace(row.Author.Avatar)
+		row.Share.Cover = service.URLProxyReplace(row.Share.Cover)
 		if len(row.IntroHTML) > 0 {
+			if introHTML, err1 := service.HtmlURLProxyReplace(row.IntroHTML); err1 == nil {
+				row.IntroHTML = introHTML
+			}
 			if markdown, err := htmltomarkdown.ConvertString(row.IntroHTML); err == nil {
 				row.IntroHTML = markdown
 			}
@@ -202,8 +209,14 @@ func (t *Task) Info(c *gin.Context) {
 		Article: articleData.Info,
 		Message: taskMessage,
 	}
+	resp.Task.Cover = service.URLProxyReplace(resp.Task.Cover)
+	resp.Article.Cover.Square = service.URLProxyReplace(resp.Article.Cover.Square)
+	resp.Article.Author.Avatar = service.URLProxyReplace(resp.Article.Author.Avatar)
 	if len(resp.Article.Cshort) > len(resp.Article.Content) {
 		resp.Article.Content = resp.Article.Cshort
+	}
+	if introHTML, err1 := service.HtmlURLProxyReplace(resp.Article.Content); err1 == nil {
+		resp.Article.Content = introHTML
 	}
 	if markdown, err := htmltomarkdown.ConvertString(resp.Article.Content); err == nil {
 		resp.Article.Content = markdown

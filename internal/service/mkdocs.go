@@ -60,6 +60,9 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 		if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
 			articleData.Info.Content = articleData.Info.Cshort
 		}
+		if markdown, err2 := HtmlURLProxyReplace(articleData.Info.Content); err2 == nil {
+			articleData.Info.Content = markdown
+		}
 		if markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content); err2 != nil {
 			return "", err2
 		} else if len(markdown) > 0 {
@@ -76,7 +79,6 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 					markdown = fmt.Sprintf(playTpl, object, markdown)
 				}
 			}
-
 			fileName := baseName + ".md"
 			fpath := path.Join(taskId, "docs", fileName)
 			if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(markdown)))); err != nil {

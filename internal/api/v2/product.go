@@ -231,7 +231,12 @@ func (p *Product) ProductList(c *gin.Context) {
 			Cover:         v.Cover,
 			Article:       v.Article,
 		}
+		row.Cover.Square = service.URLProxyReplace(row.Cover.Square)
+		row.Author.Avatar = service.URLProxyReplace(row.Author.Avatar)
 		if len(row.IntroHTML) > 0 {
+			if introHTML, err1 := service.HtmlURLProxyReplace(row.IntroHTML); err1 == nil {
+				row.IntroHTML = introHTML
+			}
 			if markdown, err1 := htmltomarkdown.ConvertString(row.IntroHTML); err1 == nil {
 				row.IntroHTML = markdown
 			}
@@ -287,7 +292,12 @@ func (p *Product) PvipProductList(c *gin.Context) {
 			Cover:         v.Cover,
 			Article:       v.Article,
 		}
+		row.Cover.Square = service.URLProxyReplace(row.Cover.Square)
+		row.Author.Avatar = service.URLProxyReplace(row.Author.Avatar)
 		if len(row.IntroHTML) > 0 {
+			if introHTML, err1 := service.HtmlURLProxyReplace(row.IntroHTML); err1 == nil {
+				row.IntroHTML = introHTML
+			}
 			if markdown, err1 := htmltomarkdown.ConvertString(row.IntroHTML); err1 == nil {
 				row.IntroHTML = markdown
 			}
