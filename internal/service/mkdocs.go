@@ -12,6 +12,8 @@ import (
 	"io"
 	"os/exec"
 	"path"
+	"sort"
+	"time"
 
 	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/zkep/mygeektime/internal/global"
@@ -30,6 +32,7 @@ type Mkdocs struct {
 }
 
 type Nav struct {
+	Index int
 	Name  string
 	Items []string
 }
@@ -51,21 +54,26 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 		Navs:     make([]Nav, 0, len(ls)),
 	}
 	intro := fmt.Sprintf("%s.md", title)
+
 	docs.Navs = append(docs.Navs, Nav{Items: []string{intro}})
-	for _, x := range ls {
-		var articleData geek.ArticleData
-		if err := json.Unmarshal(x.Raw, &articleData); err != nil {
-			return "", err
-		}
-		if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
-			articleData.Info.Content = articleData.Info.Cshort
-		}
-		if markdown, err2 := HtmlURLProxyReplace(articleData.Info.Content); err2 == nil {
-			articleData.Info.Content = markdown
-		}
-		if markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content); err2 != nil {
-			return "", err2
-		} else if len(markdown) > 0 {
+	batch := global.GPool.NewBatch()
+	for i := range ls {
+		x, k := ls[i], i
+		batch.Queue(func(_ context.Context) (any, error) {
+			var articleData geek.ArticleData
+			if err := json.Unmarshal(x.Raw, &articleData); err != nil {
+				return nil, err
+			}
+			if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
+				articleData.Info.Content = articleData.Info.Cshort
+			}
+			if markdown, err2 := HtmlURLProxyReplace(articleData.Info.Content); err2 == nil {
+				articleData.Info.Content = markdown
+			}
+			markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content)
+			if err2 != nil {
+				return nil, err2
+			}
 			baseName := VerifyFileName(articleData.Info.Title)
 			var itemMessage task.TaskMessage
 			if len(x.Message) > 0 {
@@ -79,20 +87,69 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 					markdown = fmt.Sprintf(playTpl, object, markdown)
 				}
 			}
+			// article comments
+			hasNext := true
+			perPage := 20
+			page := 1
+			commentCount := int64(0)
+			commentHtml := ""
+			commentHtmlFormat := `<li><img src="%s" width="30px"><span>%s</span> 👍（%d） 💬（%d）<div>%s</div>%s</li><br/>`
+			for hasNext {
+				var comments []*model.ArticleComment
+				tx := global.DB.Model(&model.ArticleComment{})
+				if err := tx.Where("aid = ?", x.OtherId).
+					Count(&commentCount).Offset((page - 1) * perPage).
+					Limit(perPage + 1).Find(&comments).Error; err != nil {
+					return nil, err
+				}
+				page++
+				if len(comments) > perPage {
+					comments = comments[:perPage]
+				} else {
+					hasNext = false
+				}
+				for _, comment := range comments {
+					var row geek.ArticleComment
+					if err := json.Unmarshal(comment.Raw, &row); err != nil {
+						continue
+					}
+					row.UserHeader = URLProxyReplace(row.UserHeader)
+					commentHtml += fmt.Sprintf(commentHtmlFormat, row.UserHeader,
+						row.UserName, row.LikeCount, row.DiscussionCount, row.CommentContent,
+						time.Unix(row.CommentCtime, 0).Format(time.DateOnly))
+				}
+			}
+
+			if commentCount > 0 {
+				markdown += fmt.Sprintf("\n<div><strong>全部留言（%d）</strong></div>", commentCount)
+				markdown += fmt.Sprintf("<ul>\n%s\n</ul>", commentHtml)
+			}
 			fileName := baseName + ".md"
 			fpath := path.Join(taskId, "docs", fileName)
 			if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(markdown)))); err != nil {
-				return "", err
+				return nil, err
 			}
-			docs.Navs = append(docs.Navs, Nav{Items: []string{fileName}})
+			return &Nav{Index: k + 1, Items: []string{fileName}}, nil
+		})
+	}
+	ws, err := batch.Wait(ctx)
+	if err != nil {
+		return "", err
+	}
+	for _, w := range ws {
+		if val, ok := w.Value.(*Nav); ok {
+			docs.Navs = append(docs.Navs, *val)
 		}
 	}
+	sort.Slice(docs.Navs, func(i, j int) bool {
+		return docs.Navs[i].Index < docs.Navs[j].Index
+	})
 	fpath := path.Join(taskId, "docs", intro)
-	if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(indexMarkdown)))); err != nil {
+	if _, err = global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(indexMarkdown)))); err != nil {
 		return "", err
 	}
 	indexPath := path.Join(taskId, "docs", "index.md")
-	if _, err := global.Storage.Put(indexPath, io.NopCloser(bytes.NewBuffer([]byte(title)))); err != nil {
+	if _, err = global.Storage.Put(indexPath, io.NopCloser(bytes.NewBuffer([]byte(title)))); err != nil {
 		return "", err
 	}
 	tpl, err := template.New("template").Parse(MkdocsYML)
