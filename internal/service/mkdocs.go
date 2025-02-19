@@ -54,7 +54,6 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 		Navs:     make([]Nav, 0, len(ls)),
 	}
 	intro := fmt.Sprintf("%s.md", title)
-
 	docs.Navs = append(docs.Navs, Nav{Items: []string{intro}})
 	batch := global.GPool.NewBatch()
 	for i := range ls {
@@ -63,6 +62,9 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 			var articleData geek.ArticleData
 			if err := json.Unmarshal(x.Raw, &articleData); err != nil {
 				return nil, err
+			}
+			if len(articleData.Info.Title) == 0 {
+				return nil, fmt.Errorf("title is empty %s", x.TaskId)
 			}
 			if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
 				articleData.Info.Content = articleData.Info.Cshort
