@@ -276,7 +276,7 @@ func (p *Product) PvipProductList(c *gin.Context) {
 			Keyword:  req.Keyword,
 			Category: "product",
 			Platform: "pc",
-			Prev:     1,
+			Prev:     req.Prev,
 			Size:     req.Size + 1,
 		}
 		searchRet, err := service.GeekTimeSearch(c, accessToken, searchReq)
