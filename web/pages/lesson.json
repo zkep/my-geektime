@@ -556,9 +556,9 @@
         "card": {
           "header": {
             "className": "word-break",
-            "title": "${author.name}",
-            "subTitle": "${author.intro}",
-            "description": "",
+            "title": "",
+            "subTitle": "",
+            "description": "${title | raw}",
             "avatar": "${cover.square | raw}",
             "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
           },
@@ -570,13 +570,13 @@
               "separator": "：",
               "items": [
                 {
-                  "label": "课程",
-                  "content": "${title}",
+                  "label": "作者",
+                  "content": "${author.name}",
                   "span": 3
                 },
                 {
-                  "label": "课程简介",
-                  "content": "${subtitle}",
+                  "label": "作者简介",
+                  "content": "${author.intro}",
                   "span": 3
                 },
                 {

@@ -987,3 +987,99 @@ type Product struct {
 	Extra      Extra      `json:"extra,omitempty"`
 	Type       string     `json:"type,omitempty"`
 }
+
+type ColumnRequest struct {
+	ProductID            int64 `json:"product_id"`
+	WithRecommendArticle bool  `json:"with_recommend_article"`
+}
+
+type ColumnResponse struct {
+	Code  int    `json:"code,omitempty"`
+	Data  Column `json:"data,omitempty"`
+	Error any    `json:"error,omitempty"`
+}
+
+type Column struct {
+	ID               int    `json:"id,omitempty"`
+	Type             string `json:"type,omitempty"`
+	IsCore           bool   `json:"is_core,omitempty"`
+	IsVideo          bool   `json:"is_video,omitempty"`
+	IsAudio          bool   `json:"is_audio,omitempty"`
+	IsSaleProduct    bool   `json:"is_sale_product,omitempty"`
+	Ucode            string `json:"ucode,omitempty"`
+	IsFinish         bool   `json:"is_finish,omitempty"`
+	TotalLength      int    `json:"total_length,omitempty"`
+	NavID            int    `json:"nav_id,omitempty"`
+	NpsMin           int    `json:"nps_min,omitempty"`
+	UpdateFrequency  string `json:"update_frequency,omitempty"`
+	LastChapterID    int    `json:"last_chapter_id,omitempty"`
+	BeginTime        int    `json:"begin_time,omitempty"`
+	EndTime          int    `json:"end_time,omitempty"`
+	IsPreorder       bool   `json:"is_preorder,omitempty"`
+	Bgcolor          string `json:"bgcolor,omitempty"`
+	IsIncludePreview bool   `json:"is_include_preview,omitempty"`
+	ShowChapter      bool   `json:"show_chapter,omitempty"`
+	Utime            int    `json:"utime,omitempty"`
+	IsDailylesson    bool   `json:"is_dailylesson,omitempty"`
+	IsOpencourse     bool   `json:"is_opencourse,omitempty"`
+	Title            string `json:"title,omitempty"`
+	Subtitle         string `json:"subtitle,omitempty"`
+	Ctime            int    `json:"ctime,omitempty"`
+	Unit             string `json:"unit,omitempty"`
+	Cover            struct {
+		Square string `json:"square,omitempty"`
+	} `json:"cover,omitempty"`
+	Author struct {
+		Name      string `json:"name,omitempty"`
+		Intro     string `json:"intro,omitempty"`
+		Avatar    string `json:"avatar,omitempty"`
+		BriefHTML string `json:"brief_html,omitempty"`
+		Brief     string `json:"brief,omitempty"`
+		AiID      string `json:"ai_id,omitempty"`
+	} `json:"author,omitempty"`
+	Price struct {
+		Market       int `json:"market,omitempty"`
+		Sale         int `json:"sale,omitempty"`
+		SaleType     int `json:"sale_type,omitempty"`
+		PromoEndTime int `json:"promo_end_time,omitempty"`
+		StartTime    int `json:"start_time,omitempty"`
+		EndTime      int `json:"end_time,omitempty"`
+	} `json:"price,omitempty"`
+	Path struct {
+		Desc     string `json:"desc,omitempty"`
+		DescHTML string `json:"desc_html,omitempty"`
+	} `json:"path,omitempty"`
+	Article struct {
+		ID       int `json:"id,omitempty"`
+		Count    int `json:"count,omitempty"`
+		CountReq int `json:"count_req,omitempty"`
+		CountPub int `json:"count_pub,omitempty"`
+	} `json:"article,omitempty"`
+	IsSale        bool `json:"is_sale,omitempty"`
+	IsGroupbuy    bool `json:"is_groupbuy,omitempty"`
+	OnlySellInVip bool `json:"only_sell_in_vip,omitempty"`
+	Seo           struct {
+		Keywords []string `json:"keywords,omitempty"`
+	} `json:"seo,omitempty"`
+	Share struct {
+		Title   string `json:"title,omitempty"`
+		Content string `json:"content,omitempty"`
+		Cover   string `json:"cover,omitempty"`
+		Poster  string `json:"poster,omitempty"`
+	} `json:"share,omitempty"`
+	Column struct {
+		CatalogPicURL string `json:"catalog_pic_url,omitempty"`
+		Ranks         []struct {
+			ID    int    `json:"id,omitempty"`
+			Name  string `json:"name,omitempty"`
+			Score int    `json:"score,omitempty"`
+		} `json:"ranks,omitempty"`
+		HotComments  []any `json:"hot_comments,omitempty"`
+		HotLines     any   `json:"hot_lines,omitempty"`
+		IntroBgStyle int   `json:"intro_bg_style,omitempty"`
+		InRank       bool  `json:"in_rank,omitempty"`
+	} `json:"column,omitempty"`
+	InPvip        int    `json:"in_pvip,omitempty"`
+	ColumnBadge   string `json:"column_badge,omitempty"`
+	HideCopyright bool   `json:"hide_copyright,omitempty"`
+}

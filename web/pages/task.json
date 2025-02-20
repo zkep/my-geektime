@@ -29,8 +29,12 @@
                 "name": "direction",
                 "label": "方向",
                 "clearable": true,
-                "value": 3,
+                "value": 0,
                 "options":[
+                  {
+                    "label": "全部",
+                    "value": 0
+                  },
                   {
                     "label": "后端/架构",
                     "value": 3
@@ -73,6 +77,20 @@
                     ]
                   }
                 }
+              },
+              {
+                "type": "list-select",
+                "id": "pvip-tag",
+                "name": "tag",
+                "label": "分类",
+                "value": 0,
+                "options":[
+                  {
+                    "label": "全部",
+                    "value": 0
+                  }
+                ],
+                "visibleOn": "${ direction == 0 }"
               },
               {
                 "type": "list-select",

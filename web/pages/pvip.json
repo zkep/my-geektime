@@ -551,6 +551,12 @@
                   "type": "hidden",
                   "name": "with_articles",
                   "value": true
+                },
+                {
+                  "type": "input-text",
+                  "placeholder": "搜索关键字",
+                  "clearable": true,
+                  "name": "keyword"
                 }
               ]
             }
@@ -578,7 +584,8 @@
             "product_type": "$product_type",
             "product_form": "$product_form",
             "tag": "${ product_type===5 ? 0 : tag }",
-            "with_articles": true
+            "with_articles": true,
+            "keyword": "$keyword"
           }
         },
         "autoFillHeight": false,
@@ -597,8 +604,8 @@
           "header": {
             "className": "word-break",
             "title": "",
-            "subTitle": "${title}",
-            "description": "${subtitle}",
+            "subTitle": "${title | raw}",
+            "description": "${subtitle | raw}",
             "avatar": "${cover.square | raw}",
             "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
           },
@@ -675,8 +682,8 @@
                       "type": "card",
                       "header": {
                         "className": "word-break",
-                        "title": "$title",
-                        "subTitle": "$subtitle",
+                        "title": "${title | raw}",
+                        "subTitle": "${subtitle | raw}",
                         "description": "共 ${article.count} 讲",
                         "avatar": "${cover.square | raw}",
                         "avatarClassName": "pull-left thumb-md avatar b-3x m-r"

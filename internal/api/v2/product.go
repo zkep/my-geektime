@@ -88,6 +88,17 @@ func (p *Product) Download(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
+	if product.Pid == "" {
+		ret, err := service.GetColumnInfo(c, identity, accessToken,
+			geek.ColumnRequest{ProductID: req.Pid, WithRecommendArticle: true})
+		if err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		product.Title = ret.Data.Title
+		product.Cover = ret.Data.Cover.Square
+		product.Raw, _ = json.Marshal(ret.Data)
+	}
 	if len(articlesMap) == 0 {
 		var articles []*model.Article
 		if err := global.DB.Model(&model.Article{}).
@@ -259,12 +270,60 @@ func (p *Product) PvipProductList(c *gin.Context) {
 	req.Prev = req.Page
 	identity := c.GetString(global.Identity)
 	accessToken := c.GetString(global.AccessToken)
+	ret := geek.ProductListResponse{Rows: make([]geek.ProductListRow, 0)}
+	if len(req.Keyword) > 0 {
+		searchReq := geek.SearchRequest{
+			Keyword:  req.Keyword,
+			Category: "product",
+			Platform: "pc",
+			Prev:     1,
+			Size:     req.Size + 1,
+		}
+		searchRet, err := service.GeekTimeSearch(c, accessToken, searchReq)
+		if err != nil {
+			global.FAIL(c, "fail.msg", err.Error())
+			return
+		}
+		if len(searchRet.Data.List) > req.Size {
+			ret.HasNext = true
+			searchRet.Data.List = searchRet.Data.List[:req.Size]
+		}
+		for _, v := range searchRet.Data.List {
+			if v.ItemType != "product" {
+				continue
+			}
+			item := v.Product
+			row := geek.ProductListRow{
+				ID:       item.ID,
+				Title:    item.Title,
+				Subtitle: item.Subtitle,
+				IsVideo:  item.Type == "c3",
+				IsAudio:  item.Type == "c1",
+			}
+			row.Article.Count = item.TotalLesson
+			row.Author.Name = item.AuthorName
+			row.Author.Info = item.AuthorIntro
+			row.Cover.Square = item.Cover
+			row.Cover.Square = service.URLProxyReplace(row.Cover.Square)
+			if len(row.IntroHTML) > 0 {
+				if introHTML, err1 := service.HtmlURLProxyReplace(row.IntroHTML); err1 == nil {
+					row.IntroHTML = introHTML
+				}
+				if markdown, err1 := htmltomarkdown.ConvertString(row.IntroHTML); err1 == nil {
+					row.IntroHTML = markdown
+				}
+			}
+			ret.Rows = append(ret.Rows, row)
+		}
+
+		global.OK(c, ret)
+		return
+	}
 	resp, err := service.GetPvipProduct(c, identity, accessToken, req)
 	if err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	ret := geek.ProductListResponse{Rows: make([]geek.ProductListRow, 0)}
 	ret.Count = resp.Data.Page.Total
 	if resp.Data.Page.Total == 0 {
 		ret.HasNext = resp.Data.Page.More

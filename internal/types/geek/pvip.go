@@ -9,6 +9,7 @@ type PvipProductRequest struct {
 	WithArticles bool    `json:"with_articles"  form:"with_articles"`
 	Prev         int     `json:"prev"  form:"prev"`
 	Size         int     `json:"size"  form:"size"`
+	Keyword      string  `json:"keyword"  form:"keyword"`
 	Tag          int32   `json:"-"  form:"tag"`
 	Direction    int32   `json:"-"  form:"direction"`
 	Page         int     `json:"-" form:"page"`
