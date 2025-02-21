@@ -37,6 +37,10 @@ type Nav struct {
 	Items []string
 }
 
+var (
+	commentHtmlFormat = `<li><img src="%s" width="30px"><span>%s</span> 👍（%d） 💬（%d）<div>%s</div>%s</li><br/>`
+)
+
 func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, error) {
 	var ls []model.Task
 	if err := global.DB.Model(&model.Task{}).
@@ -95,7 +99,6 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 			page := 1
 			commentCount := int64(0)
 			commentHtml := ""
-			commentHtmlFormat := `<li><img src="%s" width="30px"><span>%s</span> 👍（%d） 💬（%d）<div>%s</div>%s</li><br/>`
 			for hasNext {
 				var comments []*model.ArticleComment
 				tx := global.DB.Model(&model.ArticleComment{})
@@ -180,7 +183,7 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 	return docURL, nil
 }
 
-func MakeDocsiteLocal(taskId, group, title, introHTML string) error {
+func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML string) error {
 	var ls []model.Task
 	if err := global.DB.Model(&model.Task{}).
 		Where(&model.Task{TaskPid: taskId}).
@@ -218,6 +221,83 @@ func MakeDocsiteLocal(taskId, group, title, introHTML string) error {
 			docs.Navs = append(docs.Navs, Nav{Items: []string{fileName}})
 		}
 	}
+
+	docs.Navs = append(docs.Navs, Nav{Items: []string{intro}})
+	batch := global.GPool.NewBatch()
+	for i := range ls {
+		x, k := ls[i], i
+		batch.Queue(func(_ context.Context) (any, error) {
+			var articleData geek.ArticleData
+			if err := json.Unmarshal(x.Raw, &articleData); err != nil {
+				return nil, err
+			}
+			if len(articleData.Info.Title) == 0 {
+				return nil, fmt.Errorf("title is empty %s", x.TaskId)
+			}
+			if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
+				articleData.Info.Content = articleData.Info.Cshort
+			}
+			markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content)
+			if err2 != nil {
+				return nil, err2
+			}
+			baseName := VerifyFileName(articleData.Info.Title)
+			// article comments
+			hasNext := true
+			perPage := 20
+			page := 1
+			commentCount := int64(0)
+			commentHtml := ""
+			for hasNext {
+				var comments []*model.ArticleComment
+				tx := global.DB.Model(&model.ArticleComment{})
+				if err := tx.Where("aid = ?", x.OtherId).
+					Count(&commentCount).Offset((page - 1) * perPage).
+					Limit(perPage + 1).Find(&comments).Error; err != nil {
+					return nil, err
+				}
+				page++
+				if len(comments) > perPage {
+					comments = comments[:perPage]
+				} else {
+					hasNext = false
+				}
+				for _, comment := range comments {
+					var row geek.ArticleComment
+					if err := json.Unmarshal(comment.Raw, &row); err != nil {
+						continue
+					}
+					commentHtml += fmt.Sprintf(commentHtmlFormat, row.UserHeader,
+						row.UserName, row.LikeCount, row.DiscussionCount, row.CommentContent,
+						time.Unix(row.CommentCtime, 0).Format(time.DateOnly))
+				}
+			}
+
+			if commentCount > 0 {
+				markdown += fmt.Sprintf("\n<div><strong>全部留言（%d）</strong></div>", commentCount)
+				markdown += fmt.Sprintf("<ul>\n%s\n</ul>", commentHtml)
+			}
+			fileName := baseName + ".md"
+			fpath := path.Join(taskId, "docs", fileName)
+			if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(markdown)))); err != nil {
+				return nil, err
+			}
+			return &Nav{Index: k + 1, Items: []string{fileName}}, nil
+		})
+	}
+	ws, err1 := batch.Wait(ctx)
+	if err1 != nil {
+		return err1
+	}
+	for _, w := range ws {
+		if val, ok := w.Value.(*Nav); ok {
+			docs.Navs = append(docs.Navs, *val)
+		}
+	}
+	sort.Slice(docs.Navs, func(i, j int) bool {
+		return docs.Navs[i].Index < docs.Navs[j].Index
+	})
+
 	fpath := path.Join(group, title, "docs", intro)
 	if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(indexMarkdown)))); err != nil {
 		return err

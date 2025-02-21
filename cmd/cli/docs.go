@@ -21,17 +21,14 @@ type DocsFlags struct {
 	Config string `name:"config" description:"Path to config file"`
 }
 
-func (app *App) Docs(f *DocsFlags) error {
-	var (
-		cfg config.Config
-	)
+func (app *App) parse(f *DocsFlags, cfg *config.Config) error {
 	if f.Config == "" {
 		fi, err := app.assets.Open("config.yml")
 		if err != nil {
 			return err
 		}
 		defer func() { _ = fi.Close() }()
-		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
+		if err = yaml.NewDecoder(fi).Decode(cfg); err != nil {
 			return err
 		}
 	} else {
@@ -40,11 +37,18 @@ func (app *App) Docs(f *DocsFlags) error {
 			return err
 		}
 		defer func() { _ = fi.Close() }()
-		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
+		if err = yaml.NewDecoder(fi).Decode(cfg); err != nil {
 			return err
 		}
 	}
+	return nil
+}
 
+func (app *App) Docs(f *DocsFlags) error {
+	var cfg config.Config
+	if err := app.parse(f, &cfg); err != nil {
+		return err
+	}
 	global.CONF = &cfg
 	if err := initialize.Gorm(app.ctx); err != nil {
 		return err
@@ -109,29 +113,10 @@ func (app *App) Docs(f *DocsFlags) error {
 }
 
 func (app *App) LocalDoc(f *DocsFlags) error {
-	var (
-		cfg config.Config
-	)
-	if f.Config == "" {
-		fi, err := app.assets.Open("config.yml")
-		if err != nil {
-			return err
-		}
-		defer func() { _ = fi.Close() }()
-		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
-			return err
-		}
-	} else {
-		fi, err := os.Open(f.Config)
-		if err != nil {
-			return err
-		}
-		defer func() { _ = fi.Close() }()
-		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
-			return err
-		}
+	var cfg config.Config
+	if err := app.parse(f, &cfg); err != nil {
+		return err
 	}
-
 	global.CONF = &cfg
 	if err := initialize.Gorm(app.ctx); err != nil {
 		return err
@@ -192,7 +177,7 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 			}
 			group.Label = service.VerifyFileName(group.Label)
 			product.Title = service.VerifyFileName(product.Title)
-			err := service.MakeDocsiteLocal(l.TaskId, group.Label, product.Title, product.IntroHTML)
+			err := service.MakeDocsiteLocal(app.ctx, l.TaskId, group.Label, product.Title, product.IntroHTML)
 			if err != nil {
 				global.LOG.Error("Docs MakeDocsite", zap.Error(err))
 				continue
