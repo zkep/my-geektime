@@ -215,6 +215,7 @@ func (t *Task) Info(c *gin.Context) {
 	if len(resp.Article.Cshort) > len(resp.Article.Content) {
 		resp.Article.Content = resp.Article.Cshort
 	}
+	resp.Article.Cshort = ""
 	if introHTML, err1 := service.HtmlURLProxyReplace(resp.Article.Content); err1 == nil {
 		resp.Article.Content = introHTML
 	}

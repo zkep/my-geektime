@@ -93,7 +93,6 @@ func iterators(ctx context.Context, loaded bool) error {
 			global.LOG.Error("task handler wait", zap.Error(err))
 			return err
 		}
-
 		for _, value := range orderTasks {
 			x := value
 			if err := worker(timeCtx, x); err != nil {
@@ -111,25 +110,12 @@ func worker(ctx context.Context, x *model.Task) error {
 		return doProduct(ctx, x)
 	case service.TASK_TYPE_ARTICLE:
 		return doArticle(ctx, x)
+	default:
 	}
 	return nil
 }
 
 func doProduct(_ context.Context, x *model.Task) error {
-	var count int64
-	if err := global.DB.Model(&model.Task{}).
-		Where("task_pid = ?", x.TaskId).
-		Where("status <= ?", service.TASK_STATUS_RUNNING).
-		Count(&count).Error; err != nil {
-		global.LOG.Error("worker", zap.Error(err), zap.String("taskId", x.TaskId))
-		return err
-	}
-	status := service.TASK_STATUS_FINISHED
-	if count > 0 {
-		global.LOG.Info("worker sub task",
-			zap.Int64("pending", count), zap.String("taskId", x.TaskId))
-		status = service.TASK_STATUS_PENDING
-	}
 	var statistics task.TaskStatistics
 	if err := json.Unmarshal(x.Statistics, &statistics); err != nil {
 		global.LOG.Error("worker Unmarshal", zap.Error(err), zap.String("taskId", x.TaskId))
@@ -137,6 +123,7 @@ func doProduct(_ context.Context, x *model.Task) error {
 	if statistics.Items == nil {
 		statistics.Items = make(map[int]int, 5)
 	}
+	pendingCount, runingCount, errorCount := int64(0), int64(0), int64(0)
 	for _, item := range service.ALLStatus {
 		var itemCount int64
 		if err := global.DB.Model(&model.Task{}).
@@ -145,7 +132,25 @@ func doProduct(_ context.Context, x *model.Task) error {
 			Count(&itemCount).Error; err != nil {
 			global.LOG.Error("worker count", zap.Error(err), zap.String("taskId", x.TaskId))
 		}
+		switch item {
+		case service.TASK_STATUS_PENDING:
+			pendingCount = itemCount
+		case service.TASK_STATUS_RUNNING:
+			runingCount = itemCount
+		case service.TASK_STATUS_ERROR:
+			errorCount = itemCount
+		}
 		statistics.Items[item] = int(itemCount)
+	}
+	status := service.TASK_STATUS_FINISHED
+	if pendingCount > 0 {
+		status = service.TASK_STATUS_PENDING
+	}
+	if runingCount > 0 {
+		status = service.TASK_STATUS_PENDING
+	}
+	if errorCount > 0 {
+		status = service.TASK_STATUS_ERROR
 	}
 	raw, _ := json.Marshal(statistics)
 	m := model.Task{

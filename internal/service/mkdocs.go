@@ -183,7 +183,7 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 	return docURL, nil
 }
 
-func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML string) error {
+func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML string, commentLen int) error {
 	var ls []model.Task
 	if err := global.DB.Model(&model.Task{}).
 		Where(&model.Task{TaskPid: taskId}).
@@ -200,28 +200,6 @@ func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML strin
 		Navs:     make([]Nav, 0, len(ls)),
 	}
 	intro := fmt.Sprintf("%s.md", title)
-	docs.Navs = append(docs.Navs, Nav{Items: []string{intro}})
-	for _, x := range ls {
-		var articleData geek.ArticleData
-		if err := json.Unmarshal(x.Raw, &articleData); err != nil {
-			return err
-		}
-		if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
-			articleData.Info.Content = articleData.Info.Cshort
-		}
-		if markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content); err2 != nil {
-			return err2
-		} else if len(markdown) > 0 {
-			baseName := VerifyFileName(articleData.Info.Title)
-			fileName := baseName + ".md"
-			fpath := path.Join(group, title, "docs", fileName)
-			if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(markdown)))); err != nil {
-				return err
-			}
-			docs.Navs = append(docs.Navs, Nav{Items: []string{fileName}})
-		}
-	}
-
 	docs.Navs = append(docs.Navs, Nav{Items: []string{intro}})
 	batch := global.GPool.NewBatch()
 	for i := range ls {
@@ -245,9 +223,13 @@ func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML strin
 			// article comments
 			hasNext := true
 			perPage := 20
+			if commentLen > 0 {
+				perPage = commentLen
+			}
 			page := 1
 			commentCount := int64(0)
 			commentHtml := ""
+			count := 0
 			for hasNext {
 				var comments []*model.ArticleComment
 				tx := global.DB.Model(&model.ArticleComment{})
@@ -263,6 +245,11 @@ func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML strin
 					hasNext = false
 				}
 				for _, comment := range comments {
+					if commentLen > 0 && count >= commentLen {
+						hasNext = false
+						break
+					}
+					count++
 					var row geek.ArticleComment
 					if err := json.Unmarshal(comment.Raw, &row); err != nil {
 						continue
@@ -274,11 +261,16 @@ func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML strin
 			}
 
 			if commentCount > 0 {
-				markdown += fmt.Sprintf("\n<div><strong>全部留言（%d）</strong></div>", commentCount)
+				label := "全部留言"
+				if commentLen > 0 {
+					label = "精选留言"
+					commentCount = int64(count)
+				}
+				markdown += fmt.Sprintf("\n<div><strong>%s（%d）</strong></div>", label, commentCount)
 				markdown += fmt.Sprintf("<ul>\n%s\n</ul>", commentHtml)
 			}
 			fileName := baseName + ".md"
-			fpath := path.Join(taskId, "docs", fileName)
+			fpath := path.Join(group, title, "docs", fileName)
 			if _, err := global.Storage.Put(fpath, io.NopCloser(bytes.NewBuffer([]byte(markdown)))); err != nil {
 				return nil, err
 			}
@@ -319,7 +311,6 @@ func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML strin
 	if _, err = global.Storage.Put(mkdocsPath, io.NopCloser(buff)); err != nil {
 		return err
 	}
-
 	return nil
 }
 

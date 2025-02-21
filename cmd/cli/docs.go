@@ -59,6 +59,9 @@ func (app *App) Docs(f *DocsFlags) error {
 	if err := initialize.Storage(app.ctx); err != nil {
 		return err
 	}
+	if err := initialize.GPool(app.ctx); err != nil {
+		return err
+	}
 
 	hasMore, page, psize := true, 1, 6
 	for hasMore {
@@ -127,7 +130,9 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 	if err := initialize.Storage(app.ctx); err != nil {
 		return err
 	}
-
+	if err := initialize.GPool(app.ctx); err != nil {
+		return err
+	}
 	var tags []Tag
 	if err := json.Unmarshal([]byte(TagJSON), &tags); err != nil {
 		return err
@@ -177,7 +182,8 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 			}
 			group.Label = service.VerifyFileName(group.Label)
 			product.Title = service.VerifyFileName(product.Title)
-			err := service.MakeDocsiteLocal(app.ctx, l.TaskId, group.Label, product.Title, product.IntroHTML)
+			err := service.MakeDocsiteLocal(app.ctx, l.TaskId,
+				group.Label, product.Title, product.IntroHTML, 30)
 			if err != nil {
 				global.LOG.Error("Docs MakeDocsite", zap.Error(err))
 				continue

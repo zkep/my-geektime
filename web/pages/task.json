@@ -791,6 +791,9 @@
                         "filter-toggler",
                         "bulkActions"
                       ],
+                      "data": {
+                        "xstatus": 0
+                      },
                       "filter": {
                         "title": "条件搜索",
                         "body": [

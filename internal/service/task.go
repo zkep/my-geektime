@@ -43,6 +43,8 @@ func VerifyFileName(name string) string {
 	name = strings.ReplaceAll(name, ":", "：")
 	name = strings.ReplaceAll(name, `"`, "“")
 	name = strings.ReplaceAll(name, "?", "？")
+	name = strings.ReplaceAll(name, "\t", "")
+	name = strings.ReplaceAll(name, "\b", "")
 	return strings.TrimSpace(name)
 }
 

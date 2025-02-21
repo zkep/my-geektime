@@ -47,12 +47,12 @@ docker-compose up -d
 
 #### 微信赞赏
 
-欢迎赞赏👏
+如若有用，不吝赞赏👏
 
 <picture>
   <img
     alt="sponsor"
     src="docs/images/sponsor.jpg"
-    width="300px"
+    width="256px"
   />
 </picture>
