@@ -89,16 +89,19 @@ func iterators(ctx context.Context, loaded bool) error {
 				return nil, err
 			})
 		}
+		for _, value := range orderTasks {
+			x := value
+			batch.Queue(func(pctx context.Context) (any, error) {
+				err := worker(pctx, x)
+				if err != nil {
+					global.LOG.Error("task handler worker", zap.Error(err), zap.String("taskid", x.TaskId))
+				}
+				return nil, err
+			})
+		}
 		if _, err := batch.Wait(timeCtx); err != nil {
 			global.LOG.Error("task handler wait", zap.Error(err))
 			return err
-		}
-		for _, value := range orderTasks {
-			x := value
-			if err := worker(timeCtx, x); err != nil {
-				global.LOG.Error("task handler worker", zap.Error(err), zap.String("taskid", x.TaskId))
-				return err
-			}
 		}
 	}
 	return nil

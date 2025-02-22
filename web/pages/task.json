@@ -1019,16 +1019,6 @@
                                       "type": "divider"
                                     },
                                     {
-                                      "type": "html",
-                                      "label": "课程介绍",
-                                      "className": "word-break",
-                                      "name": "intro_html",
-                                      "html": "${intro_html}"
-                                    },
-                                    {
-                                      "type": "divider"
-                                    },
-                                    {
                                       "type": "button-group",
                                       "btnLevel": "light",
                                       "btnActiveLevel": "warning",

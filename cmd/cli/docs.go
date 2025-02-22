@@ -183,7 +183,7 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 			group.Label = service.VerifyFileName(group.Label)
 			product.Title = service.VerifyFileName(product.Title)
 			err := service.MakeDocsiteLocal(app.ctx, l.TaskId,
-				group.Label, product.Title, product.IntroHTML, 30)
+				group.Label, product.Title, product.IntroHTML, 15)
 			if err != nil {
 				global.LOG.Error("Docs MakeDocsite", zap.Error(err))
 				continue
