@@ -162,15 +162,17 @@ func doProduct(_ context.Context, x *model.Task) error {
 		Statistics: raw,
 		UpdatedAt:  time.Now().Unix(),
 	}
-	if status == service.TASK_STATUS_FINISHED {
-		var product geek.ProductBase
-		if len(x.Raw) > 0 {
-			_ = json.Unmarshal(x.Raw, &product)
+	if global.CONF.Site.Download {
+		if status == service.TASK_STATUS_FINISHED {
+			var product geek.ProductBase
+			if len(x.Raw) > 0 {
+				_ = json.Unmarshal(x.Raw, &product)
+			}
+			dir := path.Join(x.TaskId, service.VerifyFileName(product.Title))
+			dirURL := global.Storage.GetKey(dir, false)
+			message := task.TaskMessage{Object: dirURL}
+			m.Message, _ = json.Marshal(message)
 		}
-		dir := path.Join(x.TaskId, service.VerifyFileName(product.Title))
-		dirURL := global.Storage.GetKey(dir, false)
-		message := task.TaskMessage{Object: dirURL}
-		m.Message, _ = json.Marshal(message)
 	}
 	if err := global.DB.Model(&model.Task{}).Where(&model.Task{Id: x.Id}).Updates(&m).Error; err != nil {
 		global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
