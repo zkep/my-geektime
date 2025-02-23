@@ -38,4 +38,3 @@ services:
       -  ./server/config.yml:/config.yml
     depends_on:
       - mysql
-      - redis
