@@ -38,8 +38,8 @@ type Nav struct {
 }
 
 var (
-	commentHtmlFormat       = `<li><img src="%s" width="30px"><span>%s</span> 👍（%d） 💬（%d）<div>%s</div>%s</li><br/>`
-	commentSimpleHtmlFormat = `<li><span>%s</span> 👍（%d） 💬（%d）<div>%s</div>%s</li><br/>`
+	commentHtmlFormat       = `<li><img src="%s" width="30px"><span>%s</span> 👍（%d） 💬（%d）<p>%s</p>%s</li><br/>`
+	commentSimpleHtmlFormat = `<li><span>%s</span> 👍（%d） 💬（%d）<p>%s</p>%s</li><br/>`
 )
 
 func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, error) {
