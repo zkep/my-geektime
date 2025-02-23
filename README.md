@@ -29,9 +29,6 @@ git clone https://github.com/zkep/mygeektime.git
 
 cd mygeektime/docker
 
-# 没有极客时间VIP的用户，执行下面命令，下载默认数据，默认数据不全，仅仅为了演示功能
-wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
-
 # 更新到最新的镜像
 docker pull zkep/mygeektime:latest
 
@@ -44,15 +41,11 @@ docker-compose up -d
 浏览器访问:  http://127.0.0.1:8090
 
 
-#### 感谢
-* [gin](https://github.com/gin-gonic/gin)
-* [amis](https://github.com/baidu/amis)
-* [FFmpeg](https://ffmpeg.org/download.html)
-
-
 #### 微信赞赏
 
 如若有用，不吝赞赏👏
+
+赞赏¥50并留言<b>邮箱账号</b>，将回赠<b>完整数据库</b>
 
 <picture>
   <img
