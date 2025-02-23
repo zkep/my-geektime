@@ -136,7 +136,9 @@
                                                                             localStorage.setItem("uid", payload.user.uid);
                                                                             localStorage.setItem("role_id", payload.user.role_id);
                                                                             localStorage.setItem("avatar", payload.user.avatar);
-                                                                            localStorage.setItem("geek_auth", payload.user.geek_auth);
+                                                                            if (payload.user.geek_auth) {
+                                                                                localStorage.setItem("geek_auth", payload.user.geek_auth);
+                                                                            }
                                                                             location.href="/";
                                                                         }
                                                                         return payload;
