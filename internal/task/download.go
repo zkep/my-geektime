@@ -162,7 +162,7 @@ func doProduct(_ context.Context, x *model.Task) error {
 		Statistics: raw,
 		UpdatedAt:  time.Now().Unix(),
 	}
-	if global.CONF.Site.Download {
+	if x.Bstatus > 0 {
 		if status == service.TASK_STATUS_FINISHED {
 			var product geek.ProductBase
 			if len(x.Raw) > 0 {

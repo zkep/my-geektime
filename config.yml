@@ -24,7 +24,7 @@ storage: # mp4 or mp3 save folder
 browser:
   open_browser: true # Automatically open browser after service startup
 site:
-  download: true
+  download: false
   register:
      type: name # name | none
   login:

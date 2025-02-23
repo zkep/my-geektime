@@ -35,6 +35,8 @@ message Task {
   string ciphertext = 14 [(gogoproto.moretags) = "gorm:\"comment:ciphertext\""];
   // rewrite_hls
   bytes rewrite_hls = 15 [(gogoproto.moretags) = "gorm:\"comment:rewrite hls\""];
+  // bstatus
+  int32 bstatus= 16 [(gogoproto.moretags) = "gorm:\"index;size:4;comment:business status\""];
   // raw
   bytes raw = 21[(gogoproto.moretags) = "gorm:\"comment:raw\""];
   // message

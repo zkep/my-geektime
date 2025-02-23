@@ -711,6 +711,22 @@
                   },
                   {
                     "type": "button",
+                    "icon": "fa-solid fa-download",
+                    "visibleOn": "${ ls:role_id === 1 }",
+                    "label": "重新下载音视频",
+                    "actionType": "ajax",
+                    "api": {
+                      "url": "/v2/task/retry",
+                      "method":"post",
+                      "data": {
+                        "pid": "${task_id}",
+                        "retry": true
+                      }
+                    },
+                    "confirmText": "确定要<b>重新下载</b>【${task_name}】到本地磁盘么？<br/> 🔔下载后重新生成【在线文档】会在文档中加入音视频"
+                  },
+                  {
+                    "type": "button",
                     "icon": "fa-solid fa-trash",
                     "visibleOn": "${ ls:role_id === 1 }",
                     "label": "删除",
@@ -940,37 +956,45 @@
                         ],
                         "actions":[
                           {
-                            "type": "button",
-                            "icon": "fa-solid fa-download",
-                            "visibleOn": "${ ls:role_id === 1}",
-                            "label": "下载",
-                            "level": "info",
-                            "actionType": "ajax",
-                            "api": {
-                              "url": "/v2/task/retry",
-                              "method":"post",
-                              "data": {
-                                "pid": "${task_pid}",
-                                "ids": "${task_id}"
+                            "type": "dropdown-button",
+                            "icon": "fa fa-ellipsis-h",
+                            "hideCaret": true,
+                            "tooltip": "更多操作",
+                            "buttons": [
+                              {
+                                "type": "button",
+                                "icon": "fa-solid fa-download",
+                                "level": "danger",
+                                "visibleOn": "${ ls:role_id === 1 && object === undefined}",
+                                "label": "下载",
+                                "actionType": "ajax",
+                                "api": {
+                                  "url": "/v2/task/retry",
+                                  "method":"post",
+                                  "data": {
+                                    "pid": "${task_pid}",
+                                    "ids": "${task_id}"
+                                  }
+                                },
+                                "confirmText": "确定要下载【音视频】到本地磁盘么？"
+                              },
+                              {
+                                "type": "button",
+                                "icon": "fa-solid fa-trash",
+                                "label": "删除",
+                                "level": "light",
+                                "visibleOn": "${ ls:role_id === 1 }",
+                                "actionType": "ajax",
+                                "api": {
+                                  "url": "/v2/task/delete",
+                                  "method":"delete",
+                                  "data": {
+                                    "ids": "${task_id}"
+                                  }
+                                },
+                                "confirmText": "确定要删除 [${task_name}] 课程吗？"
                               }
-                            },
-                            "confirmText": "确定要下载【音视频】到本地磁盘么？"
-                          },
-                          {
-                            "type": "button",
-                            "icon": "fa-solid fa-trash",
-                            "label": "删除",
-                            "visibleOn": "${ ls:role_id === 1 }",
-                            "level": "danger",
-                            "actionType": "ajax",
-                            "api": {
-                              "url": "/v2/task/delete",
-                              "method":"delete",
-                              "data": {
-                                "ids": "${task_id}"
-                              }
-                            },
-                            "confirmText": "确定要删除 [${task_name}] 课程吗？"
+                            ]
                           },
                           {
                             "type": "button",

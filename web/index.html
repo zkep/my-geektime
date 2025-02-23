@@ -138,6 +138,8 @@
                                                                             localStorage.setItem("avatar", payload.user.avatar);
                                                                             if (payload.user.geek_auth) {
                                                                                 localStorage.setItem("geek_auth", payload.user.geek_auth);
+                                                                            }else {
+                                                                                localStorage.removeItem("geek_auth");
                                                                             }
                                                                             location.href="/";
                                                                         }

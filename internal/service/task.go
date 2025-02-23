@@ -122,7 +122,7 @@ func Download(ctx context.Context, x *model.Task, data geek.ArticleData) error {
 		}
 		x.RewriteHls = meta.Spec
 		x.Ciphertext = meta.Ciphertext
-		if global.CONF.Site.Download {
+		if x.Bstatus > 0 {
 			if data.Info.IsVideo {
 				source, err = Video(ctx, dir, fileName, meta)
 				if err != nil {
@@ -139,7 +139,7 @@ func Download(ctx context.Context, x *model.Task, data geek.ArticleData) error {
 		}
 	}
 
-	if global.CONF.Site.Download {
+	if x.Bstatus > 0 {
 		message := task.TaskMessage{}
 		if len(source) > 0 {
 			message.Object = global.Storage.GetKey(source, false)

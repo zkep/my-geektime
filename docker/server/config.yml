@@ -24,7 +24,7 @@ storage: # mp4 or mp3 save folder
 browser:
   open_browser: false
 site:
-  download: true
+  download: false
   register:
     type: name # name | none
   login:

@@ -18,3 +18,6 @@ product:
   api_busy: "The service is busy, please try again later！"
   no_exists_pid: "Non-existent course ID"
 
+tasks:
+  illegal_operation: "After successfully caching all courses, it can be operated. Currently caching courses （%d/%d）"
+  allow_operation: "Currently caching courses （%d/%d）"

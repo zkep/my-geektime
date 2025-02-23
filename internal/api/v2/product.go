@@ -178,6 +178,9 @@ func (p *Product) Download(c *gin.Context) {
 			OtherGroup: product.OtherGroup,
 			OtherTag:   product.OtherTag,
 		}
+		if global.CONF.Site.Download {
+			item.Bstatus = service.TASK_STATUS_PENDING
+		}
 		tasks = append(tasks, &item)
 	}
 	count := len(tasks)
@@ -191,6 +194,9 @@ func (p *Product) Download(c *gin.Context) {
 		},
 	}
 	job.Statistics, _ = json.Marshal(statistics)
+	if global.CONF.Site.Download {
+		job.Bstatus = service.TASK_STATUS_PENDING
+	}
 	err := global.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(job).Error; err != nil {
 			return err

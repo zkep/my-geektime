@@ -121,6 +121,7 @@ func (t *Task) List(c *gin.Context) {
 				_ = json.Unmarshal(l.Message, &taskMessage)
 				if len(taskMessage.Object) > 0 {
 					row.Dir = global.Storage.GetUrl(taskMessage.Object)
+					row.Dir = fmt.Sprintf("%s/", row.Dir)
 				}
 				if len(taskMessage.Doc) > 0 {
 					row.Doc = global.Storage.GetUrl(taskMessage.Doc)
@@ -234,23 +235,60 @@ func (t *Task) Retry(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
+	var info model.Task
+	if err := global.DB.Model(&model.Task{}).Where("task_id", req.Pid).First(&info).Error; err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	var statistics task.TaskStatistics
+	if err := json.Unmarshal(info.Statistics, &statistics); err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	if !req.Retry && len(req.Ids) == 0 && info.Bstatus > 0 {
+		finishCount, ok := statistics.Items[service.TASK_STATUS_FINISHED]
+		if !ok {
+			global.FAIL(c, "tasks.illegal_operation", 0, statistics.Count)
+			return
+		}
+		if statistics.Count != finishCount {
+			global.FAIL(c, "tasks.illegal_operation", finishCount, statistics.Count)
+			return
+		}
+		global.OkWithMsg(c, nil, "tasks.allow_operation", "OK", finishCount, statistics.Count)
+		return
+	}
+	newStatistics := task.TaskStatistics{
+		Count: statistics.Count,
+		Items: map[int]int{
+			service.TASK_STATUS_PENDING:  statistics.Count,
+			service.TASK_STATUS_RUNNING:  0,
+			service.TASK_STATUS_FINISHED: 0,
+			service.TASK_STATUS_ERROR:    0,
+		},
+	}
+	statisticsRaw, _ := json.Marshal(newStatistics)
 	err := global.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&model.Task{}).
 			Where("task_id", req.Pid).
-			UpdateColumn("status", service.TASK_STATUS_PENDING).Error; err != nil {
+			UpdateColumn("status", service.TASK_STATUS_PENDING).
+			UpdateColumn("bstatus", service.TASK_STATUS_PENDING).
+			UpdateColumn("statistics", statisticsRaw).Error; err != nil {
 			return err
 		}
 		if len(req.Ids) == 0 {
 			if err := tx.Model(&model.Task{}).
 				Where("task_pid", req.Pid).
-				UpdateColumn("status", service.TASK_STATUS_PENDING).Error; err != nil {
+				UpdateColumn("status", service.TASK_STATUS_PENDING).
+				UpdateColumn("bstatus", service.TASK_STATUS_PENDING).Error; err != nil {
 				return err
 			}
 		} else {
 			for _, idx := range strings.Split(req.Ids, ",") {
 				if err := tx.Model(&model.Task{}).
 					Where("task_id", idx).
-					UpdateColumn("status", service.TASK_STATUS_PENDING).Error; err != nil {
+					UpdateColumn("status", service.TASK_STATUS_PENDING).
+					UpdateColumn("bstatus", service.TASK_STATUS_PENDING).Error; err != nil {
 					return err
 				}
 			}
@@ -525,6 +563,20 @@ func (t *Task) Export(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
+	var statistics task.TaskStatistics
+	if err := json.Unmarshal(l.Statistics, &statistics); err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
+	}
+	finishCount, ok := statistics.Items[service.TASK_STATUS_FINISHED]
+	if !ok {
+		global.FAIL(c, "tasks.illegal_operation", 0, statistics.Count)
+		return
+	}
+	if statistics.Count != finishCount {
+		global.FAIL(c, "tasks.illegal_operation", finishCount, statistics.Count)
+		return
+	}
 	var product geek.ProductBase
 	if err := json.Unmarshal(l.Raw, &product); err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
@@ -565,6 +617,6 @@ func (t *Task) Export(c *gin.Context) {
 			global.FAIL(c, "fail.msg", err.Error())
 			return
 		}
-		global.OK(c, map[string]any{})
+		global.OK(c, nil)
 	}
 }
