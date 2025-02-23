@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -21,6 +22,10 @@ const (
 	refererURL = "https://time.geekbang.org/dashboard/usercenter"
 )
 
+var (
+	ErrorGeekAccountNotLogin = errors.New("geek account not login")
+)
+
 func SaveCookie(cookies string, identity string, auth *geek.AuthResponse) func(r *http.Response) error {
 	return func(r *http.Response) error {
 		raw, err := io.ReadAll(r.Body)
@@ -31,15 +36,24 @@ func SaveCookie(cookies string, identity string, auth *geek.AuthResponse) func(r
 			global.LOG.Error("SaveCookie", zap.Error(err), zap.String("raw", string(raw)))
 			return err
 		}
+		if auth.Code != 0 {
+			global.LOG.Error("SaveCookie", zap.String("raw", string(raw)))
+			return ErrorGeekAccountNotLogin
+		}
+		var authData geek.GeekUser
+		if err = json.Unmarshal(auth.Data, &authData); err != nil {
+			global.LOG.Error("SaveCookie", zap.Error(err), zap.String("raw", string(raw)))
+			return ErrorGeekAccountNotLogin
+		}
 		user := model.User{
 			Uid:         identity,
-			NickName:    auth.Data.Nick,
-			Avatar:      auth.Data.Avatar,
+			NickName:    authData.Nick,
+			Avatar:      authData.Avatar,
 			AccessToken: cookies,
 		}
-		if err := global.DB.Where(model.User{Uid: identity}).
+		if err = global.DB.Where(model.User{Uid: identity}).
 			Assign(model.User{
-				Avatar:      auth.Data.Avatar,
+				Avatar:      authData.Avatar,
 				AccessToken: cookies,
 			}).
 			FirstOrCreate(&user).Error; err != nil {

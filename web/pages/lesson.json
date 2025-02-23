@@ -828,7 +828,7 @@
               "label": "缓存",
               "level": "light",
               "actionType": "drawer",
-              "visibleOn": "${ ls:access_token === undefined }",
+              "visibleOn": "${ ls:geek_auth === undefined }",
               "drawer": {
                 "resizable": true,
                 "closeOnOutside": true,
@@ -849,7 +849,7 @@
                       "data": {
                         "cookie": "${cookie}"
                       },
-                      "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"access_token\", \"${cookie}\");\n}\nreturn payload;"
+                      "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"geek_auth\", true);\nsetTimeout(\"location.href='/';\", 3000)\n;}\nreturn payload;"
                     },
                     "body": [
                       {
@@ -901,14 +901,15 @@
               "level": "info",
               "icon": "fa fa-download",
               "actionType": "ajax",
-              "visibleOn": "${ ls:access_token !== undefined }",
+              "visibleOn": "${ ls:geek_auth !== undefined }",
               "api": {
                 "url": "/v2/product/download",
                 "method":"post",
                 "data": {
                   "pid": "${id | trim}",
                   "ids": "${article.id | trim}"
-                }
+                },
+                "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
               },
               "confirmText": "缓存 [${share.title}]，\n 请在[我的课程]查看详情"
             }

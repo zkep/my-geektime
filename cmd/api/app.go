@@ -75,9 +75,6 @@ func (app *App) Run(f *Flags) error {
 	if err := initialize.Tw(app.ctx); err != nil {
 		return err
 	}
-	if err := initialize.Redis(app.ctx); err != nil {
-		return err
-	}
 	if err := initialize.I18N(app.ctx, app.assets); err != nil {
 		return err
 	}

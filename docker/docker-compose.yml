@@ -19,17 +19,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 33060:3306
-  redis:
-    image: redis:latest
-    hostname: redis
-    restart: always
-    networks:
-      - mygeektime
-    volumes:
-      - ./redis/data:/data
-    command: redis-server --requirepass 123456
-    ports:
-      - 63790:6379
   server:
     hostname: mygeektime
     image: zkep/mygeektime:latest

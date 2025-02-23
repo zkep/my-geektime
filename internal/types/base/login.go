@@ -43,8 +43,8 @@ type User struct {
 	NickName string `json:"nick_name,omitempty"`
 	// avatar
 	Avatar string `json:"avatar,omitempty"`
-	// access_token
-	AccessToken string `json:"access_token,omitempty"`
+	// geek auth
+	GeekAuth bool `json:"geek_auth,omitempty"`
 	// role_id
 	RoleId int32 `json:"role_id,omitempty"`
 }

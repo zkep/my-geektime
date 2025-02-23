@@ -7,7 +7,5 @@ type Config struct {
 	DB      Database `json:"database" yaml:"database"`
 	Storage Storage  `json:"storage" yaml:"storage"`
 	Browser Browser  `json:"browser" yaml:"browser"`
-	Email   Email    `json:"email" yaml:"email"`
-	Redis   Redis    `json:"redis" yaml:"redis"`
 	Site    Site     `json:"site" yaml:"site"`
 }

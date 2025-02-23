@@ -1,10 +1,16 @@
 package geek
 
+import "encoding/json"
+
 type AuthResponse struct {
-	Error []any    `json:"error,omitempty"`
-	Extra []any    `json:"extra,omitempty"`
-	Data  GeekUser `json:"data,omitempty"`
-	Code  int      `json:"code,omitempty"`
+	Error json.RawMessage `json:"error,omitempty"`
+	Data  json.RawMessage `json:"data,omitempty"`
+	Code  int             `json:"code,omitempty"`
+}
+
+type AuthError struct {
+	Msg  string `json:"msg,omitempty"`
+	Code int    `json:"code,omitempty"`
 }
 
 type GeekUser struct {

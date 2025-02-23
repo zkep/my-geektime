@@ -11,7 +11,6 @@ func base(public, private *gin.RouterGroup) {
 		public.GET("/base/config", api.Config)
 		public.POST("/base/login", api.Login)
 		public.POST("/base/register", api.Register)
-		public.POST("/base/send/email", api.SendEmail)
 	}
 	{
 		private.POST("/base/refresh/cookie", api.RefreshCookie)

@@ -13,6 +13,6 @@ base:
     err_code: "验证码不正确"
 
 product:
-  no_cookie: "极客时间cookie不存在，请刷新cookie!"
+  no_cookie: "极客时间cookie不存在或过期，请刷新cookie!"
   api_busy: "服务繁忙，请稍后再试！"
   no_exists_pid: "不存在的课程ID"

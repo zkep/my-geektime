@@ -2,6 +2,7 @@ package v2
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -33,6 +34,16 @@ func (p *Product) Download(c *gin.Context) {
 	accessToken := c.GetString(global.AccessToken)
 	if accessToken == "" {
 		global.FAIL(c, "product.no_cookie")
+		return
+	}
+	// check geektime cookie
+	var auth geek.AuthResponse
+	if err := service.Authority(accessToken, service.SaveCookie(accessToken, identity, &auth)); err != nil {
+		if errors.Is(err, service.ErrorGeekAccountNotLogin) {
+			global.JSON(c, 10002, nil, "product.no_cookie", "")
+		} else {
+			global.FAIL(c, "fail.msg", err.Error())
+		}
 		return
 	}
 	articlesMap := make(map[int64]*model.Article, 10)

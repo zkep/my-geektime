@@ -1015,7 +1015,7 @@
                             "label": "缓存",
                             "level": "light",
                             "actionType": "drawer",
-                            "visibleOn": "${ ls:access_token === undefined }",
+                            "visibleOn": "${ ls:geek_auth === undefined }",
                             "drawer": {
                               "resizable": true,
                               "closeOnOutside": true,
@@ -1036,7 +1036,7 @@
                                     "data": {
                                       "cookie": "${cookie}"
                                     },
-                                    "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"access_token\", \"${cookie}\");\n}\nreturn payload;"
+                                    "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"geek_auth\", true);\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
                                   },
                                   "body": [
                                     {
@@ -1087,7 +1087,7 @@
                             "label": "缓存",
                             "level": "info",
                             "icon": "fa fa-download",
-                            "visibleOn": "${ ls:access_token !== undefined  }",
+                            "visibleOn": "${ ls:geek_auth !== undefined  }",
                             "actionType": "ajax",
                             "api": {
                               "url": "/v2/product/download",
@@ -1095,7 +1095,8 @@
                               "data": {
                                 "pid": "${cid}",
                                 "ids": "${id | trim}"
-                              }
+                              },
+                              "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
                             },
                             "confirmText": "缓存 [${share.title}]，\n 请在[我的课程]查看详情"
                           }
@@ -1109,7 +1110,7 @@
                           "label": "批量缓存",
                           "level": "light",
                           "actionType": "drawer",
-                          "visibleOn": "${ ls:access_token === undefined }",
+                          "visibleOn": "${ ls:geek_auth === undefined }",
                           "drawer": {
                             "resizable": true,
                             "closeOnOutside": true,
@@ -1130,7 +1131,7 @@
                                   "data": {
                                     "cookie": "${cookie}"
                                   },
-                                  "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"access_token\", \"${cookie}\");\n}\nreturn payload;"
+                                  "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"geek_auth\", true);setTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
                                 },
                                 "body": [
                                   {
@@ -1180,14 +1181,15 @@
                           "label": "批量缓存",
                           "level": "info",
                           "actionType": "ajax",
-                          "visibleOn": "${ ls:access_token !== undefined }",
+                          "visibleOn": "${ ls:geek_auth !== undefined }",
                           "api": {
                             "url": "/v2/product/download",
                             "method":"post",
                             "data": {
                               "pid": "${cid}",
                               "ids": "${ids|raw}"
-                            }
+                            },
+                            "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
                           },
                           "confirmText": "缓存 [${share.title}]，\n 请在[我的课程]查看详情"
                         }
@@ -1227,7 +1229,7 @@
                 "label": "缓存",
                 "level": "light",
                 "actionType": "drawer",
-                "visibleOn": "${ ls:access_token === undefined }",
+                "visibleOn": "${ ls:geek_auth === undefined }",
                 "drawer": {
                   "resizable": true,
                   "closeOnOutside": true,
@@ -1248,7 +1250,7 @@
                         "data": {
                           "cookie": "${cookie}"
                         },
-                        "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"access_token\", \"${cookie}\");\n}\nreturn payload;"
+                        "adaptor": "if (payload.status === 0){\nlocalStorage.setItem(\"geek_auth\", true);\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
                       },
                       "body": [
                         {
@@ -1300,14 +1302,15 @@
                 "level": "info",
                 "icon": "fa fa-download",
                 "actionType": "ajax",
-                "visibleOn": "${ ls:access_token !== undefined }",
+                "visibleOn": "${ ls:geek_auth !== undefined }",
                 "confirmText": "缓存 [${share.title}],\n 请在 [我的课程] 查看详情",
                 "api": {
                   "url": "/v2/product/download",
                   "method":"post",
                   "data": {
                     "pid": "${id}"
-                  }
+                  },
+                  "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
                 }
               }
             ]

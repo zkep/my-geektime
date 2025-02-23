@@ -9,11 +9,6 @@ jwt:
 i18n:
   directory: i18n
   default_lang: zh-CN
-redis:
-  addr: 127.0.0.1:6379
-  password: 123456
-  pool_size: 20
-  max_open_conns: 10
 database:
   driver:  sqlite   # mysql|postgres|sqlite
   source:  mygeektime.db
@@ -21,12 +16,6 @@ database:
   # source: host=127.0.0.1 user=postgres password=postgres dbname=mygeektime port=5432 sslmode=disable TimeZone=Asia/Shanghai
   max_idle_conns: 20
   max_open_conns: 100
-email:
-  host: smtp.qq.com
-  port: 587
-  from:
-  user:
-  password:
 storage: # mp4 or mp3 save folder
   driver: local
   directory: repo  # Customize download folder, default to execute repo directory under the directory
@@ -37,13 +26,9 @@ browser:
 site:
   download: true
   register:
-     type: name # email | name | none
-     email:
-        subject: "我的极客时间邮箱验证码"
-        body: "验证码： <b>%s</b> <br/><br/>"
-        attach:
+     type: name # name | none
   login:
-    type: name # email | name
+    type: name # name
     guest:
       name:
       password:
