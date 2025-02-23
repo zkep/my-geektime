@@ -17,7 +17,7 @@ git clone https://github.com/zkep/mygeektime.git
 
 cd mygeektime/docker
 
-# Apple M1 , M2 modify docker-compose.yml 35 line use zkep/mygeektime:mac-m
+# Apple M1 , M2 modify docker-compose.yml 24 line use zkep/mygeektime:mac-m
 
 docker-compose up -d
 ```

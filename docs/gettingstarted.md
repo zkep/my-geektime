@@ -12,10 +12,13 @@ git clone https://github.com/zkep/mygeektime.git
 # 切入docker compose 文件目录
 cd mygeektime/docker
 
-# 下载默认数据表
-wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/tasks.sql -O mysql/init/tasks.sql
+# 更新到最新的镜像
+docker pull zkep/mygeektime:latest
 
-# Apple M1 , M2 修改docker-compose.yml 第35行镜像改成 使用 zkep/mygeektime:mac-m
+# Apple Mac M1 , M2 更新到最新的镜像
+docker pull zkep/mygeektime:mac-m
+
+# Apple Mac  M1 , M2 修改docker-compose.yml 第24行镜像改成 使用 zkep/mygeektime:mac-m
 
 # 后台启动服务
 docker-compose up -d
@@ -36,6 +39,7 @@ zkep/mygeektime:latest  server --config=config.yml
 
 
 #### [二进制包安装](https://github.com/zkep/mygeektime/releases) ，推荐指数 🌟🌟
+
 下载对应操作系统的二进制包，下面以MacOS为例
 ```shell
 # 下载
@@ -72,5 +76,12 @@ cd ffmpeg
 
 make && make install
 ```
+
+### 安装python环境依赖，mkdocs 用于生成 markdown文档
+
+```shell
+pip install mkdocs-material
+```
+
 
 [配置项](./config.md)  👉
