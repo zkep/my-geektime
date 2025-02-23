@@ -723,7 +723,7 @@
                         "retry": true
                       }
                     },
-                    "confirmText": "确定要<b>重新下载</b>【${task_name}】到本地磁盘么？<br/> 🔔下载后重新生成【在线文档】会在文档中加入音视频"
+                    "confirmText": "确定要<b>重新下载</b>【${task_name}】到本地磁盘么？<br/> 🔔下载后重新生成【文档】会在文档中加入音视频"
                   },
                   {
                     "type": "button",
@@ -743,7 +743,7 @@
                 ]
               },
               {
-                "label": "生成在线文档",
+                "label": "生成文档",
                 "icon": "fa-solid fa-columns",
                 "type": "action",
                 "size": "sm",
@@ -757,13 +757,13 @@
                 "level": "success",
                 "actionType": "url",
                 "url": "${doc}",
-                "label": "[查看]在线文档",
+                "label": "文档",
                 "visibleOn": "${ doc !== undefined }"
               },
               {
                 "type": "button",
                 "icon": "fa fa-eye",
-                "label": "播放",
+                "label": "课程",
                 "level": "light",
                 "actionType": "drawer",
                 "drawer": {
@@ -964,9 +964,9 @@
                               {
                                 "type": "button",
                                 "icon": "fa-solid fa-download",
-                                "level": "danger",
-                                "visibleOn": "${ ls:role_id === 1 && object === undefined}",
-                                "label": "下载",
+                                "level": "light",
+                                "visibleOn": "${ ls:role_id === 1}",
+                                "label": "${object === undefined ? '下载': '重新下载'}",
                                 "actionType": "ajax",
                                 "api": {
                                   "url": "/v2/task/retry",
@@ -1280,7 +1280,7 @@
                     "pid": "${task_id}"
                   }
                 },
-                "confirmText": "确定要下载【${task_name}】到本地磁盘么？<br/> 🔔下载后重新生成【在线文档】会在文档中加入音视频"
+                "confirmText": "确定要下载【${task_name}】到本地磁盘么？<br/> 🔔下载后重新生成【文档】会在文档中加入音视频"
               },
               {
                 "type": "action",
@@ -1288,7 +1288,7 @@
                 "level": "success",
                 "actionType": "url",
                 "url": "${dir}",
-                "label": "[查看]音视频",
+                "label": "音视频",
                 "visibleOn": "${ dir !== undefined }"
               }
             ]
