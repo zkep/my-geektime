@@ -36,8 +36,9 @@ type (
 	}
 
 	Proxy struct {
-		Urls     []string `json:"urls" yaml:"urls"`
-		ProxyUrl string   `yaml:"proxy_url" json:"proxy_url"`
-		Cache    bool     `json:"cache" yaml:"cache"`
+		Urls        []string `json:"urls" yaml:"urls"`
+		ProxyUrl    string   `yaml:"proxy_url" json:"proxy_url"`
+		Cache       bool     `json:"cache" yaml:"cache"`
+		CachePrefix string   `json:"cache_prefix" yaml:"cache_prefix"`
 	}
 )
