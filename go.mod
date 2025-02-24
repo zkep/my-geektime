@@ -13,7 +13,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/uaxe/cliz v0.0.0-20241108190715-b81429d249af
 	go.uber.org/zap v1.27.0
-	golang.org/x/crypto v0.33.0
+	golang.org/x/crypto v0.34.0
 	golang.org/x/net v0.35.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.7
