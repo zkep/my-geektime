@@ -720,14 +720,10 @@
                         "data": {
                           "sample": false,
                           "order": "earliest",
-                          "cid": "${id}"
+                          "cid": "${id}",
+                          "perPage": 500,
+                          "page":  "${page}"
                         }
-                      },
-                      "data": {
-                        "cid": "${id}"
-                      },
-                      "defaultParams": {
-                        "perPage": 100
                       },
                       "mode": "cards",
                       "columnsCount": 4,
@@ -797,8 +793,7 @@
                               "closeOnOutside": true,
                               "actions": [],
                               "width": "60%",
-                              "title": "课程详情",
-                              "body": [
+                              "title": [
                                 {
                                   "type": "service",
                                   "api": {
@@ -830,6 +825,11 @@
                                     },
                                     {
                                       "type": "video",
+                                      "style": {
+                                        "width": "30%",
+                                        "height": "30%",
+                                        "margin": 5
+                                      },
                                       "muted": true,
                                       "autoPlay": false,
                                       "rates": [1.0, 1.2, 1.5, 2.0],
@@ -839,6 +839,11 @@
                                     },
                                     {
                                       "type": "video",
+                                      "style": {
+                                        "width": "30%",
+                                        "height": "30%",
+                                        "margin": 5
+                                      },
                                       "muted": true,
                                       "autoPlay": false,
                                       "rates": [1.0, 1.2, 1.5, 2.0],
@@ -848,13 +853,29 @@
                                     },
                                     {
                                       "type": "video",
+                                      "style": {
+                                        "width": "30%",
+                                        "height": "30%",
+                                        "margin": 5
+                                      },
                                       "muted": true,
                                       "autoPlay": false,
                                       "rates": [1.0, 1.2, 1.5, 2.0],
                                       "src": "${audio.url}",
                                       "poster": "${cover.default}",
                                       "visibleOn": "${ audio.url !== undefined }"
-                                    },
+                                    }
+                                  ]
+                                }
+                              ],
+                              "body": [
+                                {
+                                  "type": "service",
+                                  "api": {
+                                    "method": "get",
+                                    "url": "/v2/product/article/info?id=${id}"
+                                  },
+                                  "body": [
                                     {
                                       "type": "divider"
                                     },
@@ -884,10 +905,8 @@
                                   "columns": [
                                     {
                                       "name": "id",
-                                      "label": "ID",
-                                      "type": "text",
-                                      "toggled": true,
-                                      "width": 150
+                                      "label": "",
+                                      "type": "hidden"
                                     },
                                     {
                                       "name": "user_header",
@@ -1201,15 +1220,9 @@
                           "type": "tpl",
                           "tpl": "当前有 ${count} 条数据。",
                           "className": "v-middle"
-                        },
-                        "pagination",
-                        "switch-per-page"
+                        }
                       ],
-                      "footerToolbar": [
-                        "statistics",
-                        "switch-per-page",
-                        "pagination"
-                      ],
+                      "footerToolbar": [],
                       "affixHeader": true,
                       "columnsTogglable": "auto",
                       "placeholder": "暂无数据",

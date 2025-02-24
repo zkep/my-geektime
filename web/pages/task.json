@@ -771,20 +771,19 @@
                   "closeOnOutside": true,
                   "actions": [],
                   "size": "xl",
-                  "title": "详情",
-                  "body": [
-                    {
-                      "type": "card",
-                      "header": {
-                        "className": "word-break",
-                        "title": "$task_name",
-                        "subTitle": "$subtitle",
-                        "description": "共 ${article.count} 讲",
-                        "avatar": "${cover | raw}",
-                        "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
-                      },
-                      "body": []
+                  "title": {
+                    "type": "card",
+                    "header": {
+                      "className": "word-break",
+                      "title": "$task_name",
+                      "subTitle": "$subtitle",
+                      "description": "共 ${article.count} 讲",
+                      "avatar": "${cover | raw}",
+                      "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
                     },
+                    "body": []
+                  },
+                  "body": [
                     {
                       "type": "markdown",
                       "wrapperComponent": "pre",
@@ -934,7 +933,7 @@
                             "name": "status",
                             "type": "static-mapping",
                             "visibleOn": "${ ls:role_id === 1 }",
-                            "label": "状态: ",
+                            "label": "状态",
                             "canAccessSuperData": false,
                             "classNameExpr": "${ status =='4' ? 'text-danger' : '' }",
                             "map": {
@@ -1001,14 +1000,92 @@
                             "icon": "fa fa-eye",
                             "label": "播放",
                             "level": "light",
-                            "actionType": "drawer",
+                            "actionType": "dialog",
                             "visibleOn": "${status !='1'}",
-                            "drawer": {
+                            "nextCondition": "true",
+                            "dialog": {
+                              "size": "full",
                               "resizable": true,
                               "closeOnOutside": true,
+                              "overlay": true,
                               "actions": [],
-                              "width": "60%",
-                              "title": "",
+                              "title": [
+                                {
+                                  "type": "service",
+                                  "api": {
+                                    "method": "get",
+                                    "url": "/v2/task/info?id=${task_id}"
+                                  },
+                                  "body": [
+                                    {
+                                      "type": "flex",
+                                      "justify": "space-evenly",
+                                      "items": [
+                                        {
+                                          "type": "html",
+                                          "html":  "${task_name}<br/><br/>${article.summary === undefined ? '' : '概要：'+article.summary}<br/><br/>${message.text === undefined ? '' : '下载信息：'+message.text}"
+                                        },
+                                        {
+                                          "type": "video",
+                                          "style": {
+                                            "width": "20%",
+                                            "height": "20%",
+                                            "margin": 5
+                                          },
+                                          "muted": true,
+                                          "autoPlay": false,
+                                          "rates": [1.0, 1.2, 1.5, 2.0],
+                                          "src": "${article.video.hls_medias|last|pick:url}",
+                                          "poster": "${article.video.cover}",
+                                          "visibleOn": "${ play_url === undefined && article.video.hls_medias !== undefined }"
+                                        },
+                                        {
+                                          "type": "video",
+                                          "style": {
+                                            "width": "20%",
+                                            "height": "20%",
+                                            "margin": 5
+                                          },
+                                          "muted": true,
+                                          "autoPlay": false,
+                                          "rates": [1.0, 1.2, 1.5, 2.0],
+                                          "src": "${article.video_preview.medias|last|pick:url}",
+                                          "poster": "${article.video.cover}",
+                                          "visibleOn": "${ play_url === undefined && article.video.hls_medias === undefined && article.video_preview.medias !== undefined }"
+                                        },
+                                        {
+                                          "type": "video",
+                                          "style": {
+                                            "width": "20%",
+                                            "height": "20%",
+                                            "margin": 5
+                                          },
+                                          "muted": true,
+                                          "autoPlay": false,
+                                          "rates": [1.0, 1.2, 1.5, 2.0],
+                                          "src": "${play_url}",
+                                          "poster": "${ article.cover.default }",
+                                          "visibleOn": "${ play_url !== undefined }"
+                                        },
+                                        {
+                                          "type": "video",
+                                          "style": {
+                                            "width": "20%",
+                                            "height": "20%",
+                                            "margin": 5
+                                          },
+                                          "muted": true,
+                                          "autoPlay": false,
+                                          "rates": [1.0, 1.2, 1.5, 2.0],
+                                          "src": "${article.audio.url}",
+                                          "poster": "${ article.cover.default }",
+                                          "visibleOn": "${ play_url === undefined && article.audio.url !== undefined}"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
                               "body": [
                                 {
                                   "type": "service",
@@ -1018,234 +1095,195 @@
                                   },
                                   "body": [
                                     {
-                                      "type": "property",
-                                      "title": "${article.title}",
-                                      "mode": "simple",
-                                      "separator": "：",
-                                      "items": [
+                                      "type": "panel",
+                                      "title": "",
+                                      "affixFooter": true,
+                                      "actions": [
                                         {
-                                          "label": "PID",
-                                          "content": "${article.pid}"
+                                          "type": "button-group",
+                                          "btnLevel": "light",
+                                          "btnActiveLevel": "warning",
+                                          "style": {
+                                            "margin": 10
+                                          },
+                                          "buttons": [
+                                            {
+                                              "label": "导出Markdown",
+                                              "type": "action",
+                                              "size": "sm",
+                                              "level": "info",
+                                              "actionType": "download",
+                                              "api": "/v2/task/download?id=${task_id}&type=markdown"
+                                            }
+                                          ]
                                         },
                                         {
-                                          "label": "ID",
-                                          "content": "${article.id}"
-                                        } ,
-                                        {
-                                          "label": "下载信息",
-                                          "content": "${message.text}",
-                                          "span": 3,
-                                          "visibleOn": "${ message.text !== '' }"
-                                        }
-                                      ]
-                                    },
-                                    {
-                                      "type": "divider"
-                                    },
-                                    {
-                                      "type": "button-group",
-                                      "btnLevel": "light",
-                                      "btnActiveLevel": "warning",
-                                      "style": {
-                                        "margin": 10
-                                      },
-                                      "buttons": [
-                                        {
-                                          "label": "导出Markdown",
-                                          "type": "action",
-                                          "size": "sm",
+                                          "type": "button",
+                                          "actionType": "prev",
                                           "level": "info",
-                                          "actionType": "download",
-                                          "api": "/v2/task/download?id=${task_id}&type=markdown"
-                                        }
-                                      ]
-                                    },
-                                    {
-                                      "type": "divider"
-                                    },
-                                    {
-                                      "type": "video",
-                                      "muted": true,
-                                      "autoPlay": false,
-                                      "rates": [1.0, 1.2, 1.5, 2.0],
-                                      "src": "${article.video.hls_medias|last|pick:url}",
-                                      "poster": "${article.video.cover}",
-                                      "visibleOn": "${ play_url === undefined && article.video.hls_medias !== undefined }"
-                                    },
-                                    {
-                                      "type": "video",
-                                      "muted": true,
-                                      "autoPlay": false,
-                                      "rates": [1.0, 1.2, 1.5, 2.0],
-                                      "src": "${article.video_preview.medias|last|pick:url}",
-                                      "poster": "${article.video.cover}",
-                                      "visibleOn": "${ play_url === undefined && article.video.hls_medias === undefined && article.video_preview.medias !== undefined }"
-                                    },
-                                    {
-                                      "type": "video",
-                                      "muted": true,
-                                      "autoPlay": false,
-                                      "rates": [1.0, 1.2, 1.5, 2.0],
-                                      "src": "${play_url}",
-                                      "poster": "${ article.cover.default }",
-                                      "visibleOn": "${ play_url !== undefined }"
-                                    },
-                                    {
-                                      "type": "video",
-                                      "muted": true,
-                                      "autoPlay": false,
-                                      "rates": [1.0, 1.2, 1.5, 2.0],
-                                      "src": "${article.audio.url}",
-                                      "poster": "${ article.cover.default }",
-                                      "visibleOn": "${ play_url === undefined && article.audio.url !== undefined}"
-                                    },
-                                    {
-                                      "type": "divider"
-                                    },
-                                    {
-                                      "type": "markdown",
-                                      "name": "article.content",
-                                      "label": "附件"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "crud",
-                                  "label": "评论列表",
-                                  "api": {
-                                    "method": "get",
-                                    "url": "/v2/product/article/commont/list",
-                                    "data": {
-                                      "perPage": "${perPage}",
-                                      "aid": "${other_id}",
-                                      "page": "$page"
-                                    }
-                                  },
-                                  "defaultParams": {
-                                    "perPage": 10
-                                  },
-                                  "columns": [
-                                    {
-                                      "name": "id",
-                                      "label": "ID",
-                                      "type": "text",
-                                      "toggled": true,
-                                      "width": 150
-                                    },
-                                    {
-                                      "name": "user_header",
-                                      "label": "头像",
-                                      "text": "${user_name}",
-                                      "type": "avatar",
-                                      "src": "${user_header}",
-                                      "onError": "return true;"
-                                    },
-                                    {
-                                      "name": "user_name",
-                                      "label": "用户名",
-                                      "type": "text",
-                                      "width": 150
-                                    },
-                                    {
-                                      "name": "discussion_count",
-                                      "label": "讨论数",
-                                      "type": "text",
-                                      "width": 50
-                                    },
-                                    {
-                                      "name": "like_count",
-                                      "label": "点赞数",
-                                      "type": "text",
-                                      "width": 50
-                                    },
-                                    {
-                                      "name": "comment_content",
-                                      "label": "评论内容",
-                                      "type": "html"
-                                    },
-                                    {
-                                      "type": "operation",
-                                      "label": "操作",
-                                      "width": 100,
-                                      "buttons": [
+                                          "visibleOn": "data.hasPrev",
+                                          "label": "上一个"
+                                        },
                                         {
                                           "type": "button",
-                                          "label": "查看讨论",
-                                          "actionType": "dialog",
+                                          "actionType": "next",
                                           "level": "info",
-                                          "visibleOn": "${ discussion_count > 0 }",
-                                          "dialog": {
-                                            "title": "查看讨论",
-                                            "size": "lg",
-                                            "body": [
-                                              {
-                                                "type": "crud",
-                                                "label": "讨论列表",
-                                                "api": {
-                                                  "method": "get",
-                                                  "url": "/v2/product/article/discussion/list",
-                                                  "data": {
-                                                    "perPage": "${perPage}",
-                                                    "page": "$page",
-                                                    "use_likes_order": true,
-                                                    "target_id": "${id}",
-                                                    "target_type": 1,
-                                                    "size": "${perPage}",
-                                                    "prev": "$page",
-                                                    "page_type": 1
-                                                  }
-                                                },
-                                                "defaultParams": {
-                                                  "perPage": 10
-                                                },
-                                                "columns": [
-                                                  {
-                                                    "name": "discussion.id",
-                                                    "label": "ID",
-                                                    "type": "text",
-                                                    "toggled": true,
-                                                    "width": 60
-                                                  },
-                                                  {
-                                                    "name": "author.avatar",
-                                                    "label": "头像",
-                                                    "text": "${author.nickname}",
-                                                    "type": "avatar",
-                                                    "src": "${author.avatar}",
-                                                    "onError": "return true;"
-                                                  },
-                                                  {
-                                                    "name": "author.nickname",
-                                                    "label": "昵称",
-                                                    "type": "text",
-                                                    "width": 100
-                                                  },
-                                                  {
-                                                    "name": "discussion.ctime",
-                                                    "label": "时间",
-                                                    "type": "date",
-                                                    "format": "YYYY-MM-DD",
-                                                    "width": 100
-                                                  },
-                                                  {
-                                                    "name": "discussion.likes_number",
-                                                    "label": "点赞数",
-                                                    "type": "text",
-                                                    "width": 50
-                                                  },
-                                                  {
-                                                    "name": "discussion.discussion_content",
-                                                    "label": "讨论内容",
-                                                    "type": "html"
-                                                  }
-                                                ]
-                                              }
-                                            ]
-                                          }
+                                          "visibleOn": "data.hasNext",
+                                          "label": "下一个"
                                         }
                                       ],
-                                      "toggled": true,
-                                      "placeholder": "-"
+                                      "body": [
+                                        {
+                                          "type": "static",
+                                          "label": "下载信息",
+                                          "value": "${message.text}",
+                                          "visibleOn": "${ message.text !== undefined }"
+                                        },
+                                        {
+                                          "type": "divider"
+                                        },
+                                        {
+                                          "type": "markdown",
+                                          "name": "article.content",
+                                          "label": "附件"
+                                        },
+                                        {
+                                          "type": "crud",
+                                          "label": "评论列表",
+                                          "api": {
+                                            "method": "get",
+                                            "url": "/v2/product/article/commont/list",
+                                            "data": {
+                                              "perPage": "${perPage}",
+                                              "aid": "${other_id}",
+                                              "page": "$page"
+                                            }
+                                          },
+                                          "defaultParams": {
+                                            "perPage": 5
+                                          },
+                                          "columns": [
+                                            {
+                                              "name": "id",
+                                              "label": "",
+                                              "type": "hidden"
+                                            },
+                                            {
+                                              "name": "user_header",
+                                              "label": "头像",
+                                              "text": "${user_name}",
+                                              "type": "avatar",
+                                              "src": "${user_header}",
+                                              "onError": "return true;"
+                                            },
+                                            {
+                                              "name": "user_name",
+                                              "label": "用户名",
+                                              "type": "text",
+                                              "width": 100
+                                            },
+                                            {
+                                              "name": "discussion_count",
+                                              "label": "讨论数",
+                                              "type": "text",
+                                              "width": 20
+                                            },
+                                            {
+                                              "name": "like_count",
+                                              "label": "点赞数",
+                                              "type": "text",
+                                              "width": 20
+                                            },
+                                            {
+                                              "name": "comment_content",
+                                              "label": "评论内容",
+                                              "type": "html"
+                                            },
+                                            {
+                                              "type": "operation",
+                                              "label": "操作",
+                                              "width": 100,
+                                              "buttons": [
+                                                {
+                                                  "type": "button",
+                                                  "label": "查看讨论",
+                                                  "actionType": "dialog",
+                                                  "level": "info",
+                                                  "visibleOn": "${ discussion_count > 0 }",
+                                                  "dialog": {
+                                                    "title": "查看讨论",
+                                                    "size": "lg",
+                                                    "body": [
+                                                      {
+                                                        "type": "crud",
+                                                        "label": "讨论列表",
+                                                        "api": {
+                                                          "method": "get",
+                                                          "url": "/v2/product/article/discussion/list",
+                                                          "data": {
+                                                            "perPage": "${perPage}",
+                                                            "page": "$page",
+                                                            "use_likes_order": true,
+                                                            "target_id": "${id}",
+                                                            "target_type": 1,
+                                                            "size": "${perPage}",
+                                                            "prev": "$page",
+                                                            "page_type": 1
+                                                          }
+                                                        },
+                                                        "defaultParams": {
+                                                          "perPage": 10
+                                                        },
+                                                        "columns": [
+                                                          {
+                                                            "name": "discussion.id",
+                                                            "label": "",
+                                                            "type": "hidden"
+                                                          },
+                                                          {
+                                                            "name": "author.avatar",
+                                                            "label": "头像",
+                                                            "text": "${author.nickname}",
+                                                            "type": "avatar",
+                                                            "src": "${author.avatar}",
+                                                            "onError": "return true;"
+                                                          },
+                                                          {
+                                                            "name": "author.nickname",
+                                                            "label": "昵称",
+                                                            "type": "text",
+                                                            "width": 100
+                                                          },
+                                                          {
+                                                            "name": "discussion.ctime",
+                                                            "label": "时间",
+                                                            "type": "date",
+                                                            "format": "YYYY-MM-DD",
+                                                            "width": 100
+                                                          },
+                                                          {
+                                                            "name": "discussion.likes_number",
+                                                            "label": "点赞数",
+                                                            "type": "text",
+                                                            "width": 50
+                                                          },
+                                                          {
+                                                            "name": "discussion.discussion_content",
+                                                            "label": "讨论内容",
+                                                            "type": "html"
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "toggled": true,
+                                              "placeholder": "-"
+                                            }
+                                          ]
+                                        }
+                                      ]
                                     }
                                   ]
                                 }

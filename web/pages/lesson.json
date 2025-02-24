@@ -610,8 +610,7 @@
                 "closeOnOutside": true,
                 "actions": [],
                 "width": "60%",
-                "title": "课程详情",
-                "body": [
+                "title": [
                   {
                     "type": "service",
                     "api": {
@@ -643,6 +642,11 @@
                       },
                       {
                         "type": "video",
+                        "style": {
+                          "width": "30%",
+                          "height": "30%",
+                          "margin": 5
+                        },
                         "muted": true,
                         "autoPlay": false,
                         "rates": [1.0, 1.2, 1.5, 2.0],
@@ -652,6 +656,11 @@
                       },
                       {
                         "type": "video",
+                        "style": {
+                          "width": "30%",
+                          "height": "30%",
+                          "margin": 5
+                        },
                         "muted": true,
                         "autoPlay": false,
                         "rates": [1.0, 1.2, 1.5, 2.0],
@@ -661,13 +670,29 @@
                       },
                       {
                         "type": "video",
+                        "style": {
+                          "width": "30%",
+                          "height": "30%",
+                          "margin": 5
+                        },
                         "muted": true,
                         "autoPlay": false,
                         "rates": [1.0, 1.2, 1.5, 2.0],
                         "src": "${audio.url}",
                         "poster": "${cover.default}",
                         "visibleOn": "${ audio.url !== undefined }"
-                      },
+                      }
+                    ]
+                  }
+                ],
+                "body": [
+                  {
+                    "type": "service",
+                    "api": {
+                      "method": "get",
+                      "url": "/v2/product/article/info?id=${article.id}"
+                    },
+                    "body": [
                       {
                         "type": "divider"
                       },
@@ -697,10 +722,8 @@
                     "columns": [
                       {
                         "name": "id",
-                        "label": "ID",
-                        "type": "text",
-                        "toggled": true,
-                        "width": 150
+                        "label": "",
+                        "type": "hidden"
                       },
                       {
                         "name": "user_header",

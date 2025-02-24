@@ -14,8 +14,7 @@ func (p *Product) Articles(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	req.Size = req.PerPage
-	req.Prev = req.Page
+	req.Size = 500
 	identity := c.GetString(global.Identity)
 	accessToken := c.GetString(global.AccessToken)
 	resp, err := service.GetArticles(c, identity, accessToken, req)
