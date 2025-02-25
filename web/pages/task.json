@@ -807,7 +807,8 @@
                         "bulkActions"
                       ],
                       "data": {
-                        "xstatus": 0
+                        "xstatus": 0,
+                        "keywords": ""
                       },
                       "filter": {
                         "title": "条件搜索",
