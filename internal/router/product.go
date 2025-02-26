@@ -16,8 +16,6 @@ func product(_, private *gin.RouterGroup) {
 		p.GET("/article/info", api.ArticleInfo)
 		p.GET("/article/commonts", api.ArticleCommonts)
 		p.GET("/article/discussions", api.ArticleDiscussion)
-		p.GET("/article/commont/list", api.ArticleCommontList)
-		p.GET("/article/discussion/list", api.ArticleDiscussionList)
 		p.POST("/download", api.Download)
 	}
 }

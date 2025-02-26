@@ -31,7 +31,7 @@ func (p *Product) ArticleDiscussion(c *gin.Context) {
 	global.OK(c, ret)
 }
 
-func (p *Product) ArticleDiscussionList(c *gin.Context) {
+func (t *Task) ArticleDiscussion(c *gin.Context) {
 	var req geek.DiscussionListRequest
 	if err := c.ShouldBind(&req); err != nil {
 		global.FAIL(c, "fail.msg", err.Error())

@@ -1153,7 +1153,7 @@
                                           "label": "评论列表",
                                           "api": {
                                             "method": "get",
-                                            "url": "/v2/product/article/commont/list",
+                                            "url": "/v2/task/article/commonts",
                                             "data": {
                                               "perPage": "${perPage}",
                                               "aid": "${other_id}",
@@ -1220,7 +1220,7 @@
                                                         "label": "讨论列表",
                                                         "api": {
                                                           "method": "get",
-                                                          "url": "/v2/product/article/discussion/list",
+                                                          "url": "/v2/task/article/discussions",
                                                           "data": {
                                                             "perPage": "${perPage}",
                                                             "page": "$page",

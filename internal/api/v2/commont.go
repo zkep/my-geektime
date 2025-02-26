@@ -30,7 +30,7 @@ func (p *Product) ArticleCommonts(c *gin.Context) {
 	global.OK(c, ret)
 }
 
-func (p *Product) ArticleCommontList(c *gin.Context) {
+func (t *Task) ArticleCommonts(c *gin.Context) {
 	var req geek.ArticleCommentListRequest
 	if err := c.ShouldBind(&req); err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
