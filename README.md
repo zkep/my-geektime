@@ -35,7 +35,7 @@ docker pull zkep/mygeektime:latest
 # Apple Mac M1 , M2 更新到最新的镜像
 docker pull zkep/mygeektime:mac-m
 
-# Apple Mac M1 , M2 修改docker-compose.yml 第24行镜像改成 使用 zkep/my-geektime:mac-m
+# Apple Mac M1 , M2 修改docker-compose.yml 第24行镜像改成 使用 zkep/mygeektime:mac-m
 docker-compose up -d
 ```
 浏览器访问:  http://127.0.0.1:8090
