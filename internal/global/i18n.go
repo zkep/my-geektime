@@ -1,6 +1,6 @@
 package global
 
-import "github.com/zkep/mygeektime/lib/rest"
+import "github.com/zkep/my-geektime/lib/rest"
 
 var (
 	I18N rest.I18n

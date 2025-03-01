@@ -1,6 +1,6 @@
 package task
 
-import "github.com/zkep/mygeektime/internal/types/geek"
+import "github.com/zkep/my-geektime/internal/types/geek"
 
 type TaskListRequest struct {
 	TaskPid     string `json:"task_pid"  form:"task_pid"`

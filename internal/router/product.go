@@ -2,8 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	v2 "github.com/zkep/mygeektime/internal/api/v2"
-	"github.com/zkep/mygeektime/internal/middleware"
+	v2 "github.com/zkep/my-geektime/internal/api/v2"
+	"github.com/zkep/my-geektime/internal/middleware"
 )
 
 func product(_, private *gin.RouterGroup) {

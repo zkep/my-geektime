@@ -16,10 +16,10 @@ import (
 	"time"
 
 	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/internal/model"
-	"github.com/zkep/mygeektime/internal/types/geek"
-	"github.com/zkep/mygeektime/internal/types/task"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/internal/model"
+	"github.com/zkep/my-geektime/internal/types/geek"
+	"github.com/zkep/my-geektime/internal/types/task"
 	"go.uber.org/zap"
 )
 

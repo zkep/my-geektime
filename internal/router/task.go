@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	v2 "github.com/zkep/mygeektime/internal/api/v2"
+	v2 "github.com/zkep/my-geektime/internal/api/v2"
 )
 
 func task(public, private *gin.RouterGroup) {

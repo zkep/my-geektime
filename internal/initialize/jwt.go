@@ -3,8 +3,8 @@ package initialize
 import (
 	"context"
 
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/lib/rest"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/lib/rest"
 )
 
 func Jwt(_ context.Context) error {

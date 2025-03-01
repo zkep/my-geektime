@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/internal/model"
-	"github.com/zkep/mygeektime/internal/types/geek"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/internal/model"
+	"github.com/zkep/my-geektime/internal/types/geek"
 	"go.uber.org/zap"
 )
 

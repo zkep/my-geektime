@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/zkep/mygeektime/internal/config"
-	"github.com/zkep/mygeektime/internal/global"
-	mw "github.com/zkep/mygeektime/internal/middleware"
+	"github.com/zkep/my-geektime/internal/config"
+	"github.com/zkep/my-geektime/internal/global"
+	mw "github.com/zkep/my-geektime/internal/middleware"
 )
 
 func NewRouter(assets embed.FS) *gin.Engine {

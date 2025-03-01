@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/lib/rest"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/lib/rest"
 )
 
 func JWTMiddleware() gin.HandlerFunc {

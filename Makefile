@@ -1,4 +1,4 @@
-PROJECT:=mygeektime
+PROJECT:=my-geektime
 
 .PHONY: build
 
@@ -19,7 +19,7 @@ githook:
 
 run: build
 	gofmt -w ./
-	mygeektime \
+	my-geektime \
     --help
 
 website:

@@ -9,9 +9,9 @@ import (
 	"syscall"
 
 	"github.com/uaxe/cliz"
-	"github.com/zkep/mygeektime/cmd/api"
-	"github.com/zkep/mygeektime/cmd/cli"
-	"github.com/zkep/mygeektime/lib/color"
+	"github.com/zkep/my-geektime/cmd/api"
+	"github.com/zkep/my-geektime/cmd/cli"
+	"github.com/zkep/my-geektime/lib/color"
 )
 
 type App struct {

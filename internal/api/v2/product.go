@@ -9,12 +9,12 @@ import (
 
 	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/internal/model"
-	"github.com/zkep/mygeektime/internal/service"
-	"github.com/zkep/mygeektime/internal/types/geek"
-	"github.com/zkep/mygeektime/internal/types/task"
-	"github.com/zkep/mygeektime/lib/utils"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/internal/model"
+	"github.com/zkep/my-geektime/internal/service"
+	"github.com/zkep/my-geektime/internal/types/geek"
+	"github.com/zkep/my-geektime/internal/types/task"
+	"github.com/zkep/my-geektime/lib/utils"
 	"gorm.io/gorm"
 )
 

@@ -7,10 +7,10 @@
 #### docker compose 方式，推荐指数 🌟🌟🌟🌟🌟
 ```shell
 # 下载本项目
-git clone https://github.com/zkep/mygeektime.git
+git clone https://github.com/zkep/my-geektime.git
 
 # 切入docker compose 文件目录
-cd mygeektime/docker
+cd my-geektime/docker
 
 # 更新到最新的镜像
 docker pull zkep/mygeektime:latest
@@ -38,14 +38,14 @@ zkep/mygeektime:latest  server --config=config.yml
 浏览器访问:  http://127.0.0.1:8090
 
 
-#### [二进制包安装](https://github.com/zkep/mygeektime/releases) ，推荐指数 🌟🌟
+#### [二进制包安装](https://github.com/zkep/my-geektime/releases) ，推荐指数 🌟🌟
 
 下载对应操作系统的二进制包，下面以MacOS为例
 ```shell
 # 下载
-wget https://github.com/zkep/mygeektime/releases/download/v0.0.1/mygeektime_Darwin_arm64.tar.gz
+wget https://github.com/zkep/my-geektime/releases/download/v0.0.6/mygeektime_Darwin_arm64.tar.gz
 # 解压
-tar -zxvf mygeektime_Darwin_arm64.tar.gz
+tar -zxvf my-geektime_Darwin_arm64.tar.gz
 
 # 切入解压目录
 cd mygeektime_Darwin_arm64

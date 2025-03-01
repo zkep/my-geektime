@@ -1,7 +1,7 @@
 package global
 
 import (
-	"github.com/zkep/mygeektime/lib/pool"
+	"github.com/zkep/my-geektime/lib/pool"
 )
 
 var (

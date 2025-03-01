@@ -8,7 +8,7 @@ server:
   http_addr: 0.0.0.0      # ip
   http_port: 8090         # http 端口
 jwt:                      # jwt 权限配置
-  secret: mygeektime-secret 
+  secret: my-geektime-secret 
   expires: 86400
 i18n:                     # 国际化配置
   directory: i18n

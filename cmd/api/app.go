@@ -9,12 +9,12 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/zkep/mygeektime/internal/config"
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/internal/initialize"
-	"github.com/zkep/mygeektime/internal/router"
-	"github.com/zkep/mygeektime/lib/browser"
-	"github.com/zkep/mygeektime/lib/color"
+	"github.com/zkep/my-geektime/internal/config"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/internal/initialize"
+	"github.com/zkep/my-geektime/internal/router"
+	"github.com/zkep/my-geektime/lib/browser"
+	"github.com/zkep/my-geektime/lib/color"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )

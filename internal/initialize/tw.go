@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/internal/task"
-	"github.com/zkep/mygeektime/lib/schedule"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/internal/task"
+	"github.com/zkep/my-geektime/lib/schedule"
 )
 
 func Tw(ctx context.Context) error {

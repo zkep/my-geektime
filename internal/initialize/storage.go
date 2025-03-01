@@ -4,8 +4,8 @@ import (
 	"context"
 	"path/filepath"
 
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/lib/storage"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/lib/storage"
 )
 
 func Storage(_ context.Context) error {

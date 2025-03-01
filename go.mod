@@ -1,4 +1,4 @@
-module github.com/zkep/mygeektime
+module github.com/zkep/my-geektime
 
 go 1.23.3
 

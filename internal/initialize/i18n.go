@@ -6,8 +6,8 @@ import (
 	"io/fs"
 	"path"
 
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/lib/rest"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/lib/rest"
 	"go.uber.org/zap"
 )
 

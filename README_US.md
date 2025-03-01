@@ -5,7 +5,7 @@ This is a tool to obtain the geektime  articles docs
 
 ---
 
-### [Docs](https://zkep.github.io/mygeektime/) | [Show Time](https://mygeektime.anyfun.tech)
+### [Docs](https://zkep.github.io/my-geektime/) | [Show Time](https://my-geektime.anyfun.tech)
 
 
 #### Install
@@ -13,11 +13,11 @@ This is a tool to obtain the geektime  articles docs
 #### install with docker compose
 
 ```shell
-git clone https://github.com/zkep/mygeektime.git
+git clone https://github.com/zkep/my-geektime.git
 
-cd mygeektime/docker
+cd my-geektime/docker
 
-# Apple M1 , M2 modify docker-compose.yml 24 line use zkep/mygeektime:mac-m
+# Apple M1 , M2 modify docker-compose.yml 24 line use zkep/my-geektime:mac-m
 
 docker-compose up -d
 ```

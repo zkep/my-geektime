@@ -3,7 +3,7 @@ package zhttp_test
 import (
 	"testing"
 
-	"github.com/zkep/mygeektime/lib/zhttp"
+	"github.com/zkep/my-geektime/lib/zhttp"
 )
 
 func TestClient(t *testing.T) {

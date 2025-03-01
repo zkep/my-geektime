@@ -3,8 +3,8 @@ package initialize
 import (
 	"context"
 
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/lib/pool"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/lib/pool"
 )
 
 func GPool(ctx context.Context) error {

@@ -3,7 +3,7 @@ package initialize
 import (
 	"context"
 
-	"github.com/zkep/mygeektime/internal/global"
+	"github.com/zkep/my-geektime/internal/global"
 	"go.uber.org/zap"
 )
 

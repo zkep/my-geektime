@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/lib/storage"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/lib/storage"
 	"go.uber.org/zap"
 )
 

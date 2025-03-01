@@ -3,7 +3,7 @@ package main
 import (
 	"embed"
 
-	"github.com/zkep/mygeektime/cmd"
+	"github.com/zkep/my-geektime/cmd"
 )
 
 //go:embed i18n/*

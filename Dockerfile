@@ -21,7 +21,7 @@ RUN apt-get -yqq update && \
 ENV PATH=/root/.local/bin:$PATH
 RUN pipx install mkdocs-material --include-deps
 
-COPY --from=builder /app/mygeektime /usr/bin/mygeektime
+COPY --from=builder /app/my-geektime /usr/bin/my-geektime
 COPY --from=ffmpeg /usr/share/fonts /usr/share/fonts
 COPY --from=ffmpeg /usr/share/fontconfig /usr/share/fontconfig
 COPY --from=ffmpeg /usr/bin/fc-* /usr/bin/
@@ -30,4 +30,4 @@ ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64
 
 EXPOSE 8090
 
-ENTRYPOINT ["mygeektime"]
+ENTRYPOINT ["my-geektime"]

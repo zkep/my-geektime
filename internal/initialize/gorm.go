@@ -3,9 +3,9 @@ package initialize
 import (
 	"context"
 
-	"github.com/zkep/mygeektime/internal/global"
-	"github.com/zkep/mygeektime/internal/model"
-	"github.com/zkep/mygeektime/lib/db"
+	"github.com/zkep/my-geektime/internal/global"
+	"github.com/zkep/my-geektime/internal/model"
+	"github.com/zkep/my-geektime/lib/db"
 )
 
 func Gorm(_ context.Context) error {

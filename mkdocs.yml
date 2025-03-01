@@ -37,7 +37,7 @@ extra:
     provider: mike
 
 copyright: Copyright &copy; 2024-Present zkep
-repo_url: https://github.com/zkep/mygeektime
+repo_url: https://github.com/zkep/my-geektime
 
 markdown_extensions:
   - attr_list

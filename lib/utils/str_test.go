@@ -3,7 +3,7 @@ package utils_test
 import (
 	"fmt"
 
-	"github.com/zkep/mygeektime/lib/utils"
+	"github.com/zkep/my-geektime/lib/utils"
 )
 
 func ExampleNewStrGenerator() {
