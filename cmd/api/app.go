@@ -89,10 +89,10 @@ func (app *App) Run(f *Flags) error {
 }
 
 func (app *App) newHttpServer(f *config.Config) error {
-	if err := app.docterFfmpeg(); err != nil {
+	if err := app.doctorFfmpeg(); err != nil {
 		return err
 	}
-	if err := app.docterMkdocs(); err != nil {
+	if err := app.doctorMkdocs(); err != nil {
 		return err
 	}
 	addr := fmt.Sprintf("%s:%d", f.Server.HTTPAddr, f.Server.HTTPPort)
@@ -114,7 +114,7 @@ func (app *App) newHttpServer(f *config.Config) error {
 	return nil
 }
 
-func (app *App) docterFfmpeg() error {
+func (app *App) doctorFfmpeg() error {
 	if _, err := exec.LookPath("ffmpeg"); err != nil {
 		fmt.Println("Please install ffmpeg: ")
 		fmt.Println("Ffmpeg will be used for video merging")
@@ -126,7 +126,7 @@ func (app *App) docterFfmpeg() error {
 	return nil
 }
 
-func (app *App) docterMkdocs() error {
+func (app *App) doctorMkdocs() error {
 	if _, err := exec.LookPath("mkdocs"); err != nil {
 		fmt.Println("Please install mkdocs: ")
 		fmt.Println("pip install mkdocs-material")
