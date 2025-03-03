@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>My Geek Time</title>
+    <title>我的极客时间</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta
             name="viewport"
@@ -56,52 +56,65 @@
         // const history = History.createBrowserHistory();
         const history = History.createHashHistory();
 
+
         const login = {
             type: "page",
+            style: {
+                height: "100%",
+                opacity: 1,
+                backgroundImage: "/public/login-bg.svg",
+            },
             body: [
                 {
                     type: "wrapper",
+                    style: {
+                        height: "100%",
+                        width: "100%",
+                        alignItems: "center",
+                    },
                     body:  [
                         {
                             type: "service",
                             api: "/v2/base/config",
+                            style: {
+                                alignItems: "center",
+                                marginTop: "10%",
+                            },
                             body: [
                                 {
                                     type: "flex",
+                                    justify: "center",
                                     mobile: {
                                         direction: "column"
                                     },
                                     alignItems: "center",
-                                    style: {
-                                        height: "100%",
-                                        backgroundColor: "#fff"
-                                    },
                                     items: [
                                         {
-                                            style: {
-                                                width: 500,
-                                                height: 550,
-                                                margin: 50,
-                                            },
                                             type: "panel",
                                             title: "",
+                                            style: {
+                                                width: 370,
+                                                height: "100%",
+                                                margin: 10,
+                                                backgroundColor: "#fff"
+                                            },
                                             body: [
                                                 {
                                                     type: "flex",
                                                     mobile: {
                                                         direction: "column"
                                                     },
-                                                    alignItems: "center",
                                                     style: {
                                                         height: "100%",
                                                     },
+                                                    alignItems: "center",
                                                     items: [
                                                         {
                                                             type: "html",
                                                             style: {
                                                                 margin: 10
                                                             },
-                                                            tpl: "<h2>您好，欢迎登录</h2><p>Hello, welcome to log in.</p>"
+                                                            tpl: "<h3>您好，欢迎登录 我的极客时间 管理后台</h3><p>Hello, welcome to log in.</p>"
                                                         },
                                                     ]
                                                 },
@@ -351,7 +364,7 @@
 
         const app = {
             type: 'app',
-            brandName: 'MyGeekTime',
+            brandName: '我的极客时间',
             logo: '/public/logo.png',
             header: {
                 type: "grid",
@@ -472,7 +485,7 @@
                     }
                 ]
             },
-            footer: '<div class="p-2 text-center bg-light">My Geek Time</div>',
+            footer: '<div class="p-2 text-center bg-light">© 2025 我的极客时间, Inc.</div>',
             api: '/pages/site.json'
         };
 

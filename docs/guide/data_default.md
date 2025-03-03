@@ -2,7 +2,7 @@
 
 **默认数据库，缓存了330+的VIP体系课程，可以直接使用my-geektime进行在线观看，音视频缓存**
 
-微信赞赏并留言 <b>邮箱账号</b>，将回赠<b> 数据库 & 手把手教程</b>，无需VIP，即刻畅享VIP课程
+微信赞赏并留言 <b>邮箱账号</b>，将回赠<b> 数据库 </b>，无需VIP，即刻畅享VIP课程
 
 <picture>
   <img
@@ -12,7 +12,7 @@
   />
 </picture>
 
-#### 赞赏后邮箱附件目录
+#### 赞赏后邮箱收到的附件目录
 ```shell
 my-geektime
 ├── docker  # docker 目录
@@ -30,6 +30,24 @@ my-geektime
 ###  默认数据库表导入
 
 * 方式1:  docker compose 在启动前，将tasks.sql 放入 docker/mysql/init 目录即可
+
+* 方式2:  cp 到 docker mysql镜像中
+```shell
+docker cp tasks.sql mysql:/
+
+docker exec -it mysql bash
+
+mysql -uroot -p123456
+
+use mygeektime;
+
+source tasks.sql;
+```
+
+* 方式3: mysqldump 将tasks.sql导入到mysql
+```shell
+mysqldump -uroot -P3306 -p123456 mygeektime < tasks.sql
+```
 
 step: 1
 ```shell
@@ -66,21 +84,4 @@ docker-compose up  -d
 ```
 
 
-* 方式2:
-```shell
-docker cp tasks.sql mysql:/
-
-docker exec -it mysql bash
-
-mysql -uroot -p123456
-
-use mygeektime;
-
-source tasks.sql;
-```
-
-* 方式3: 将tasks.sql导入到mysql
-```shell
-mysqldump -uroot -P3306 -p123456 mygeektime < tasks.sql
-```
 
