@@ -1,7 +1,7 @@
 github.com/JohannesKaufmann/dom v0.2.0 h1:1bragmEb19K8lHAqgFgqCpiPCFEZMTXzOIEjuxkUfLQ=
 github.com/JohannesKaufmann/dom v0.2.0/go.mod h1:57iSUl5RKric4bUkgos4zu6Xt5LMHUnw3TF1l5CbGZo=
-github.com/JohannesKaufmann/html-to-markdown/v2 v2.2.2 h1:R1085yJXsGfROq7qpXziLhGBqwA1BYDiUo2iYir1GUg=
-github.com/JohannesKaufmann/html-to-markdown/v2 v2.2.2/go.mod h1:SEAzpYwRyt41M2gOentwAt1Wubr3UHyPPSYtC2CIiNg=
+github.com/JohannesKaufmann/html-to-markdown/v2 v2.3.0 h1:e+ZfpzWc28HIrpIwT+J0wvlK6zkb0ffXHDH9I4QF4lU=
+github.com/JohannesKaufmann/html-to-markdown/v2 v2.3.0/go.mod h1:CD7yrhaD1dBDORPdjkpBrvnrzVIs9kZM6SRteYYUqdA=
 github.com/bytedance/sonic v1.12.6 h1:/isNmCUF2x3Sh8RAp/4mh4ZGkcFAX/hLrzrK3AvpRzk=
 github.com/bytedance/sonic v1.12.6/go.mod h1:B8Gt/XvtZ3Fqj+iSKMypzymZxw/FVwgIGKzMzT9r/rk=
 github.com/bytedance/sonic/loader v0.1.1/go.mod h1:ncP89zfokxS5LZrJxl5z0UJcsk4M4yY2JpfqGeCtNLU=
