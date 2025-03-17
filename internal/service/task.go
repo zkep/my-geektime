@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 	"sort"
 	"strings"
@@ -130,6 +131,10 @@ func Download(ctx context.Context, x *model.Task, data geek.ArticleData) error {
 					return err
 				}
 			} else {
+				up, _ := url.Parse(downloadURL)
+				if strings.Contains(up.Path, up.Host) {
+					downloadURL = strings.TrimPrefix(up.Path, "/")
+				}
 				source, err = Audio(ctx, x, downloadURL, dir, fileName)
 				if err != nil {
 					global.LOG.Error("download audio", zap.Error(err), zap.String("taskId", x.TaskId))
