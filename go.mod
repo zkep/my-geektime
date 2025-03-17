@@ -3,7 +3,7 @@ module github.com/zkep/my-geektime
 go 1.23.3
 
 require (
-	github.com/JohannesKaufmann/html-to-markdown/v2 v2.3.0
+	github.com/JohannesKaufmann/html-to-markdown/v2 v2.3.1
 	github.com/gin-contrib/static v1.1.3
 	github.com/gin-contrib/timeout v1.0.2
 	github.com/gin-gonic/gin v1.10.0
