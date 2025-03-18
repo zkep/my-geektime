@@ -51,6 +51,6 @@ docker-compose up -d
   <img
     alt="sponsor"
     src="docs/images/sponsor.jpg"
-    width="256px"
+    width="356px"
   />
 </picture>

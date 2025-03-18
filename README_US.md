@@ -31,7 +31,7 @@ browser web url:  http://127.0.0.1:8090
   <img
     alt="sponsor"
     src="docs/images/sponsor.jpg"
-    width="256px"
+    width="356px"
   />
 </picture>
 
