@@ -12,12 +12,17 @@ import (
 	mw "github.com/zkep/my-geektime/internal/middleware"
 )
 
-func NewRouter(assets embed.FS) *gin.Engine {
+func NewRouter(assets embed.FS) (*gin.Engine, error) {
 	e := gin.Default()
 
 	e.Use(mw.Cors())
 
-	e.Use(static.Serve("/", static.EmbedFolder(assets, "web")))
+	ef, err := static.EmbedFolder(assets, "web")
+	if err != nil {
+		return e, err
+	}
+
+	e.Use(static.Serve("/", ef))
 
 	e.NoRoute(func(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, "/")
@@ -41,5 +46,5 @@ func NewRouter(assets embed.FS) *gin.Engine {
 
 	file(public, private)
 
-	return e
+	return e, nil
 }

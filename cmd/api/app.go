@@ -96,9 +96,14 @@ func (app *App) newHttpServer(f *config.Config) error {
 		return err
 	}
 	addr := fmt.Sprintf("%s:%d", f.Server.HTTPAddr, f.Server.HTTPPort)
+
+	r, err := router.NewRouter(app.assets)
+	if err != nil {
+		return err
+	}
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           router.NewRouter(app.assets),
+		Handler:           r,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	go func() {
