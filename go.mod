@@ -1,11 +1,9 @@
 module github.com/zkep/my-geektime
 
-go 1.24
-
-toolchain go1.24.1
+go 1.24.2
 
 require (
-	github.com/JohannesKaufmann/html-to-markdown/v2 v2.3.1
+	github.com/JohannesKaufmann/html-to-markdown/v2 v2.3.2
 	github.com/gin-contrib/static v1.1.5
 	github.com/gin-contrib/timeout v1.0.2
 	github.com/gin-gonic/gin v1.10.0
@@ -20,7 +18,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/driver/postgres v1.5.11
-	gorm.io/gorm v1.25.12
+	gorm.io/gorm v1.26.0
 )
 
 require (
@@ -37,7 +35,6 @@ require (
 	github.com/go-playground/validator/v10 v10.26.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.5.5 // indirect
