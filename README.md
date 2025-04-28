@@ -17,7 +17,7 @@
 
 
 
-### [项目文档](https://zkep.github.io/my-geektime/) | [在线体验](https://mygeektime.anyfun.tech)
+### [项目文档](https://zkep.github.io/my-geektime/) 
 
 
 ### 安装
