@@ -173,7 +173,7 @@ func (t *TimerWheel) CancelTimer(timerid uint32) {
 }
 
 func (t *TimerWheel) checkExpired(now time.Time) {
-	for t.timerHeap.Len() <= 0 {
+	for t.timerHeap.Len() > 0 {
 		expired := t.timerHeap[0].expired
 		if expired.After(now) {
 			break
