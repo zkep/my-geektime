@@ -14,7 +14,7 @@ cd my-geektime/docker
 # 更新到最新的镜像
 docker pull zkep/mygeektime:latest
 
-docker-compose -f docker-compose.yml  up -d 
+docker-compose -f docker-compose.yml up -d 
 
 ```
 
@@ -28,7 +28,7 @@ cd my-geektime/docker
 # Apple Mac M1,M2... 更新到最新的镜像
 docker pull zkep/mygeektime:mac-m
 
-docker-compose -f docker-compose-m.yml  up -d 
+docker-compose -f docker-compose-m.yml up -d 
 ```
 浏览器访问:  http://127.0.0.1:8090
 
