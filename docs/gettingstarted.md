@@ -5,25 +5,33 @@
 * 如果，你的本地已经有redis，mysql等服务了，也可以考虑docker方式和二进制发行包方式
 
 #### docker compose 方式，推荐指数 🌟🌟🌟🌟🌟
+Linux OR Windows OR MacOS（非M系列）
 ```shell
-# 下载本项目
 git clone https://github.com/zkep/my-geektime.git
 
-# 切入docker compose 文件目录
 cd my-geektime/docker
 
 # 更新到最新的镜像
 docker pull zkep/mygeektime:latest
 
-# Apple Mac M1 , M2 更新到最新的镜像
+docker-compose -f docker-compose.yml  up -d 
+
+```
+
+MacOS M 系列
+```shell
+
+git clone https://github.com/zkep/my-geektime.git
+
+cd my-geektime/docker
+
+# Apple Mac M1,M2... 更新到最新的镜像
 docker pull zkep/mygeektime:mac-m
 
-# Apple Mac  M1 , M2 修改docker-compose.yml 第24行镜像改成 使用 zkep/mygeektime:mac-m
-
-# 后台启动服务
-docker-compose up -d
+docker-compose -f docker-compose-m.yml  up -d 
 ```
-服务启动后浏览器访问:  http://127.0.0.1:8090
+浏览器访问:  http://127.0.0.1:8090
+
 
 #### docker 方式，推荐指数 🌟🌟🌟
 使用宿主机目录替换下面的 ${directory}
