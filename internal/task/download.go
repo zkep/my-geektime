@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"path"
 	"strconv"
 	"sync"
@@ -207,30 +206,29 @@ func doArticle(ctx context.Context, x *model.Task) error {
 			global.LOG.Error("worker User", zap.Error(err), zap.String("taskId", x.TaskId))
 			return err
 		}
-		if u.AccessToken == "" {
-			return errors.New("no access token, please refresh geektime cookie")
+		if u.AccessToken != "" {
+			var auth geek.AuthResponse
+			if err = service.Authority(u.AccessToken, service.SaveCookie(u.AccessToken, u.Uid, &auth)); err != nil {
+				global.LOG.Error("worker Authority", zap.Error(err), zap.String("taskId", x.TaskId))
+				return err
+			}
+			article, err1 := service.GetArticleInfo(ctx, u.Uid, u.AccessToken, geek.ArticlesInfoRequest{Id: aid})
+			if err1 != nil {
+				global.LOG.Error("worker GetArticleInfo", zap.Error(err1), zap.String("taskId", x.TaskId))
+				return err1
+			}
+			if err = service.ArticleAllComment(ctx, u.Uid, u.AccessToken, aid); err != nil {
+				global.LOG.Error("worker ArticleAllComment", zap.Error(err), zap.String("taskId", x.TaskId))
+			}
+			data = article.Data
+			var info geek.ArticleInfoRaw
+			if err = json.Unmarshal(article.Raw, &info); err != nil {
+				global.LOG.Error("worker Unmarshal", zap.Error(err), zap.String("taskId", x.TaskId))
+				return err
+			}
+			m.Raw = info.Data
+			x.Raw = info.Data
 		}
-		var auth geek.AuthResponse
-		if err = service.Authority(u.AccessToken, service.SaveCookie(u.AccessToken, u.Uid, &auth)); err != nil {
-			global.LOG.Error("worker Authority", zap.Error(err), zap.String("taskId", x.TaskId))
-			return err
-		}
-		article, err1 := service.GetArticleInfo(ctx, u.Uid, u.AccessToken, geek.ArticlesInfoRequest{Id: aid})
-		if err1 != nil {
-			global.LOG.Error("worker GetArticleInfo", zap.Error(err1), zap.String("taskId", x.TaskId))
-			return err1
-		}
-		if err = service.ArticleAllComment(ctx, u.Uid, u.AccessToken, aid); err != nil {
-			global.LOG.Error("worker ArticleAllComment", zap.Error(err), zap.String("taskId", x.TaskId))
-		}
-		data = article.Data
-		var info geek.ArticleInfoRaw
-		if err = json.Unmarshal(article.Raw, &info); err != nil {
-			global.LOG.Error("worker Unmarshal", zap.Error(err), zap.String("taskId", x.TaskId))
-			return err
-		}
-		m.Raw = info.Data
-		x.Raw = info.Data
 	} else {
 		if err := json.Unmarshal(x.Raw, &data); err != nil {
 			global.LOG.Error("worker Unmarshal", zap.Error(err), zap.String("taskId", x.TaskId))
