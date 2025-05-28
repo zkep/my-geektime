@@ -19,6 +19,7 @@ import (
 
 type DocsFlags struct {
 	Config string `name:"config" description:"Path to config file"`
+	TaskID string `name:"taskid" description:"task id" default:""`
 }
 
 func (app *App) parse(f *DocsFlags, cfg *config.Config) error {
@@ -67,9 +68,13 @@ func (app *App) Docs(f *DocsFlags) error {
 	for hasMore {
 		var ls []*model.Task
 		tx := global.DB.Model(&model.Task{})
+		if len(f.TaskID) > 0 {
+			tx = tx.Where("task_id = ?", f.TaskID)
+		} else {
+			tx = tx.Where("other_form = ?", 1)
+			tx = tx.Where("other_type = ?", 1)
+		}
 		tx = tx.Where("task_pid = ?", "")
-		tx = tx.Where("other_form = ?", 1)
-		tx = tx.Where("other_type = ?", 1)
 		tx = tx.Where("deleted_at = ?", 0)
 		if err := tx.Order("id ASC").
 			Offset((page - 1) * psize).
@@ -145,17 +150,20 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 				x.Options[opt.Value] = opt.Label
 			}
 			tagMap[tag.Value] = x
-			fmt.Printf("%+v", x)
 		}
 	}
 
 	hasMore, page, psize := true, 1, 6
 	for hasMore {
 		var ls []*model.Task
-		tx := global.DB.Model(&model.Task{})
+		tx := global.DB.Debug().Model(&model.Task{})
+		if len(f.TaskID) > 0 {
+			tx = tx.Where("task_id = ?", f.TaskID)
+		} else {
+			tx = tx.Where("other_form = ?", 1)
+			tx = tx.Where("other_type = ?", 1)
+		}
 		tx = tx.Where("task_pid = ?", "")
-		tx = tx.Where("other_form = ?", 1)
-		tx = tx.Where("other_type = ?", 1)
 		tx = tx.Where("deleted_at = ?", 0)
 		if err := tx.Order("id ASC").
 			Offset((page - 1) * psize).
@@ -178,7 +186,7 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 			}
 			group, ok := tagMap[l.OtherGroup]
 			if !ok {
-				continue
+				group = TagMap{Label: "其它"}
 			}
 			group.Label = service.VerifyFileName(group.Label)
 			product.Title = service.VerifyFileName(product.Title)
