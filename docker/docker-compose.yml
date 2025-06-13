@@ -21,9 +21,9 @@ services:
       - 33060:3306
   server:
     hostname: mygeektime
-    image: zkep/mygeektime:latest
-    # mac m1 , m2
-    # image: zkep/mygeektime:mac-m
+    build: ../                       # build  from local dockerfile
+    image: zkep/mygeektime:latest    # other os
+    # image: zkep/mygeektime:mac-m   # macos arm64
     privileged: true
     restart: always
     networks:

@@ -24,14 +24,17 @@
 
 #### docker compose
 
-Linux OR Windows OR MacOS（非M系列）
+Linux / Windows / MacOS（非M系列）
 ```shell
 git clone https://github.com/zkep/my-geektime.git
 
 cd my-geektime/docker
 
-# 更新到最新的镜像
-docker pull zkep/mygeektime:latest
+# 从本地构建镜像
+# docker-compose -f docker-compose.yml  build --no-cache server
+
+# 使用最新的dockerhub仓库镜像
+# docker pull zkep/mygeektime:latest
 
 docker-compose -f docker-compose.yml up -d 
 
@@ -44,11 +47,15 @@ git clone https://github.com/zkep/my-geektime.git
 
 cd my-geektime/docker
 
-# Apple Mac M1,M2... 更新到最新的镜像
-docker pull zkep/mygeektime:mac-m
+# 从本地构建镜像
+# docker-compose -f docker-compose-m.yml  build --no-cache server
+
+# 使用最新的dockerhub仓库镜像
+# docker pull zkep/mygeektime:mac-m
 
 docker-compose -f docker-compose-m.yml up -d 
 ```
+
 浏览器访问:  http://127.0.0.1:8090
 
 
