@@ -1,0 +1,121 @@
+{
+  "status": 0,
+  "msg": "",
+  "data": {
+    "type": "page",
+    "title": "",
+    "name": "settings",
+    "toolbar": [],
+    "data": {
+      "storage": {
+        "host": "http://127.0.0.1:8090"
+      },
+      "site": {
+        "download": false,
+        "register": {
+          "type": "name"
+        },
+        "play": {
+          "type": "origin",
+          "proxy_url": [
+            "https://res001.geekbang.org",
+            "https://media001.geekbang.org"
+          ]
+        },
+        "proxy": {
+          "proxy_url": "http://127.0.0.1:8090/v2/file/proxy?url={url}",
+          "urls": [
+            "https://static001.geekbang.org/resource/image",
+            "https://static001.geekbang.org/account/avatar"
+          ]
+        }
+      }
+    },
+    "initApi": {
+      "method": "get",
+      "url": "/v2/setting/query",
+      "responseData": {
+        "&": "$$",
+        "storage": "${storage}",
+        "site": "${site}"
+      }
+    },
+    "body": [
+      {
+        "type": "form",
+        "api": "post:/v2/setting/update",
+        "title": "",
+        "mode": "horizontal",
+        "autoFocus": false,
+        "body": [
+          "缓存设置",
+          {
+            "type": "input-text",
+            "name": "storageHost",
+            "label": "URL",
+            "desc": "缓存后音视频请求的URL",
+            "size": "lg",
+            "value": "${storage.host}"
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "switch",
+            "name": "siteDownload",
+            "value": "${site.download}",
+            "onText": "开启",
+            "offText": "关闭",
+            "size": "full",
+            "desc": "缓存时自动下载音视频到本地",
+            "label": "自动下载"
+          },
+          {
+            "type": "divider"
+          },
+          "资源代理",
+          {
+            "type": "input-text",
+            "name": "siteProxyUrl",
+            "label": "代理URL",
+            "desc": "将源站URL使用服务端代理，解决裂图",
+            "size": "full",
+            "value": "${site.proxy.proxy_url}"
+          },
+          {
+            "type": "combo",
+            "name": "siteProxyUrls",
+            "label": "源站URL",
+            "multiple": true,
+            "flat": true,
+            "value": "${site.proxy.urls}",
+            "items": [
+              {
+                "name": "url",
+                "type": "input-text",
+                "hint": "源站URL",
+                "size": "lg"
+              }
+            ]
+          },
+          {
+            "type": "combo",
+            "name": "sitePlayUrls",
+            "label": "源站播放URL",
+            "multiple": true,
+            "flat": true,
+            "value": "${site.play.proxy_url}",
+            "items": [
+              {
+                "name": "url",
+                "type": "input-text",
+                "hint": "需要代理的源站播放URL",
+                "size": "lg"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
