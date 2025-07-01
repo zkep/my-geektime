@@ -26,24 +26,33 @@ var (
 	ErrorGeekAccountNotLogin = errors.New("geek account not login")
 )
 
+func GetGeekUser(r *http.Response, auth *geek.AuthResponse) (*geek.GeekUser, error) {
+	raw, err := io.ReadAll(r.Body)
+	if err != nil {
+		return nil, err
+	}
+	if err = json.Unmarshal(raw, auth); err != nil {
+		global.LOG.Error("GetGeekUser", zap.Error(err), zap.String("raw", string(raw)))
+		return nil, err
+	}
+	if auth.Code != 0 {
+		global.LOG.Error("GetGeekUser", zap.String("raw", string(raw)))
+		return nil, ErrorGeekAccountNotLogin
+	}
+	var authData geek.GeekUser
+	if err = json.Unmarshal(auth.Data, &authData); err != nil {
+		global.LOG.Error("GetGeekUser", zap.Error(err), zap.String("raw", string(raw)))
+		return nil, ErrorGeekAccountNotLogin
+	}
+	return &authData, nil
+}
+
 func SaveCookie(cookies string, identity string, auth *geek.AuthResponse) func(r *http.Response) error {
 	return func(r *http.Response) error {
-		raw, err := io.ReadAll(r.Body)
+		authData, err := GetGeekUser(r, auth)
 		if err != nil {
+			global.LOG.Error("SaveCookie", zap.Error(err))
 			return err
-		}
-		if err = json.Unmarshal(raw, auth); err != nil {
-			global.LOG.Error("SaveCookie", zap.Error(err), zap.String("raw", string(raw)))
-			return err
-		}
-		if auth.Code != 0 {
-			global.LOG.Error("SaveCookie", zap.String("raw", string(raw)))
-			return ErrorGeekAccountNotLogin
-		}
-		var authData geek.GeekUser
-		if err = json.Unmarshal(auth.Data, &authData); err != nil {
-			global.LOG.Error("SaveCookie", zap.Error(err), zap.String("raw", string(raw)))
-			return ErrorGeekAccountNotLogin
 		}
 		user := model.User{
 			Uid:         identity,

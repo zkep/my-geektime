@@ -8,14 +8,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func testResponse(c *gin.Context) {
-	c.String(http.StatusRequestTimeout, "timeout")
+func TimeoutResponse(c *gin.Context) {
+	c.JSON(
+		http.StatusRequestTimeout,
+		gin.H{"status": http.StatusRequestTimeout, "msg": "request timeout"},
+	)
 }
 
 func Timeout() gin.HandlerFunc {
 	return timeout.New(
 		timeout.WithTimeout(30*time.Second),
 		timeout.WithHandler(func(c *gin.Context) { c.Next() }),
-		timeout.WithResponse(testResponse),
+		timeout.WithResponse(TimeoutResponse),
 	)
 }

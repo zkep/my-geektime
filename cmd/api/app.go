@@ -34,9 +34,7 @@ func NewApp(ctx context.Context, quit <-chan os.Signal, assets embed.FS) *App {
 }
 
 func (app *App) Run(f *Flags) error {
-	var (
-		cfg config.Config
-	)
+	var cfg config.Config
 	if f.Config == "" {
 		fi, err := app.assets.Open("config.yml")
 		if err != nil {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/zkep/my-geektime/internal/config"
@@ -15,6 +16,7 @@ import (
 	"github.com/zkep/my-geektime/internal/types/task"
 	"github.com/zkep/my-geektime/internal/types/user"
 	"github.com/zkep/my-geektime/lib/utils"
+	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 	"gorm.io/gorm"
 )
@@ -77,6 +79,21 @@ func (app *App) Data(f *DataFlags) error {
 	}
 	if accessToken == "" {
 		return errors.New("no access token")
+	}
+	after := func(r *http.Response) error {
+		var auth geek.AuthResponse
+		authData, err := service.GetGeekUser(r, &auth)
+		if err != nil {
+			global.LOG.Error("GetGeekUser", zap.Error(err))
+			return err
+		}
+		if authData.Pvip <= 0 {
+			return fmt.Errorf("no pvip")
+		}
+		return nil
+	}
+	if err := service.Authority(accessToken, after); err != nil {
+		return err
 	}
 	var tags []Tag
 	if err := json.Unmarshal([]byte(TagJSON), &tags); err != nil {

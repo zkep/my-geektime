@@ -41,6 +41,13 @@
             "visibleOn": "${ls:role_id===1}",
             "url": "/user/list",
             "schemaApi": "get:/pages/user.json"
+          },
+          {
+            "label": "系统设置",
+            "icon": "fa-solid fa-hammer",
+            "visibleOn": "${ls:role_id===1}",
+            "url": "/setting/list",
+            "schemaApi": "get:/pages/setting.json"
           }
         ]
       }
