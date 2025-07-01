@@ -2,6 +2,7 @@ package v2
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/my-geektime/internal/config"
@@ -16,10 +17,6 @@ func NewSetting() *Setting {
 	return &Setting{}
 }
 
-const (
-	CustomConfigFile = "custom_config.yaml"
-)
-
 func (s *Setting) Update(c *gin.Context) {
 	var req setting.SettingUpdate
 	if err := c.BindJSON(&req); err != nil {
@@ -28,6 +25,7 @@ func (s *Setting) Update(c *gin.Context) {
 	}
 	global.CONF.Storage.Host = req.StorageHost
 	global.CONF.Site.Download = req.SiteDownload
+	global.CONF.Site.Cache = req.SiteCache
 	global.CONF.Site.Play.ProxyUrl = req.SitePlayUrls
 	global.CONF.Site.Proxy.ProxyUrl = req.SiteProxyURL
 	global.CONF.Site.Proxy.Urls = req.SiteProxyUrls
@@ -36,7 +34,11 @@ func (s *Setting) Update(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err)
 		return
 	}
-	if err = os.WriteFile(CustomConfigFile, raw, os.ModePerm); err != nil {
+	customConfPath := global.CustomConfigFile
+	if len(global.CONFPath) > 0 {
+		customConfPath = filepath.Join(filepath.Dir(global.CONFPath), global.CustomConfigFile)
+	}
+	if err = os.WriteFile(customConfPath, raw, os.ModePerm); err != nil {
 		global.FAIL(c, "fail.msg", err)
 		return
 	}
@@ -48,15 +50,18 @@ func (s *Setting) Query(c *gin.Context) {
 		Storage: global.CONF.Storage,
 		Site:    global.CONF.Site,
 	}
-	if stat, err := os.Stat(CustomConfigFile); err == nil && stat.Size() > 0 {
+	customConfPath := global.CustomConfigFile
+	if len(global.CONFPath) > 0 {
+		customConfPath = filepath.Join(filepath.Dir(global.CONFPath), global.CustomConfigFile)
+	}
+	if stat, err := os.Stat(customConfPath); err == nil && stat.Size() > 0 {
 		var cfg config.Config
-		fi, err1 := os.Open(CustomConfigFile)
+		raw, err1 := os.ReadFile(customConfPath)
 		if err1 != nil {
 			global.FAIL(c, "fail.msg", err1)
 			return
 		}
-		defer func() { _ = fi.Close() }()
-		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
+		if err = yaml.Unmarshal(raw, &cfg); err != nil {
 			global.FAIL(c, "fail.msg", err)
 			return
 		}

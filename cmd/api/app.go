@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"time"
 
 	"github.com/zkep/my-geektime/internal/config"
@@ -34,27 +35,29 @@ func NewApp(ctx context.Context, quit <-chan os.Signal, assets embed.FS) *App {
 }
 
 func (app *App) Run(f *Flags) error {
-	var cfg config.Config
+	var (
+		cfg            config.Config
+		customConfPath = global.CustomConfigFile
+		configRaw      []byte
+		err            error
+	)
 	if f.Config == "" {
-		fi, err := app.assets.Open("config.yml")
-		if err != nil {
-			return err
-		}
-		defer func() { _ = fi.Close() }()
-		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
-			return err
-		}
+		configRaw, err = app.assets.ReadFile("config.yml")
 	} else {
-		fi, err := os.Open(f.Config)
-		if err != nil {
-			return err
-		}
-		defer func() { _ = fi.Close() }()
-		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
-			return err
-		}
+		customConfPath = filepath.Join(filepath.Dir(f.Config), global.CustomConfigFile)
+		configRaw, err = os.ReadFile(f.Config)
+	}
+	if stat, err1 := os.Stat(customConfPath); err1 == nil && stat.Size() > 0 {
+		configRaw, err = os.ReadFile(customConfPath)
+	}
+	if err != nil {
+		return err
+	}
+	if err = yaml.Unmarshal(configRaw, &cfg); err != nil {
+		return err
 	}
 	global.CONF = &cfg
+	global.CONFPath = f.Config
 	if err := initialize.Gorm(app.ctx); err != nil {
 		return err
 	}
@@ -76,12 +79,18 @@ func (app *App) Run(f *Flags) error {
 	if err := initialize.I18N(app.ctx, app.assets); err != nil {
 		return err
 	}
+	if err := initialize.Resource(app.ctx); err != nil {
+		return err
+	}
 
 	if err := app.newHttpServer(global.CONF); err != nil {
 		return err
 	}
 
 	<-app.quit
+
+	global.Resource.Stop()
+	global.GPool.Close()
 
 	return nil
 }

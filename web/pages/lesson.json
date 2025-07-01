@@ -934,7 +934,7 @@
                 },
                 "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
               },
-              "confirmText": "缓存 [${share.title}]，\n 请在[我的课程]查看详情"
+              "confirmText": "缓存 [${ title }]，\n 请在[我的课程]查看详情"
             }
           ]
         },

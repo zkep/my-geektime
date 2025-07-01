@@ -1,6 +1,7 @@
 package config
 
 type Site struct {
+	Cache    bool     `json:"cache" yaml:"cache"`
 	Download bool     `json:"download" yaml:"download"`
 	Register Register `json:"register" yaml:"register"`
 	Login    Login    `json:"login" yaml:"login"`

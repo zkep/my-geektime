@@ -1117,7 +1117,7 @@
                               },
                               "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
                             },
-                            "confirmText": "缓存 [${share.title}]，\n 请在[我的课程]查看详情"
+                            "confirmText": "缓存 [${ title }]，\n 请在[我的课程]查看详情"
                           }
                         ]
                       },
@@ -1210,7 +1210,7 @@
                             },
                             "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
                           },
-                          "confirmText": "缓存 [${share.title}]，\n 请在[我的课程]查看详情"
+                          "confirmText": "缓存 [${ title }]，\n 请在[我的课程]查看详情"
                         }
                       ],
                       "headerToolbar": [
@@ -1316,7 +1316,7 @@
                 "icon": "fa fa-download",
                 "actionType": "ajax",
                 "visibleOn": "${ ls:geek_auth !== undefined }",
-                "confirmText": "缓存 [${share.title}],\n 请在 [我的课程] 查看详情",
+                "confirmText": "缓存 [${ title }],\n 请在 [我的课程] 查看详情",
                 "api": {
                   "url": "/v2/product/download",
                   "method":"post",

@@ -11,6 +11,7 @@
         "host": "http://127.0.0.1:8090"
       },
       "site": {
+        "cache": false,
         "download": false,
         "register": {
           "type": "name"
@@ -45,15 +46,17 @@
         "type": "form",
         "api": "post:/v2/setting/update",
         "title": "",
+        "wrapWithPanel": false,
         "mode": "horizontal",
         "autoFocus": false,
-        "body": [
+        "actions": [],
+        "controls": [
           "缓存设置",
           {
             "type": "input-text",
             "name": "storageHost",
             "label": "URL",
-            "desc": "缓存后音视频请求的URL",
+            "desc": "缓存后音视频本地播放的URL",
             "size": "lg",
             "value": "${storage.host}"
           },
@@ -68,7 +71,20 @@
             "offText": "关闭",
             "size": "full",
             "desc": "缓存时自动下载音视频到本地",
-            "label": "自动下载"
+            "label": "下载音视频"
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "switch",
+            "name": "siteCache",
+            "value": "${site.cache}",
+            "onText": "开启",
+            "offText": "关闭",
+            "size": "full",
+            "desc": "根据被代理的源站URL配置规则，缓存任务时自动下载内容中的资源到本地，添加缓存任务后触发",
+            "label": "下载资源"
           },
           {
             "type": "divider"
@@ -78,14 +94,14 @@
             "type": "input-text",
             "name": "siteProxyUrl",
             "label": "代理URL",
-            "desc": "将源站URL使用服务端代理，解决裂图",
+            "desc": "源站URL使用服务端代理，解决裂图，用户主动访问当前课程后触发缓存",
             "size": "full",
             "value": "${site.proxy.proxy_url}"
           },
           {
             "type": "combo",
             "name": "siteProxyUrls",
-            "label": "源站URL",
+            "label": "被代理的URL",
             "multiple": true,
             "flat": true,
             "value": "${site.proxy.urls}",
@@ -93,7 +109,7 @@
               {
                 "name": "url",
                 "type": "input-text",
-                "hint": "源站URL",
+                "hint": "被代理的源站URL",
                 "size": "lg"
               }
             ]
@@ -101,7 +117,7 @@
           {
             "type": "combo",
             "name": "sitePlayUrls",
-            "label": "源站播放URL",
+            "label": "被代理的播放URL",
             "multiple": true,
             "flat": true,
             "value": "${site.play.proxy_url}",
@@ -109,8 +125,24 @@
               {
                 "name": "url",
                 "type": "input-text",
-                "hint": "需要代理的源站播放URL",
+                "hint": "被代理的源站播放URL",
                 "size": "lg"
+              }
+            ]
+          },
+          {
+            "type": "button-toolbar",
+            "label": "",
+            "buttons": [
+              {
+                "type": "submit",
+                "level": "primary",
+                "label": "提  交"
+              },
+              {
+                "type": "reset",
+                "level": "primary",
+                "label": "重  置"
               }
             ]
           }

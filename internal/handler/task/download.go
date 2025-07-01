@@ -161,12 +161,12 @@ func doProduct(_ context.Context, x *model.Task) error {
 		Statistics: raw,
 		UpdatedAt:  time.Now().Unix(),
 	}
+	var product geek.ProductBase
+	if len(x.Raw) > 0 {
+		_ = json.Unmarshal(x.Raw, &product)
+	}
 	if x.Bstatus > 0 {
 		if status == service.TASK_STATUS_FINISHED {
-			var product geek.ProductBase
-			if len(x.Raw) > 0 {
-				_ = json.Unmarshal(x.Raw, &product)
-			}
 			dir := path.Join(x.TaskId, service.VerifyFileName(product.Title))
 			dirURL := global.Storage.GetKey(dir, false)
 			message := task.TaskMessage{Object: dirURL}
@@ -176,6 +176,15 @@ func doProduct(_ context.Context, x *model.Task) error {
 	if err := global.DB.Model(&model.Task{}).Where(&model.Task{Id: x.Id}).Updates(&m).Error; err != nil {
 		global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
 		return err
+	}
+	if global.CONF.Site.Cache {
+		global.Resource.Push(
+			product.Author.Avatar,
+			product.Cover.Square,
+			product.Share.Cover,
+			product.Share.Poster,
+			product.Column.CatalogPicURL,
+		)
 	}
 	return nil
 }
@@ -254,6 +263,20 @@ func doArticle(ctx context.Context, x *model.Task) error {
 	if err := global.DB.Where(&model.Task{Id: x.Id}).Updates(&m).Error; err != nil {
 		global.LOG.Error("worker Updates", zap.Error(err), zap.String("taskId", x.TaskId))
 		return err
+	}
+	if global.CONF.Site.Cache {
+		global.Resource.Push(
+			data.Info.Author.Avatar,
+			data.Info.Video.Cover,
+			data.Info.Cover.Default,
+			data.Info.Cover.Square,
+		)
+		urls, err := service.FindURLWithHTML(data.Info.Content)
+		if err != nil {
+			global.LOG.Error("worker FindURLWithHTML", zap.Error(err), zap.String("taskId", x.TaskId))
+		} else {
+			global.Resource.Push(urls...)
+		}
 	}
 	return nil
 }

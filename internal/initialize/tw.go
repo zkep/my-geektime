@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/zkep/my-geektime/internal/global"
-	"github.com/zkep/my-geektime/internal/task"
+	"github.com/zkep/my-geektime/internal/handler/task"
 	"github.com/zkep/my-geektime/lib/schedule"
 )
 

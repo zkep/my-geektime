@@ -25,6 +25,7 @@ browser:
   open_browser: true # Automatically open browser after service startup
 site:
   download: false
+  cache: false
   register:
      type: name # name | none
   login:
