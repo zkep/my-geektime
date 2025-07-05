@@ -16,7 +16,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/zkep/my-geektime/internal/global"
-	"github.com/zkep/my-geektime/lib/zhttp"
+	"github.com/zkep/my-geektime/libs/zhttp"
 	"go.uber.org/zap"
 )
 

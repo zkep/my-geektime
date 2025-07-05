@@ -24,7 +24,7 @@ const (
 	ColumnInfoURL               = "https://time.geekbang.org/serv/v3/column/info"
 )
 
-func GetArticleInfo(ctx context.Context, uid, accessToken string,
+func GetArticleInfo(ctx context.Context, accessToken string,
 	req geek.ArticlesInfoRequest) (*geek.ArticleInfoResponse, error) {
 	reqRaw, _ := json.Marshal(req)
 	var resp geek.ArticleInfoResponse
@@ -47,7 +47,6 @@ func GetArticleInfo(ctx context.Context, uid, accessToken string,
 			info := model.Article{
 				Aid:   aid,
 				Pid:   pid,
-				Uid:   uid,
 				Title: ret.Data.Info.Title,
 				Cover: ret.Data.Info.Cover.Default,
 				Raw:   raw,
@@ -69,7 +68,7 @@ func GetArticleInfo(ctx context.Context, uid, accessToken string,
 	return &resp, nil
 }
 
-func GetArticles(ctx context.Context, uid, accessToken string,
+func GetArticles(ctx context.Context, accessToken string,
 	req geek.ArticlesListRequest) (*geek.ArticlesResponse, error) {
 	raw, _ := json.Marshal(req)
 	var resp geek.ArticlesResponse
@@ -88,7 +87,6 @@ func GetArticles(ctx context.Context, uid, accessToken string,
 				info := model.ArticleSimple{
 					Aid:   fmt.Sprintf("%d", value.ID),
 					Pid:   req.Cid,
-					Uid:   uid,
 					Title: value.ArticleTitle,
 					Cover: value.ArticleCover,
 					Sort:  int32(key),
@@ -115,7 +113,7 @@ func GetArticles(ctx context.Context, uid, accessToken string,
 	return &resp, nil
 }
 
-func GetPvipProduct(ctx context.Context, uid, accessToken string,
+func GetPvipProduct(ctx context.Context, accessToken string,
 	req geek.PvipProductRequest) (*geek.ProductResponse, error) {
 	raw, _ := json.Marshal(req)
 	var resp geek.ProductResponse
@@ -133,7 +131,6 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 				itemRaw, _ := json.Marshal(value)
 				info := model.Product{
 					Pid:        fmt.Sprintf("%d", value.ID),
-					Uid:        uid,
 					Title:      value.Share.Title,
 					Cover:      value.Share.Cover,
 					Raw:        itemRaw,
@@ -161,7 +158,7 @@ func GetPvipProduct(ctx context.Context, uid, accessToken string,
 	return &resp, nil
 }
 
-func GetProduct(ctx context.Context, uid, accessToken string,
+func GetProduct(ctx context.Context, accessToken string,
 	req geek.DailyProductRequest) (*geek.DailyProductResponse, error) {
 	raw, _ := json.Marshal(req)
 	var resp geek.DailyProductResponse
@@ -179,7 +176,6 @@ func GetProduct(ctx context.Context, uid, accessToken string,
 				itemRaw, _ := json.Marshal(value)
 				info := model.Product{
 					Pid:        fmt.Sprintf("%d", value.ID),
-					Uid:        uid,
 					Title:      value.Share.Title,
 					Cover:      value.Share.Cover,
 					Raw:        itemRaw,
@@ -411,7 +407,7 @@ func GeekTimeSearch(ctx context.Context, accessToken string, req geek.SearchRequ
 	return &resp, nil
 }
 
-func GetColumnInfo(ctx context.Context, uid, accessToken string,
+func GetColumnInfo(ctx context.Context, accessToken string,
 	req geek.ColumnRequest) (*geek.ColumnResponse, error) {
 	reqRaw, _ := json.Marshal(req)
 	var resp geek.ColumnResponse
@@ -428,7 +424,6 @@ func GetColumnInfo(ctx context.Context, uid, accessToken string,
 		itemRaw, _ := json.Marshal(value)
 		info := model.Product{
 			Pid:    fmt.Sprintf("%d", value.ID),
-			Uid:    uid,
 			Title:  value.Share.Title,
 			Cover:  value.Share.Cover,
 			Raw:    itemRaw,

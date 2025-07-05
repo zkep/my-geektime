@@ -255,9 +255,6 @@ func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML strin
 					if err := json.Unmarshal(comment.Raw, &row); err != nil {
 						continue
 					}
-					//commentHtml += fmt.Sprintf(commentHtmlFormat, row.UserHeader,
-					//	row.UserName, row.LikeCount, row.DiscussionCount, row.CommentContent,
-					//	time.Unix(row.CommentCtime, 0).Format(time.DateOnly))
 					commentHtml += fmt.Sprintf(commentSimpleHtmlFormat,
 						row.UserName, row.LikeCount, row.DiscussionCount, row.CommentContent,
 						time.Unix(row.CommentCtime, 0).Format(time.DateOnly))

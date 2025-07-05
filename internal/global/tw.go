@@ -1,6 +1,6 @@
 package global
 
-import "github.com/zkep/my-geektime/lib/schedule"
+import "github.com/zkep/my-geektime/libs/schedule"
 
 var (
 	TW *schedule.TimerWheel

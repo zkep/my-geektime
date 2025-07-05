@@ -11,8 +11,6 @@ message Product {
   int64 id = 1 [(gogoproto.moretags) = "gorm:\"primaryKey;autoIncrement;comment:id\""];
   // pid
   string pid = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:product id\""];
-  // uid
-  string uid = 3 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:uid\""];
   // title
   string title = 5 [(gogoproto.moretags) = "gorm:\"comment:title\""];
   // cover

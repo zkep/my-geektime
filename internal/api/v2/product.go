@@ -14,7 +14,7 @@ import (
 	"github.com/zkep/my-geektime/internal/service"
 	"github.com/zkep/my-geektime/internal/types/geek"
 	"github.com/zkep/my-geektime/internal/types/task"
-	"github.com/zkep/my-geektime/lib/utils"
+	"github.com/zkep/my-geektime/libs/utils"
 	"gorm.io/gorm"
 )
 
@@ -65,8 +65,7 @@ func (p *Product) Download(c *gin.Context) {
 			global.FAIL(c, "product.no_exists_pid")
 			return
 		}
-		resp, err := service.GetArticles(c,
-			identity, accessToken,
+		resp, err := service.GetArticles(c, accessToken,
 			geek.ArticlesListRequest{
 				Cid:   fmt.Sprintf("%d", req.Pid),
 				Order: "earliest",
@@ -100,7 +99,7 @@ func (p *Product) Download(c *gin.Context) {
 		return
 	}
 	if product.Pid == "" {
-		ret, err := service.GetColumnInfo(c, identity, accessToken,
+		ret, err := service.GetColumnInfo(c, accessToken,
 			geek.ColumnRequest{ProductID: req.Pid, WithRecommendArticle: true})
 		if err != nil {
 			global.FAIL(c, "fail.msg", err.Error())
@@ -124,7 +123,6 @@ func (p *Product) Download(c *gin.Context) {
 	jobId := utils.HalfUUID()
 	job := &model.Task{
 		TaskId:     jobId,
-		Uid:        identity,
 		TaskName:   product.Title,
 		TaskType:   service.TASK_TYPE_PRODUCT,
 		OtherId:    fmt.Sprintf("%d", req.Pid),
@@ -144,7 +142,7 @@ func (p *Product) Download(c *gin.Context) {
 			cover    string
 		)
 		if article, ok := articlesMap[id]; !ok {
-			info, err := service.GetArticleInfo(c, identity, accessToken, geek.ArticlesInfoRequest{Id: id})
+			info, err := service.GetArticleInfo(c, accessToken, geek.ArticlesInfoRequest{Id: id})
 			if err != nil {
 				global.FAIL(c, "fail.msg", err.Error())
 				return
@@ -167,7 +165,6 @@ func (p *Product) Download(c *gin.Context) {
 		item := model.Task{
 			TaskPid:    jobId,
 			TaskId:     utils.HalfUUID(),
-			Uid:        identity,
 			OtherId:    otherId,
 			TaskName:   taskName,
 			TaskType:   service.TASK_TYPE_ARTICLE,
@@ -223,9 +220,8 @@ func (p *Product) ProductList(c *gin.Context) {
 		return
 	}
 	req.Size = req.PerPage
-	identity := c.GetString(global.Identity)
 	accessToken := c.GetString(global.AccessToken)
-	resp, err := service.GetProduct(c, identity, accessToken, req)
+	resp, err := service.GetProduct(c, accessToken, req)
 	if err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
@@ -285,7 +281,6 @@ func (p *Product) PvipProductList(c *gin.Context) {
 	}
 	req.Size = req.PerPage
 	req.Prev = req.Page
-	identity := c.GetString(global.Identity)
 	accessToken := c.GetString(global.AccessToken)
 	ret := geek.ProductListResponse{Rows: make([]geek.ProductListRow, 0)}
 	if len(req.Keyword) > 0 {
@@ -336,7 +331,7 @@ func (p *Product) PvipProductList(c *gin.Context) {
 		global.OK(c, ret)
 		return
 	}
-	resp, err := service.GetPvipProduct(c, identity, accessToken, req)
+	resp, err := service.GetPvipProduct(c, accessToken, req)
 	if err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return

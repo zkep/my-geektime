@@ -11,7 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/my-geektime/internal/global"
-	"github.com/zkep/my-geektime/lib/storage"
+	"github.com/zkep/my-geektime/libs/storage"
 	"go.uber.org/zap"
 )
 

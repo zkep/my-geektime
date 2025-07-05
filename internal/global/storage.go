@@ -1,6 +1,6 @@
 package global
 
-import "github.com/zkep/my-geektime/lib/storage"
+import "github.com/zkep/my-geektime/libs/storage"
 
 var (
 	Storage storage.Storage

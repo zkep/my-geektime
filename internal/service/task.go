@@ -37,15 +37,22 @@ var ALLStatus = []int{
 	TASK_STATUS_ERROR,
 }
 
+var Replaces = map[string]string{
+	"/":  "-",
+	"|":  "-",
+	"｜":  "-",
+	":":  "：",
+	`"`:  "“",
+	"?":  "？",
+	"&":  "+",
+	"\t": "",
+	"\b": "",
+}
+
 func VerifyFileName(name string) string {
-	name = strings.ReplaceAll(name, "/", "-")
-	name = strings.ReplaceAll(name, "|", "-")
-	name = strings.ReplaceAll(name, "｜", "-")
-	name = strings.ReplaceAll(name, ":", "：")
-	name = strings.ReplaceAll(name, `"`, "“")
-	name = strings.ReplaceAll(name, "?", "？")
-	name = strings.ReplaceAll(name, "\t", "")
-	name = strings.ReplaceAll(name, "\b", "")
+	for k, v := range Replaces {
+		name = strings.ReplaceAll(name, k, v)
+	}
 	return strings.TrimSpace(name)
 }
 

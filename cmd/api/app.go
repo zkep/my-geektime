@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"embed"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -14,8 +15,8 @@ import (
 	"github.com/zkep/my-geektime/internal/global"
 	"github.com/zkep/my-geektime/internal/initialize"
 	"github.com/zkep/my-geektime/internal/router"
-	"github.com/zkep/my-geektime/lib/browser"
-	"github.com/zkep/my-geektime/lib/color"
+	"github.com/zkep/my-geektime/libs/browser"
+	"github.com/zkep/my-geektime/libs/color"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )
@@ -58,32 +59,31 @@ func (app *App) Run(f *Flags) error {
 	}
 	global.CONF = &cfg
 	global.CONFPath = f.Config
-	if err := initialize.Gorm(app.ctx); err != nil {
+	if err = initialize.Gorm(app.ctx); err != nil {
 		return err
 	}
-	if err := initialize.Jwt(app.ctx); err != nil {
+	if err = initialize.Jwt(app.ctx); err != nil {
 		return err
 	}
-	if err := initialize.Logger(app.ctx); err != nil {
+	if err = initialize.Logger(app.ctx); err != nil {
 		return err
 	}
-	if err := initialize.Storage(app.ctx); err != nil {
+	if err = initialize.Storage(app.ctx); err != nil {
 		return err
 	}
-	if err := initialize.GPool(app.ctx); err != nil {
+	if err = initialize.GPool(app.ctx); err != nil {
 		return err
 	}
-	if err := initialize.Tw(app.ctx); err != nil {
+	if err = initialize.Tw(app.ctx); err != nil {
 		return err
 	}
-	if err := initialize.I18N(app.ctx, app.assets); err != nil {
+	if err = initialize.I18N(app.ctx, app.assets); err != nil {
 		return err
 	}
-	if err := initialize.Resource(app.ctx); err != nil {
+	if err = initialize.Resource(app.ctx); err != nil {
 		return err
 	}
-
-	if err := app.newHttpServer(global.CONF); err != nil {
+	if err = app.newHttpServer(global.CONF); err != nil {
 		return err
 	}
 
@@ -114,7 +114,7 @@ func (app *App) newHttpServer(f *config.Config) error {
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err = srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			global.LOG.Error("listen: ", zap.Error(err))
 		}
 	}()

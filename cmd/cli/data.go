@@ -1,6 +1,7 @@
 package cli
 
 import (
+	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,7 +16,7 @@ import (
 	"github.com/zkep/my-geektime/internal/types/geek"
 	"github.com/zkep/my-geektime/internal/types/task"
 	"github.com/zkep/my-geektime/internal/types/user"
-	"github.com/zkep/my-geektime/lib/utils"
+	"github.com/zkep/my-geektime/libs/utils"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 	"gorm.io/gorm"
@@ -32,35 +33,29 @@ func (app *App) Data(f *DataFlags) error {
 	var (
 		cfg         config.Config
 		accessToken string
+		configRaw   []byte
+		err         error
 	)
 	if f.Config == "" {
-		fi, err := app.assets.Open("config.yml")
-		if err != nil {
-			return err
-		}
-		defer func() { _ = fi.Close() }()
-		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
-			return err
-		}
+		configRaw, err = app.assets.ReadFile("config.yml")
 	} else {
-		fi, err := os.Open(f.Config)
-		if err != nil {
-			return err
-		}
-		defer func() { _ = fi.Close() }()
-		if err = yaml.NewDecoder(fi).Decode(&cfg); err != nil {
-			return err
-		}
+		configRaw, err = os.ReadFile(f.Config)
+	}
+	if err != nil {
+		return err
+	}
+	if err = yaml.Unmarshal(configRaw, &cfg); err != nil {
+		return err
 	}
 	global.CONF = &cfg
 	global.CONF.Site.Download = f.Download
-	if err := initialize.Gorm(app.ctx); err != nil {
+	if err = initialize.Gorm(app.ctx); err != nil {
 		return err
 	}
-	if err := initialize.Logger(app.ctx); err != nil {
+	if err = initialize.Logger(app.ctx); err != nil {
 		return err
 	}
-	if err := initialize.Storage(app.ctx); err != nil {
+	if err = initialize.Storage(app.ctx); err != nil {
 		return err
 	}
 	if len(f.Cookies) > 0 {
@@ -70,7 +65,7 @@ func (app *App) Data(f *DataFlags) error {
 		}
 	} else {
 		var u model.User
-		if err := global.DB.
+		if err = global.DB.
 			Where(&model.User{RoleId: user.AdminRoleId}).
 			First(&u).Error; err != nil {
 			return err
@@ -82,21 +77,21 @@ func (app *App) Data(f *DataFlags) error {
 	}
 	after := func(r *http.Response) error {
 		var auth geek.AuthResponse
-		authData, err := service.GetGeekUser(r, &auth)
-		if err != nil {
-			global.LOG.Error("GetGeekUser", zap.Error(err))
-			return err
+		authData, err1 := service.GetGeekUser(r, &auth)
+		if err1 != nil {
+			global.LOG.Error("GetGeekUser", zap.Error(err1))
+			return err1
 		}
-		if authData.Pvip <= 0 {
-			return fmt.Errorf("no pvip")
+		if authData.UID <= 0 {
+			return fmt.Errorf("no user")
 		}
 		return nil
 	}
-	if err := service.Authority(accessToken, after); err != nil {
+	if err = service.Authority(accessToken, after); err != nil {
 		return err
 	}
 	var tags []Tag
-	if err := json.Unmarshal([]byte(TagJSON), &tags); err != nil {
+	if err = json.Unmarshal([]byte(TagJSON), &tags); err != nil {
 		return err
 	}
 	for _, id := range f.Ids {
@@ -108,7 +103,7 @@ func (app *App) Data(f *DataFlags) error {
 		for _, form := range ProductForms {
 			for _, tag := range tags {
 				for _, opt := range tag.Options {
-					if err := app.iterators(typ, form, opt, tag, id, accessToken); err != nil {
+					if err = app.iterators(typ, form, opt, tag, id, accessToken); err != nil {
 						return err
 					}
 				}
@@ -134,7 +129,7 @@ func (app *App) iterators(typ, form, opt Option, tag Tag, id int32, accessToken 
 			Prev:         prev,
 			WithArticles: true,
 		}
-		resp, err := service.GetPvipProduct(app.ctx, "", accessToken, req)
+		resp, err := service.GetPvipProduct(app.ctx, accessToken, req)
 		if err != nil {
 			return err
 		}
@@ -148,7 +143,7 @@ func (app *App) iterators(typ, form, opt Option, tag Tag, id int32, accessToken 
 		}
 		prev++
 		for _, product := range resp.Data.Products {
-			articles, err1 := service.GetArticles(app.ctx, "", accessToken,
+			articles, err1 := service.GetArticles(app.ctx, accessToken,
 				geek.ArticlesListRequest{
 					Cid:   fmt.Sprintf("%d", product.ID),
 					Order: "earliest",
@@ -175,7 +170,7 @@ func (app *App) iterators(typ, form, opt Option, tag Tag, id int32, accessToken 
 			}
 			tasks := make([]*model.Task, 0, len(articles.Data.List))
 			for _, article := range articles.Data.List {
-				info, er := service.GetArticleInfo(app.ctx, "",
+				info, er := service.GetArticleInfo(app.ctx,
 					accessToken, geek.ArticlesInfoRequest{Id: article.ID})
 				if er != nil {
 					return er
@@ -262,349 +257,5 @@ var (
 	}
 )
 
-var TagJSON = `
-[
-  {
-    "label":"后端/架构",
-    "value": 3,
-    "options": [
-      {
-		"label": "Java",
-		"value": 10
-	  },
-	  {
-		"label": "Go",
-		"value": 11
-	  },
-	  {
-		"label": "Python",
-		"value": 12
-	  },
-	  {
-		"label": ".Net",
-		"value": 65
-	  },
-	  {
-		"label": "C语言",
-		"value": 64
-	  },
-	  {
-		"label": "基本功",
-		"value": 22
-	  },
-	  {
-		"label": "分布式",
-		"value": 20
-	  },
-	  {
-		"label": "中间件",
-		"value": 17
-	  },
-	  {
-		"label": "区块链",
-		"value": 23
-	  },
-	  {
-		"label": "全栈",
-		"value": 21
-	  },
-	  {
-		"label": "C++",
-		"value": 61
-	  },
-	  {
-		"label": "中台",
-		"value": 19
-	  },
-	  {
-		"label": "DDD",
-		"value": 18
-	  },
-	  {
-		"label": "案例",
-		"value": 16
-	  },
-	  {
-		"label": "微服务",
-		"value": 14
-	  },
-	  {
-		"label": "数据库",
-		"value": 13
-	  },
-	  {
-		"label": "Rust",
-		"value": 98
-	  }
-    ]
-  },
-  {
-    "label": "前端/移动",
-    "value": 5,
-    "options": [
-      {
-		"label": "JavaScript",
-		"value": 30
-	  },
-	  {
-		"label": "iOS",
-		"value": 34
-	  },
-	  {
-		"label": "Android",
-		"value": 33
-	  },
-	  {
-		"label": "Node.js",
-		"value": 41
-	  },
-	  {
-		"label": "网络",
-		"value": 40
-	  },
-	  {
-		"label": "webpack",
-		"value": 39
-	  },
-	  {
-		"label": "音视频",
-		"value": 38
-	  },
-	  {
-		"label": "浏览器",
-		"value": 37
-	  },
-	  {
-		"label": "Swift",
-		"value": 36
-	  },
-	  {
-		"label": "Kotlin",
-		"value": 35
-	  },
-	  {
-		"label": "框架",
-		"value": 32
-	  },
-	  {
-		"label": "TypeScript",
-		"value": 31
-	  },
-	  {
-		"label": "可视化",
-		"value": 70
-	  }
-    ]
-  },
-  {
-    "label": "计算机基础",
-    "value": 9,
-    "options": [
-    	  {
-			"label": "算法",
-			"value": 75
-		  },
-		  {
-			"label": "网络",
-			"value": 76
-		  },
-		  {
-			"label": "数据库",
-			"value": 78
-		  },
-		  {
-			"label": "面试专场",
-			"value": 102
-		  },
-		  {
-			"label": "组成原理",
-			"value": 83
-		  },
-		  {
-			"label": "数学",
-			"value": 82
-		  },
-		  {
-			"label": "代码",
-			"value": 81
-		  },
-		  {
-			"label": "编译原理",
-			"value": 80
-		  },
-		  {
-			"label": "操作系统",
-			"value": 79
-		  },
-		  {
-			"label": "工具",
-			"value": 77
-		  }
-      ]
-  },
-  {
-     "label": "AI/大数据",
-     "value": 8,
-     "options": [
-      {
-		"label": "NLP",
-		"value": 66
-	  },
-	  {
-		"label": "机器学习",
-		"value": 56
-	  },
-	  {
-		"label": "数据分析",
-		"value": 72
-	  },
-	  {
-		"label": "大数据",
-		"value": 60
-	  },
-	  {
-		"label": "推荐系统",
-		"value": 59
-	  },
-	  {
-		"label": "AI算法",
-		"value": 58
-	  },
-	  {
-		"label": "数学",
-		"value": 57
-	  },
-	  {
-		"label": "AIGC应用",
-		"value": 99
-	  },
-	  {
-		"label": "大模型",
-		"value": 100
-	  }
-     ]
-  },
-  {
-    "label": "运维/测试",
-    "value": 6,
-    "options": [
-      {
-		"label": "CI/CD",
-		"value": 45
-	  },
-	  {
-		"label": "云计算",
-		"value": 67
-	  },
-	  {
-		"label": "测试",
-		"value": 47
-	  },
-	  {
-		"label": "敏捷开发",
-		"value": 50
-	  },
-	  {
-		"label": "性能",
-		"value": 49
-	  },
-	  {
-		"label": "Linux",
-		"value": 48
-	  },
-	  {
-		"label": "安全",
-		"value": 46
-	  },
-	  {
-		"label": "运维管理",
-		"value": 44
-	  },
-	  {
-		"label": "DevOps",
-		"value": 43
-	  },
-	  {
-		"label": "Kubernetes",
-		"value": 42
-	  }
-     ]
-  },
-  {
-     "label": "产品/运营",
-     "value": 7,
-     "options": [
-       {
-		"label": "产品创新",
-		"value": 55
-	  },
-	  {
-		"label": "增长",
-		"value": 54
-	  },
-	  {
-		"label": "运营",
-		"value": 53
-	  },
-	  {
-		"label": "市场",
-		"value": 74
-	  }
-     ]
-  },
-  {
-    "label": "管理/成长",
-    "value": 4,
-    "options": [
-      {
-		"label": "研发效能",
-		"value": 26
-	  },
-	  {
-		"label": "团队管理",
-		"value": 27
-	  },
-	  {
-		"label": "个人成长",
-		"value": 28
-	  },
-	  {
-		"label": "面试专场",
-		"value": 97
-	  },
-	  {
-		"label": "短视频",
-		"value": 95
-	  },
-	  {
-		"label": "英语",
-		"value": 94
-	  },
-	  {
-		"label": "写作",
-		"value": 93
-	  },
-	  {
-		"label": "摄影",
-		"value": 92
-	  },
-	  {
-		"label": "音乐",
-		"value": 91
-	  },
-	  {
-		"label": "项目管理",
-		"value": 29
-	  },
-	  {
-		"label": "新经理",
-		"value": 25
-	  },
-	  {
-		"label": "OKR",
-		"value": 24
-	  }
-    ]
-  }
-]
-`
+//go:embed  tag.json
+var TagJSON string

@@ -16,10 +16,10 @@ FROM ubuntu:24.04
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -yqq update && \
-    apt-get install -yq --no-install-recommends python3 pipx && rm -rf /var/lib/apt/lists/*
+    apt-get install -yq --no-install-recommends python3 pipx && rm -rf /var/libs/apt/lists/*
 
 ENV PATH=/root/.local/bin:$PATH
-RUN pipx install mkdocs-material --include-deps
+RUN pipx install mkdocs-material --include-deps # --index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 COPY --from=builder /app/my-geektime /usr/bin/my-geektime
 COPY --from=ffmpeg /usr/share/fonts /usr/share/fonts

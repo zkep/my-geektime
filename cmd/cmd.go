@@ -11,7 +11,7 @@ import (
 	"github.com/uaxe/cliz"
 	"github.com/zkep/my-geektime/cmd/api"
 	"github.com/zkep/my-geektime/cmd/cli"
-	"github.com/zkep/my-geektime/lib/color"
+	"github.com/zkep/my-geektime/libs/color"
 )
 
 type App struct {

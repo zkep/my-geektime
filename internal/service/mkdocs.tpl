@@ -33,7 +33,7 @@ extra:
   version:
     provider: mike
 
-copyright: Copyright &copy; 2024-Present zkep
+copyright: Copyright &copy; 2025-Present zkep
 repo_url: https://github.com/zkep/my-geektime
 
 markdown_extensions:

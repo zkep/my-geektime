@@ -1,6 +1,6 @@
 package global
 
-import "github.com/zkep/my-geektime/lib/rest"
+import "github.com/zkep/my-geektime/libs/rest"
 
 const (
 	Identity    = "identity"

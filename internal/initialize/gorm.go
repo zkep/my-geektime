@@ -5,7 +5,7 @@ import (
 
 	"github.com/zkep/my-geektime/internal/global"
 	"github.com/zkep/my-geektime/internal/model"
-	"github.com/zkep/my-geektime/lib/db"
+	"github.com/zkep/my-geektime/libs/db"
 )
 
 func Gorm(_ context.Context) error {

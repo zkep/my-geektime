@@ -13,9 +13,7 @@ message ArticleSimple {
   string aid = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:article id\""];
   //  pid
   string pid = 3 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:product pid\""];
-  // uid
-  string uid = 4 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:uid\""];
-  // title
+ // title
   string title = 5 [(gogoproto.moretags) = "gorm:\"comment:title\""];
   // cover
   string cover = 6 [(gogoproto.moretags) = "gorm:\"comment:cover\""];

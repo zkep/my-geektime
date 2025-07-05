@@ -10,11 +10,9 @@ message Task {
   // id
   int64 id = 1 [(gogoproto.moretags) = "gorm:\"index:,priority:3,composite:idx_tasks_status_deleted_at_id;primaryKey;autoIncrement;comment:id\""];
   // task id
-  string task_id = 2 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:task id\""];
+  string task_id = 3 [(gogoproto.moretags) = "gorm:\"unique;size:128;comment:task id\""];
   // task pid
-  string task_pid = 3 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:task pid\""];
-  // uid
-  string uid = 4 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:uid\""];
+  string task_pid = 4 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:task pid\""];
   // other id
   string other_id = 5 [(gogoproto.moretags) = "gorm:\"index;size:128;comment:other id\""];
   // cover

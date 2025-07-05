@@ -221,7 +221,7 @@ func doArticle(ctx context.Context, x *model.Task) error {
 				global.LOG.Error("worker Authority", zap.Error(err), zap.String("taskId", x.TaskId))
 				return err
 			}
-			article, err1 := service.GetArticleInfo(ctx, u.Uid, u.AccessToken, geek.ArticlesInfoRequest{Id: aid})
+			article, err1 := service.GetArticleInfo(ctx, u.AccessToken, geek.ArticlesInfoRequest{Id: aid})
 			if err1 != nil {
 				global.LOG.Error("worker GetArticleInfo", zap.Error(err1), zap.String("taskId", x.TaskId))
 				return err1

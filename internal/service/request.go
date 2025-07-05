@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/zkep/my-geektime/internal/global"
-	"github.com/zkep/my-geektime/lib/zhttp"
+	"github.com/zkep/my-geektime/libs/zhttp"
 )
 
 func Request(ctx context.Context, method, url string,

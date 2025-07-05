@@ -116,7 +116,6 @@ func (app *App) Docs(f *DocsFlags) error {
 			}
 		}
 	}
-
 	return nil
 }
 
@@ -142,64 +141,64 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 	if err := json.Unmarshal([]byte(TagJSON), &tags); err != nil {
 		return err
 	}
-	tagMap := make(map[int32]TagMap, len(tags))
+	tagMap := make(map[int32]Option, len(tags))
 	for _, tag := range tags {
-		if _, ok := tagMap[tag.Value]; !ok {
-			x := TagMap{Label: tag.Label, Options: make(map[int32]string, len(tag.Options))}
-			for _, opt := range tag.Options {
-				x.Options[opt.Value] = opt.Label
-			}
-			tagMap[tag.Value] = x
-		}
+		tagMap[tag.Value] = tag.Option
 	}
-
-	hasMore, page, psize := true, 1, 6
-	for hasMore {
-		var ls []*model.Task
-		tx := global.DB.Debug().Model(&model.Task{})
-		if len(f.TaskID) > 0 {
-			tx = tx.Where("task_id = ?", f.TaskID)
-		} else {
+	workerFn := func(tagValue int32) error {
+		hasMore, page, psize := true, 1, 6
+		for hasMore {
+			var ls []*model.Task
+			tx := global.DB.Model(&model.Task{})
+			tx = tx.Where("other_group = ?", tagValue)
+			if len(f.TaskID) > 0 {
+				tx = tx.Where("task_id = ?", f.TaskID)
+			}
 			tx = tx.Where("other_form = ?", 1)
 			tx = tx.Where("other_type = ?", 1)
+			tx = tx.Where("task_pid = ?", "")
+			tx = tx.Where("deleted_at = ?", 0)
+			if err := tx.Order("id ASC").
+				Offset((page - 1) * psize).
+				Limit(psize + 1).
+				Find(&ls).Error; err != nil {
+				global.LOG.Error("Docs find", zap.Error(err))
+				return err
+			}
+			if len(ls) <= psize {
+				hasMore = false
+			} else {
+				ls = ls[:psize]
+			}
+			page++
+			for _, l := range ls {
+				var product geek.ProductBase
+				if err := json.Unmarshal(l.Raw, &product); err != nil {
+					global.LOG.Error("Docs Unmarshal", zap.Error(err))
+					continue
+				}
+				group, ok := tagMap[l.OtherGroup]
+				if !ok {
+					group = Option{Label: "其它"}
+				}
+				group.Label = service.VerifyFileName(group.Label)
+				product.Title = service.VerifyFileName(product.Title)
+				err := service.MakeDocsiteLocal(app.ctx, l.TaskId, group.Label, product.Title, product.IntroHTML, 15)
+				if err != nil {
+					global.LOG.Error("Docs MakeDocsite", zap.Error(err))
+					continue
+				}
+				dir := path.Join(group.Label, product.Title)
+				fmt.Printf("\n[%s] docs dir: %s\n", product.Title, global.Storage.GetKey(dir, true))
+			}
 		}
-		tx = tx.Where("task_pid = ?", "")
-		tx = tx.Where("deleted_at = ?", 0)
-		if err := tx.Order("id ASC").
-			Offset((page - 1) * psize).
-			Limit(psize + 1).
-			Find(&ls).Error; err != nil {
-			global.LOG.Error("Docs find", zap.Error(err))
+		return nil
+	}
+	for _, tag := range tags {
+		err := workerFn(tag.Value)
+		if err != nil {
 			return err
 		}
-		if len(ls) <= psize {
-			hasMore = false
-		} else {
-			ls = ls[:psize]
-		}
-		page++
-		for _, l := range ls {
-			var product geek.ProductBase
-			if err := json.Unmarshal(l.Raw, &product); err != nil {
-				global.LOG.Error("Docs Unmarshal", zap.Error(err))
-				continue
-			}
-			group, ok := tagMap[l.OtherGroup]
-			if !ok {
-				group = TagMap{Label: "其它"}
-			}
-			group.Label = service.VerifyFileName(group.Label)
-			product.Title = service.VerifyFileName(product.Title)
-			err := service.MakeDocsiteLocal(app.ctx, l.TaskId,
-				group.Label, product.Title, product.IntroHTML, 15)
-			if err != nil {
-				global.LOG.Error("Docs MakeDocsite", zap.Error(err))
-				continue
-			}
-			dir := path.Join(group.Label, product.Title)
-			fmt.Printf("\n[%s] docs dir: %s\n", product.Title, global.Storage.GetKey(dir, true))
-		}
 	}
-
 	return nil
 }

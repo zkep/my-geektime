@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"github.com/zkep/my-geektime/lib/storage"
+	"github.com/zkep/my-geektime/libs/storage"
 )
 
 type Resource struct {

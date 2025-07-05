@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/zkep/my-geektime/internal/global"
-	"github.com/zkep/my-geektime/lib/rest"
+	"github.com/zkep/my-geektime/libs/rest"
 )
 
 func Jwt(_ context.Context) error {

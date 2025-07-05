@@ -7,7 +7,7 @@ import (
 	"path"
 
 	"github.com/zkep/my-geektime/internal/global"
-	"github.com/zkep/my-geektime/lib/rest"
+	"github.com/zkep/my-geektime/libs/rest"
 	"go.uber.org/zap"
 )
 

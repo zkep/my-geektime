@@ -13,7 +13,7 @@ import (
 	"github.com/zkep/my-geektime/internal/global"
 	"github.com/zkep/my-geektime/internal/model"
 	"github.com/zkep/my-geektime/internal/types/geek"
-	"github.com/zkep/my-geektime/lib/zhttp"
+	"github.com/zkep/my-geektime/libs/zhttp"
 	"go.uber.org/zap"
 )
 

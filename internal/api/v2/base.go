@@ -15,7 +15,7 @@ import (
 	"github.com/zkep/my-geektime/internal/types/base"
 	"github.com/zkep/my-geektime/internal/types/geek"
 	"github.com/zkep/my-geektime/internal/types/user"
-	"github.com/zkep/my-geektime/lib/utils"
+	"github.com/zkep/my-geektime/libs/utils"
 	"gorm.io/gorm"
 )
 
