@@ -1,7 +1,7 @@
 server:
   app_name: My Geek Time
   run_mode: debug
-  http_addr: 0.0.0.0
+  http_addr: 127.0.0.1
   http_port: 8090
 jwt:
   secret: mygeektime-secret

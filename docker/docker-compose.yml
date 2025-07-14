@@ -1,4 +1,4 @@
-name: mygeektime
+version: "3"
 networks:
   mygeektime:
     driver: bridge
@@ -18,19 +18,19 @@ services:
       - ./mysql/init/tasks.sql:/docker-entrypoint-initdb.d/tasks.sql
       - /etc/localtime:/etc/localtime:ro
     ports:
-      - 33060:3306
+      - "33060:3306"
   server:
     hostname: mygeektime
     build: ../                       # build  from local dockerfile
     image: zkep/mygeektime:latest    # other os
-    # image: zkep/mygeektime:mac-m   # macos arm64
+    # image: zkep/mygeektime:mac-m   # macOS arm64
     privileged: true
     restart: always
     networks:
       - mygeektime
     command: server --config=config.yml
     ports:
-      - 8090:8090
+      - "8090:8090"
     environment:
       - GIN_MODE=test
     volumes:
