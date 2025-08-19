@@ -50,6 +50,9 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 		Find(&ls).Error; err != nil {
 		return "", err
 	}
+	if rewrittenHTML, err := HtmlURLProxyReplace(introHTML); err == nil {
+		introHTML = rewrittenHTML
+	}
 	indexMarkdown, err1 := htmltomarkdown.ConvertString(introHTML)
 	if err1 != nil {
 		return "", err1
@@ -74,8 +77,8 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 			if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
 				articleData.Info.Content = articleData.Info.Cshort
 			}
-			if markdown, err2 := HtmlURLProxyReplace(articleData.Info.Content); err2 == nil {
-				articleData.Info.Content = markdown
+			if rewrittenContent, err2 := HtmlURLProxyReplace(articleData.Info.Content); err2 == nil {
+				articleData.Info.Content = rewrittenContent
 			}
 			markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content)
 			if err2 != nil {
