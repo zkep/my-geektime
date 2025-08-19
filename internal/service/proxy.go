@@ -148,6 +148,8 @@ func OutputHTML(n *html.Node) string {
 				if err != nil {
 					return
 				}
+				// For void elements, we're done - don't write another '>' later, and don't need to process children
+				return
 			}
 
 			if err := b.WriteByte('>'); err != nil {
