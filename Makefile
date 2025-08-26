@@ -12,7 +12,7 @@ build:
 
 githook:
 	git config core.hooksPath .githooks
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
 	chmod 777 .githooks/commit-msg
 	chmod 777 .githooks/pre-commit
 	chmod 777 .githooks/pre-push

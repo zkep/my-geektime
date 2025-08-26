@@ -6,10 +6,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"github.com/JohannesKaufmann/html-to-markdown/v2/converter"
-	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/base"
-	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/commonmark"
-	"golang.org/x/net/html"
 	"io"
 	"net/http"
 	"os"
@@ -18,10 +14,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/JohannesKaufmann/html-to-markdown/v2/converter"
+	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/base"
+	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/commonmark"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/zkep/my-geektime/internal/global"
 	"github.com/zkep/my-geektime/libs/zhttp"
 	"go.uber.org/zap"
+	"golang.org/x/net/html"
 )
 
 func playSpec(ctx context.Context, req *PlayMetaRequest) error {
