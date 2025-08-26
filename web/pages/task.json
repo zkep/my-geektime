@@ -785,7 +785,7 @@
                   },
                   "body": [
                     {
-                      "type": "markdown",
+                      "type": "html",
                       "wrapperComponent": "pre",
                       "className": "word-break",
                       "name": "intro_html",
@@ -1002,13 +1002,12 @@
                             "label": "播放",
                             "level": "light",
                             "actionType": "dialog",
-                            "visibleOn": "${status !='1'}",
                             "nextCondition": "true",
+                            "visibleOn": "${status !='1'}",
                             "dialog": {
                               "size": "full",
                               "resizable": true,
                               "closeOnOutside": true,
-                              "overlay": true,
                               "actions": [],
                               "title": [
                                 {
@@ -1024,6 +1023,7 @@
                                       "items": [
                                         {
                                           "type": "html",
+                                          "className": "word-break",
                                           "html":  "${task_name}<br/><br/>${article.summary === undefined ? '' : '概要：'+article.summary}<br/><br/>${message.text === undefined ? '' : '下载信息：'+message.text}"
                                         },
                                         {
@@ -1083,6 +1083,48 @@
                                           "visibleOn": "${ play_url === undefined && article.audio.url !== undefined}"
                                         }
                                       ]
+                                    },
+                                    {
+                                      "type": "flex",
+                                      "justify": "center",
+                                      "items": [
+                                        {
+                                          "label": "导出Markdown",
+                                          "type": "action",
+                                          "size": "sm",
+                                          "level": "info",
+                                          "actionType": "download",
+                                          "api": "/v2/task/download?id=${task_id}&type=markdown",
+                                          "style": {
+                                            "width": 100,
+                                            "margin": 10
+                                          }
+                                        },
+                                        {
+                                          "type": "button",
+                                          "actionType": "prev",
+                                          "size": "sm",
+                                          "level": "info",
+                                          "label": "上 一 个",
+                                          "visibleOn": "data.hasPrev",
+                                          "style": {
+                                            "width": 100,
+                                            "margin": 10
+                                          }
+                                        },
+                                        {
+                                          "type": "button",
+                                          "actionType": "next",
+                                          "size": "sm",
+                                          "level": "info",
+                                          "label": "下 一 个",
+                                          "visibleOn": "data.hasNext",
+                                          "style": {
+                                            "width": 100,
+                                            "margin": 10
+                                          }
+                                        }
+                                      ]
                                     }
                                   ]
                                 }
@@ -1099,40 +1141,7 @@
                                       "type": "panel",
                                       "title": "",
                                       "affixFooter": true,
-                                      "actions": [
-                                        {
-                                          "type": "button-group",
-                                          "btnLevel": "light",
-                                          "btnActiveLevel": "warning",
-                                          "style": {
-                                            "margin": 10
-                                          },
-                                          "buttons": [
-                                            {
-                                              "label": "导出Markdown",
-                                              "type": "action",
-                                              "size": "sm",
-                                              "level": "info",
-                                              "actionType": "download",
-                                              "api": "/v2/task/download?id=${task_id}&type=markdown"
-                                            }
-                                          ]
-                                        },
-                                        {
-                                          "type": "button",
-                                          "actionType": "prev",
-                                          "level": "info",
-                                          "visibleOn": "data.hasPrev",
-                                          "label": "上一个"
-                                        },
-                                        {
-                                          "type": "button",
-                                          "actionType": "next",
-                                          "level": "info",
-                                          "visibleOn": "data.hasNext",
-                                          "label": "下一个"
-                                        }
-                                      ],
+                                      "actions": [],
                                       "body": [
                                         {
                                           "type": "static",
@@ -1144,9 +1153,10 @@
                                           "type": "divider"
                                         },
                                         {
-                                          "type": "markdown",
+                                          "type": "html",
+                                          "className": "word-break",
                                           "name": "article.content",
-                                          "label": "附件"
+                                          "label": "内容"
                                         },
                                         {
                                           "type": "crud",
@@ -1198,6 +1208,7 @@
                                             {
                                               "name": "comment_content",
                                               "label": "评论内容",
+                                              "className": "word-break",
                                               "type": "html"
                                             },
                                             {
@@ -1271,6 +1282,7 @@
                                                           {
                                                             "name": "discussion.discussion_content",
                                                             "label": "讨论内容",
+                                                            "className": "word-break",
                                                             "type": "html"
                                                           }
                                                         ]
@@ -1319,7 +1331,7 @@
                     "pid": "${task_id}"
                   }
                 },
-                "confirmText": "确定要下载【${task_name}】到本地磁盘么？<br/> 🔔下载后重新生成【文档】会在文档中加入音视频"
+                "confirmText": "确定要下载【${task_name}】到本地磁盘么？<br/> 🔔下载后重新生成【文档】会在文档中加入本地音视频"
               },
               {
                 "type": "action",

@@ -694,7 +694,7 @@
                       "type": "divider"
                     },
                     {
-                      "type": "markdown",
+                      "type": "html",
                       "wrapperComponent": "pre",
                       "className": "word-break",
                       "name": "intro_html",
@@ -880,10 +880,10 @@
                                       "type": "divider"
                                     },
                                     {
-                                      "type": "markdown",
+                                      "type": "html",
                                       "className": "word-break",
                                       "name": "content",
-                                      "label": "附件"
+                                      "label": "内容"
                                     }
                                   ]
                                 },
@@ -937,6 +937,7 @@
                                     {
                                       "name": "comment_content",
                                       "label": "评论内容",
+                                      "className": "word-break",
                                       "type": "html"
                                     },
                                     {
@@ -1012,6 +1013,7 @@
                                                   {
                                                     "name": "discussion.discussion_content",
                                                     "label": "讨论内容",
+                                                    "className": "word-break",
                                                     "type": "html"
                                                   }
                                                 ]

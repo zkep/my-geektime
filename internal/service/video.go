@@ -6,6 +6,10 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"github.com/JohannesKaufmann/html-to-markdown/v2/converter"
+	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/base"
+	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/commonmark"
+	"golang.org/x/net/html"
 	"io"
 	"net/http"
 	"os"
@@ -237,6 +241,10 @@ func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, er
 		"ALL",
 		"-protocol_whitelist",
 		"concat,file,http,https,tcp,tls,crypto",
+		"-c",
+		"copy",
+		"-movflags",
+		"frag_keyframe+empty_moov",
 		"-i",
 		path.Join(destDir, "index.m3u8"),
 	}
@@ -252,4 +260,28 @@ func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, er
 	global.LOG.Info("video", zap.String("removeAll", destDir))
 	_ = os.RemoveAll(destDir)
 	return concatPath, nil
+}
+
+var (
+	conv = converter.NewConverter(
+		converter.WithPlugins(
+			base.NewBasePlugin(),
+			commonmark.NewCommonmarkPlugin(),
+		),
+	)
+)
+
+func init() {
+	conv.Register.RendererFor("video", converter.TagTypeInline, renderVideo, converter.PriorityStandard)
+}
+
+func renderVideo(_ converter.Context, w converter.Writer, node *html.Node) converter.RenderStatus {
+	var buf bytes.Buffer
+	_ = html.Render(&buf, node)
+	_, _ = w.WriteString(buf.String())
+	return converter.RenderSuccess
+}
+
+func HTMLConvertMarkdown(rawHtml string) (string, error) {
+	return conv.ConvertString(rawHtml)
 }

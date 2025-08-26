@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/my-geektime/internal/global"
 	"github.com/zkep/my-geektime/internal/model"
@@ -261,9 +260,6 @@ func (p *Product) ProductList(c *gin.Context) {
 			if introHTML, err1 := service.HtmlURLProxyReplace(row.IntroHTML); err1 == nil {
 				row.IntroHTML = introHTML
 			}
-			if markdown, err1 := htmltomarkdown.ConvertString(row.IntroHTML); err1 == nil {
-				row.IntroHTML = markdown
-			}
 		}
 		ret.Rows = append(ret.Rows, row)
 	}
@@ -321,9 +317,6 @@ func (p *Product) PvipProductList(c *gin.Context) {
 				if introHTML, err1 := service.HtmlURLProxyReplace(row.IntroHTML); err1 == nil {
 					row.IntroHTML = introHTML
 				}
-				if markdown, err1 := htmltomarkdown.ConvertString(row.IntroHTML); err1 == nil {
-					row.IntroHTML = markdown
-				}
 			}
 			ret.Rows = append(ret.Rows, row)
 		}
@@ -368,9 +361,6 @@ func (p *Product) PvipProductList(c *gin.Context) {
 		if len(row.IntroHTML) > 0 {
 			if introHTML, err1 := service.HtmlURLProxyReplace(row.IntroHTML); err1 == nil {
 				row.IntroHTML = introHTML
-			}
-			if markdown, err1 := htmltomarkdown.ConvertString(row.IntroHTML); err1 == nil {
-				row.IntroHTML = markdown
 			}
 		}
 		ret.Rows = append(ret.Rows, row)

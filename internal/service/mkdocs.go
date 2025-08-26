@@ -15,7 +15,6 @@ import (
 	"sort"
 	"time"
 
-	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/zkep/my-geektime/internal/global"
 	"github.com/zkep/my-geektime/internal/model"
 	"github.com/zkep/my-geektime/internal/types/geek"
@@ -53,7 +52,7 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 	if rewrittenHTML, err := HtmlURLProxyReplace(introHTML); err == nil {
 		introHTML = rewrittenHTML
 	}
-	indexMarkdown, err1 := htmltomarkdown.ConvertString(introHTML)
+	indexMarkdown, err1 := HTMLConvertMarkdown(introHTML)
 	if err1 != nil {
 		return "", err1
 	}
@@ -80,7 +79,7 @@ func MakeDocsite(ctx context.Context, taskId, title, introHTML string) (string, 
 			if rewrittenContent, err2 := HtmlURLProxyReplace(articleData.Info.Content); err2 == nil {
 				articleData.Info.Content = rewrittenContent
 			}
-			markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content)
+			markdown, err2 := HTMLConvertMarkdown(articleData.Info.Content)
 			if err2 != nil {
 				return nil, err2
 			}
@@ -195,7 +194,7 @@ func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML strin
 		Find(&ls).Error; err != nil {
 		return err
 	}
-	indexMarkdown, err1 := htmltomarkdown.ConvertString(introHTML)
+	indexMarkdown, err1 := HTMLConvertMarkdown(introHTML)
 	if err1 != nil {
 		return err1
 	}
@@ -219,7 +218,7 @@ func MakeDocsiteLocal(ctx context.Context, taskId, group, title, introHTML strin
 			if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
 				articleData.Info.Content = articleData.Info.Cshort
 			}
-			markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content)
+			markdown, err2 := HTMLConvertMarkdown(articleData.Info.Content)
 			if err2 != nil {
 				return nil, err2
 			}
@@ -332,7 +331,7 @@ func MakeDocArchive(_ context.Context, taskId, title, introHTML string) (*bytes.
 		Find(&ls).Error; err != nil {
 		return nil, err
 	}
-	indexMarkdown, err1 := htmltomarkdown.ConvertString(introHTML)
+	indexMarkdown, err1 := HTMLConvertMarkdown(introHTML)
 	if err1 != nil {
 		return nil, err1
 	}
@@ -352,7 +351,7 @@ func MakeDocArchive(_ context.Context, taskId, title, introHTML string) (*bytes.
 		if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
 			articleData.Info.Content = articleData.Info.Cshort
 		}
-		if markdown, err2 := htmltomarkdown.ConvertString(articleData.Info.Content); err2 != nil {
+		if markdown, err2 := HTMLConvertMarkdown(articleData.Info.Content); err2 != nil {
 			return nil, err2
 		} else if len(markdown) > 0 {
 			baseName := VerifyFileName(articleData.Info.Title)

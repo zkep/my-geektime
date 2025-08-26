@@ -1,7 +1,6 @@
 package v2
 
 import (
-	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/zkep/my-geektime/internal/global"
 	"github.com/zkep/my-geektime/internal/service"
@@ -63,9 +62,6 @@ func (p *Product) ArticleInfo(c *gin.Context) {
 	if len(resp.Data.Info.Content) > 0 {
 		if contextHTML, err1 := service.HtmlURLProxyReplace(resp.Data.Info.Content); err1 == nil {
 			resp.Data.Info.Content = contextHTML
-		}
-		if markdown, err1 := htmltomarkdown.ConvertString(resp.Data.Info.Content); err1 == nil {
-			resp.Data.Info.Content = markdown
 		}
 	}
 	global.OK(c, resp.Data.Info)

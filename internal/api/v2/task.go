@@ -13,7 +13,6 @@ import (
 	"strings"
 	"time"
 
-	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 	"github.com/golang-jwt/jwt/v4"
@@ -152,9 +151,6 @@ func (t *Task) List(c *gin.Context) {
 			if introHTML, err1 := service.HtmlURLProxyReplace(row.IntroHTML); err1 == nil {
 				row.IntroHTML = introHTML
 			}
-			if markdown, err := htmltomarkdown.ConvertString(row.IntroHTML); err == nil {
-				row.IntroHTML = markdown
-			}
 		}
 		ret.Rows = append(ret.Rows, row)
 	}
@@ -219,9 +215,6 @@ func (t *Task) Info(c *gin.Context) {
 	resp.Article.Cshort = ""
 	if introHTML, err1 := service.HtmlURLProxyReplace(resp.Article.Content); err1 == nil {
 		resp.Article.Content = introHTML
-	}
-	if markdown, err := htmltomarkdown.ConvertString(resp.Article.Content); err == nil {
-		resp.Article.Content = markdown
 	}
 	if len(l.Ciphertext) > 0 || len(l.RewriteHls) > 0 {
 		resp.PalyURL = fmt.Sprintf("%s/v2/task/play.m3u8?id=%s", global.CONF.Storage.Host, l.TaskId)
@@ -369,7 +362,7 @@ func (t *Task) Download(c *gin.Context) {
 		if len(articleData.Info.Cshort) > len(articleData.Info.Content) {
 			articleData.Info.Content = articleData.Info.Cshort
 		}
-		markdown, err := htmltomarkdown.ConvertString(articleData.Info.Content)
+		markdown, err := service.HTMLConvertMarkdown(articleData.Info.Content)
 		if err != nil {
 			global.FAIL(c, "fail.msg", err.Error())
 			return
