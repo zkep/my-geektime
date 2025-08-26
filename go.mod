@@ -3,7 +3,7 @@ module github.com/zkep/my-geektime
 go 1.24.2
 
 require (
-	github.com/JohannesKaufmann/html-to-markdown/v2 v2.3.2
+	github.com/JohannesKaufmann/html-to-markdown/v2 v2.4.0
 	github.com/gin-contrib/static v1.1.5
 	github.com/gin-contrib/timeout v1.0.2
 	github.com/gin-gonic/gin v1.10.1
@@ -14,7 +14,7 @@ require (
 	github.com/uaxe/cliz v0.0.1
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.41.0
-	golang.org/x/net v0.42.0
+	golang.org/x/net v0.43.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/driver/postgres v1.6.0
