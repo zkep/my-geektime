@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/zkep/my-geektime/internal/global"
@@ -11,7 +12,11 @@ import (
 
 func PorxyMatch(uri string) bool {
 	for _, p := range global.CONF.Site.Proxy.Urls {
-		if strings.HasPrefix(uri, p) {
+		matched, err := regexp.MatchString(p, uri)
+		if err != nil {
+			return false
+		}
+		if matched {
 			return true
 		}
 	}
@@ -130,7 +135,7 @@ func OutputHTML(n *html.Node) string {
 				if _, err := b.WriteString(`="`); err != nil {
 					return
 				}
-				if a.Key == "href" || a.Key == "src" {
+				if a.Key == "href" || a.Key == "src" || a.Key == "poster" {
 					a.Val = URLProxyReplace(a.Val)
 				}
 				if err := escape(b, a.Val); err != nil {
@@ -252,7 +257,7 @@ func FindURLWithHTML(rawHtml string) ([]string, error) {
 				if _, err := b.WriteString(`="`); err != nil {
 					return
 				}
-				if a.Key == "href" || a.Key == "src" {
+				if a.Key == "href" || a.Key == "src" || a.Key == "poster" {
 					urls = append(urls, a.Val)
 				}
 				if err := escape(b, a.Val); err != nil {

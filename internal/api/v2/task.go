@@ -208,6 +208,7 @@ func (t *Task) Info(c *gin.Context) {
 	}
 	resp.Task.Cover = service.URLProxyReplace(resp.Task.Cover)
 	resp.Article.Cover.Square = service.URLProxyReplace(resp.Article.Cover.Square)
+	resp.Article.Cover.Default = service.URLProxyReplace(resp.Article.Cover.Default)
 	resp.Article.Author.Avatar = service.URLProxyReplace(resp.Article.Author.Avatar)
 	if len(resp.Article.Cshort) > len(resp.Article.Content) {
 		resp.Article.Content = resp.Article.Cshort
