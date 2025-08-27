@@ -15,11 +15,11 @@ This is a tool to obtain the geektime  articles docs
 ```shell
 git clone https://github.com/zkep/my-geektime.git
 
+docker pull --platform=linux/amd64  zkep/mygeektime:latest
+
 cd my-geektime/docker
 
-# Apple M1 , M2 modify docker-compose.yml 24 line use zkep/my-geektime:mac-m
-
-docker-compose up -d
+docker-compose -f docker-compose.yml up -d
 ```
 
 browser web url:  http://127.0.0.1:8090

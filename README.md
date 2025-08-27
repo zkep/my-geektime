@@ -22,38 +22,30 @@
 
 ### 安装
 
-#### docker compose
+1. 下载项目
 
-Linux / Windows / MacOS（非M系列）
 ```shell
 git clone https://github.com/zkep/my-geektime.git
+```
+2. 获取镜像 （任选其一）
+- 拉取仓库镜像
+```shell
+# 拉取linux/amd64架构的镜像
+docker pull --platform=linux/amd64  zkep/mygeektime:latest
 
-cd my-geektime/docker
-
-# 从本地构建镜像
-# docker-compose -f docker-compose.yml  build --no-cache server
-
-# 使用最新的dockerhub仓库镜像
-# docker pull zkep/mygeektime:latest
-
-docker-compose -f docker-compose.yml up -d 
-
+# 拉取linux/arm64架构的镜像
+# docker pull --platform=linux/arm64  zkep/mygeektime:latest
+```
+- 本地构建镜像
+```shell
+docker build --platform linux/amd64  -t zkep/mygeektime:latest .
 ```
 
-MacOS M 系列
+3. 启动服务
 ```shell
-
-git clone https://github.com/zkep/my-geektime.git
-
 cd my-geektime/docker
 
-# 从本地构建镜像
-# docker-compose -f docker-compose-m.yml  build --no-cache server
-
-# 使用最新的dockerhub仓库镜像
-# docker pull zkep/mygeektime:mac-m
-
-docker-compose -f docker-compose-m.yml up -d 
+docker-compose -f docker-compose.yml up -d
 ```
 
 浏览器访问:  http://127.0.0.1:8090

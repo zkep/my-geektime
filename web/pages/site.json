@@ -14,9 +14,14 @@
         "children": [
           {
             "label": "我的课程",
-            "url": "/task/list",
             "icon": "fa-solid fa-pen-clip",
-            "schemaApi": "get:/pages/task.json"
+            "children": [
+              {
+                "label": "课程列表",
+                "url": "/task/list",
+                "schemaApi": "get:/pages/task.json"
+              }
+            ]
           },
           {
             "label": "极客课程",

@@ -25,10 +25,10 @@ git clone https://github.com/zkep/my-geektime.git
 
 cd my-geektime/docker
 
-# Apple Mac M1,M2... 更新到最新的镜像
-docker pull zkep/mygeektime:mac-m
+# 拉取linux/amd64架构的镜像
+docker pull --platform=linux/amd64  zkep/mygeektime:latest
 
-docker-compose -f docker-compose-m.yml up -d 
+docker-compose up -d 
 ```
 浏览器访问:  http://127.0.0.1:8090
 
