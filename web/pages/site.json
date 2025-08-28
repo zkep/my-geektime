@@ -20,6 +20,11 @@
                 "label": "课程列表",
                 "url": "/task/list",
                 "schemaApi": "get:/pages/task.json"
+              },
+              {
+                "label": "收藏列表",
+                "url": "/collect/list",
+                "schemaApi": "get:/pages/collect.json"
               }
             ]
           },
@@ -41,18 +46,34 @@
             ]
           },
           {
-            "label": "用户列表",
-            "icon": "fa-regular fa-circle-user",
-            "visibleOn": "${ls:role_id===1}",
-            "url": "/user/list",
-            "schemaApi": "get:/pages/user.json"
-          },
-          {
             "label": "系统设置",
             "icon": "fa-solid fa-hammer",
             "visibleOn": "${ls:role_id===1}",
-            "url": "/setting",
-            "schemaApi": "get:/pages/setting.json"
+            "children": [
+              {
+                "label": "系统配置",
+                "url": "/setting",
+                "schemaApi": "get:/pages/setting.json"
+              },
+              {
+                "label": "用户管理",
+                "url": "/user/list",
+                "schemaApi": "get:/pages/user.json"
+              },
+              {
+                "label": "字典表",
+                "url": "/sys/dict/list",
+                "schemaApi": "get:/pages/dict.json",
+                "children": [
+                  {
+                    "label": "添加字典表",
+                    "url": "/sys/dict/add",
+                    "visibleOn": "false",
+                    "schemaApi": "get:/pages/dict-add.json"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

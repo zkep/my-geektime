@@ -577,7 +577,7 @@
           "method": "get",
           "url": "/v2/product/pvip/list",
           "data": {
-            "perPage": 20,
+            "perPage": 12,
             "page": "$page",
             "sort": "$sort",
             "direction": "$direction",
@@ -589,9 +589,6 @@
           }
         },
         "autoFillHeight": false,
-        "defaultParams": {
-          "perPage": 20
-        },
         "keepItemSelectionOnPageChange": true,
         "bulkActions": [],
         "footerToolbar": [
@@ -599,7 +596,7 @@
           "pagination"
         ],
         "mode": "cards",
-        "columnsCount": 4,
+        "columnsCount": 3,
         "card": {
           "header": {
             "className": "word-break",
@@ -726,15 +723,22 @@
                         }
                       },
                       "mode": "cards",
-                      "columnsCount": 4,
+                      "columnsCount": 3,
                       "checkOnItemClick": true,
                       "card": {
                         "header": {
-                          "className": "word-break",
-                          "title": "",
-                          "subTitle":  "",
-                          "description": "",
-                          "avatar": "${article_cover | raw}"
+                          "avatarText": "${article_title|substring:0:2|upperCase}",
+                          "avatarTextBackground": [
+                            "#FFB900",
+                            "#D83B01",
+                            "#B50E0E",
+                            "#E81123",
+                            "#B4009E",
+                            "#5C2D91",
+                            "#0078D7",
+                            "#00B4FF",
+                            "#008272"
+                          ]
                         },
                         "body": [
                           {
@@ -905,7 +909,7 @@
                                   "columns": [
                                     {
                                       "name": "id",
-                                      "label": "",
+                                      "label": "ID",
                                       "type": "hidden"
                                     },
                                     {

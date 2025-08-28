@@ -229,62 +229,57 @@ func (t *Task) Retry(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	var info model.Task
-	if err := global.DB.Model(&model.Task{}).Where("task_id", req.Pid).First(&info).Error; err != nil {
-		global.FAIL(c, "fail.msg", err.Error())
-		return
-	}
-	var statistics task.TaskStatistics
-	if err := json.Unmarshal(info.Statistics, &statistics); err != nil {
-		global.FAIL(c, "fail.msg", err.Error())
-		return
-	}
-	if !req.Retry && len(req.Ids) == 0 && info.Bstatus > 0 {
-		finishCount, ok := statistics.Items[service.TASK_STATUS_FINISHED]
-		if !ok {
-			global.FAIL(c, "tasks.illegal_operation", 0, statistics.Count)
-			return
+	worker := func(tx *gorm.DB, taskId string, ids ...string) error {
+		var info model.Task
+		if err := tx.Model(&model.Task{}).Where("task_id = ?", taskId).First(&info).Error; err != nil {
+			return err
 		}
-		if statistics.Count != finishCount {
-			global.FAIL(c, "tasks.illegal_operation", finishCount, statistics.Count)
-			return
+		var statistics task.TaskStatistics
+		if err := json.Unmarshal(info.Statistics, &statistics); err != nil {
+			return err
 		}
-		global.OkWithMsg(c, nil, "tasks.allow_operation", "OK", finishCount, statistics.Count)
-		return
-	}
-	newStatistics := task.TaskStatistics{
-		Count: statistics.Count,
-		Items: map[int]int{
-			service.TASK_STATUS_PENDING:  statistics.Count,
-			service.TASK_STATUS_RUNNING:  0,
-			service.TASK_STATUS_FINISHED: 0,
-			service.TASK_STATUS_ERROR:    0,
-		},
-	}
-	statisticsRaw, _ := json.Marshal(newStatistics)
-	err := global.DB.Transaction(func(tx *gorm.DB) error {
+		newStatistics := task.TaskStatistics{
+			Count: statistics.Count,
+			Items: map[int]int{
+				service.TASK_STATUS_PENDING:  statistics.Count,
+				service.TASK_STATUS_RUNNING:  0,
+				service.TASK_STATUS_FINISHED: 0,
+				service.TASK_STATUS_ERROR:    0,
+			},
+		}
+		statisticsRaw, _ := json.Marshal(newStatistics)
 		if err := tx.Model(&model.Task{}).
-			Where("task_id", req.Pid).
+			Where("task_id = ?", taskId).
 			UpdateColumn("status", service.TASK_STATUS_PENDING).
 			UpdateColumn("bstatus", service.TASK_STATUS_PENDING).
 			UpdateColumn("statistics", statisticsRaw).Error; err != nil {
 			return err
 		}
-		if len(req.Ids) == 0 {
+		if len(ids) > 0 {
 			if err := tx.Model(&model.Task{}).
-				Where("task_pid", req.Pid).
+				Where("task_id IN ?", ids).
 				UpdateColumn("status", service.TASK_STATUS_PENDING).
 				UpdateColumn("bstatus", service.TASK_STATUS_PENDING).Error; err != nil {
 				return err
 			}
 		} else {
-			for _, idx := range strings.Split(req.Ids, ",") {
-				if err := tx.Model(&model.Task{}).
-					Where("task_id", idx).
-					UpdateColumn("status", service.TASK_STATUS_PENDING).
-					UpdateColumn("bstatus", service.TASK_STATUS_PENDING).Error; err != nil {
-					return err
-				}
+			if err := tx.Model(&model.Task{}).
+				Where("task_pid = ?", taskId).
+				UpdateColumn("status", service.TASK_STATUS_PENDING).
+				UpdateColumn("bstatus", service.TASK_STATUS_PENDING).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+	ids := strings.Split(req.Ids, ",")
+	err := global.DB.Transaction(func(tx *gorm.DB) error {
+		if len(req.Pid) > 0 {
+			return worker(tx, req.Pid, ids...)
+		}
+		for _, id := range ids {
+			if err := worker(tx, id); err != nil {
+				return err
 			}
 		}
 		return nil

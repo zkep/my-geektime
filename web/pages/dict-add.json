@@ -1,0 +1,136 @@
+{
+  "status": 0,
+  "msg": "",
+  "data": {
+    "type": "page",
+    "title": "添加字典表",
+    "toolbar": [
+      {
+        "type": "button",
+        "level": "info",
+        "actionType": "link",
+        "link": "/sys/dict/list",
+        "label": "返回列表"
+      }
+    ],
+    "body": [
+      {
+        "type": "form",
+        "title": "",
+        "redirect": "/sys/dict/list",
+        "name": "dict-edit-form",
+        "api": "post:/v2/sys/dict/create",
+        "controls": [
+          {
+            "type": "nested-select",
+            "name": "pkey",
+            "label": "分类",
+            "source": "get:/v2/sys/dict/tree"
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "text",
+            "name": "name",
+            "label": "名称",
+            "required": true
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "text",
+            "name": "key",
+            "label": "唯一标识",
+            "required": true,
+            "validations": {
+              "isAlphanumeric": true
+            },
+            "placeholder": "请输入唯一标识",
+            "value": "${pkey !== undefined ? UUID(8) : ''}",
+            "hint": "唯一标识示例：productCategory，仅支持英文数字，不支持特殊字符"
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "combo",
+            "name": "content",
+            "label": "值",
+            "multiLine": true,
+            "items": [
+              {
+                "name": "type",
+                "label": "类型",
+                "type": "select",
+                "selectFirst": true,
+                "options": [
+                  {
+                    "label": "文本",
+                    "value": "string"
+                  },
+                  {
+                    "label": "数字",
+                    "value": "number"
+                  },
+                  {
+                    "label": "布尔值",
+                    "value": "boolean"
+                  },
+                  {
+                    "label": "对象",
+                    "value": "object"
+                  }
+                ]
+              },
+              {
+                "name": "value",
+                "label": "默认值",
+                "hiddenOn": "this.type!=='string'",
+                "type": "input-text"
+              },
+              {
+                "name": "value",
+                "label": "默认值",
+                "hiddenOn": "this.type!=='number'",
+                "type": "input-number"
+              },
+              {
+                "name": "value",
+                "label": "默认值",
+                "hiddenOn": "this.type!=='boolean'",
+                "onText": "true",
+                "offText": "false",
+                "type": "switch"
+              },
+              {
+                "name": "value",
+                "label": "默认值",
+                "hiddenOn": "this.type!=='object'",
+                "type": "json-schema"
+              }
+            ]
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "textarea",
+            "name": "summary",
+            "label": "描述"
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "number",
+            "name": "sort",
+            "label": "排序",
+            "value": 1
+          }
+        ]
+      }
+    ]
+  }
+}

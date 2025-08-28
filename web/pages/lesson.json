@@ -541,7 +541,7 @@
             "orderby": "${orderby}",
             "type": "${type}",
             "page": "${page}",
-            "perPage": 20
+            "perPage": 12
           }
         },
         "autoFillHeight": false,
@@ -552,16 +552,8 @@
           "pagination"
         ],
         "mode": "cards",
-        "columnsCount": 4,
+        "columnsCount": 3,
         "card": {
-          "header": {
-            "className": "word-break",
-            "title": "",
-            "subTitle": "",
-            "description": "${title | raw}",
-            "avatar": "${cover.square | raw}",
-            "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
-          },
           "body": [
             {
               "type": "property",
@@ -569,6 +561,16 @@
               "mode": "simple",
               "separator": "：",
               "items": [
+                {
+                  "label": "标题",
+                  "content": "${title}",
+                  "span": 3
+                },
+                {
+                  "label": "副标题",
+                  "content": "${subtitle}",
+                  "span": 3
+                },
                 {
                   "label": "作者",
                   "content": "${author.name}",
@@ -722,7 +724,7 @@
                     "columns": [
                       {
                         "name": "id",
-                        "label": "",
+                        "label": "ID",
                         "type": "hidden"
                       },
                       {

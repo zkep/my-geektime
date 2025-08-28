@@ -1,0 +1,471 @@
+{
+  "status": 0,
+  "msg": "",
+  "data": {
+    "type": "page",
+    "title": "字典表",
+    "name": "sys-dict",
+    "toolbar": [
+      {
+        "type": "button",
+        "label": "添加字典",
+        "position": "left",
+        "level": "info",
+        "actionType": "link",
+        "link": "/sys/dict/add"
+      }
+    ],
+    "body": [
+      {
+        "type": "crud",
+        "id": "sysDictCrud",
+        "name": "sysDictCrud",
+        "parsePrimitiveQuery": {
+          "enable": true,
+          "types": [
+            "boolean",
+            "number"
+          ]
+        },
+        "syncLocation": false,
+        "autoGenerateFilter": true,
+        "headerToolbar": [
+          {
+            "type": "columns-toggler",
+            "align": "right",
+            "draggable": true
+          },
+          {
+            "type": "drag-toggler",
+            "align": "right"
+          }
+        ],
+        "api": "get:/v2/sys/dict/list",
+        "deferApi": "get:/v2/sys/dict/list?pkey=${key}",
+        "draggable": false,
+        "defaultParams": {
+          "perPage": 10
+        },
+        "autoFillHeight": false,
+        "keepItemSelectionOnPageChange": true,
+        "bulkActions": [],
+        "footerToolbar": [
+          "switch-per-page",
+          "pagination"
+        ],
+        "columns": [
+          {
+            "name": "id",
+            "label": "ID",
+            "type": "text",
+            "toggled": true,
+            "width": 100
+          },
+          {
+            "name": "name",
+            "type": "text",
+            "toggled": true,
+            "label": "名称",
+            "searchable": {
+              "type": "input-text",
+              "name": "name",
+              "label": "名称",
+              "placeholder": "输入名称"
+            }
+          },
+          {
+            "name": "key",
+            "type": "text",
+            "toggled": true,
+            "label": "唯一标识",
+            "searchable": {
+              "type": "input-text",
+              "name": "key",
+              "label": "唯一标识",
+              "placeholder": "输入唯一标识"
+            }
+          },
+          {
+            "name": "content",
+            "type": "json",
+            "label": "内容"
+          },
+          {
+            "name": "sort",
+            "type": "text",
+            "toggled": true,
+            "label": "排序"
+          },
+          {
+            "name": "created",
+            "type": "date",
+            "format": "YYYY-MM-DD HH:mm:ss",
+            "label": "创建时间"
+          },
+          {
+            "name": "updated",
+            "type": "date",
+            "format": "YYYY-MM-DD HH:mm:ss",
+            "label": "更新时间"
+          },
+          {
+            "type": "operation",
+            "label": "操作",
+            "width": 100,
+            "buttons": [
+              {
+                "type": "button",
+                "icon": "fa fa-eye",
+                "actionType": "dialog",
+                "dialog": {
+                  "title": "查看",
+                  "size": "lg",
+                  "body": {
+                    "type": "form",
+                    "body": [
+                      {
+                        "type": "static",
+                        "label": "上级标识",
+                        "name": "pkey"
+                      },
+                      {
+                        "type": "static",
+                        "name": "id",
+                        "label": "ID"
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "static",
+                        "name": "name",
+                        "label": "名称"
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "static",
+                        "name": "key",
+                        "label": "唯一标识"
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "combo",
+                        "name": "content",
+                        "label": "值",
+                        "multiLine": true,
+                        "items": [
+                          {
+                            "name": "type",
+                            "label": "类型",
+                            "type": "select",
+                            "options": [
+                              {
+                                "label": "文本",
+                                "value": "string"
+                              },
+                              {
+                                "label": "数字",
+                                "value": "number"
+                              },
+                              {
+                                "label": "布尔值",
+                                "value": "boolean"
+                              },
+                              {
+                                "label": "对象",
+                                "value": "object"
+                              }
+                            ]
+                          },
+                          {
+                            "name": "value",
+                            "label": "默认值",
+                            "hiddenOn": "this.type!=='string'",
+                            "type": "static-text"
+                          },
+                          {
+                            "name": "value",
+                            "label": "默认值",
+                            "hiddenOn": "this.type!=='number'",
+                            "type": "static-number"
+                          },
+                          {
+                            "name": "value",
+                            "type": "switch",
+                            "label": "默认值",
+                            "hiddenOn": "this.type!=='boolean'",
+                            "onText": "true",
+                            "offText": "false"
+                          },
+                          {
+                            "name": "value",
+                            "label": "默认值",
+                            "hiddenOn": "this.type!=='object'",
+                            "type": "json-schema"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "type": "textarea",
+                        "name": "summary",
+                        "label": "描述",
+                        "showCounter": true,
+                        "readOnly": true
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "name": "created",
+                        "type": "static-date",
+                        "format": "YYYY-MM-DD HH:mm:ss",
+                        "label": "创建时间"
+                      },
+                      {
+                        "type": "divider"
+                      },
+                      {
+                        "name": "updated",
+                        "type": "static-date",
+                        "format": "YYYY-MM-DD HH:mm:ss",
+                        "label": "更新时间"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "button",
+                "icon": "fa fa-pencil",
+                "position": "left",
+                "actionType": "drawer",
+                "drawer": {
+                  "resizable": true,
+                  "closeOnOutside": true,
+                  "title": "编辑",
+                  "size": "lg",
+                  "body": [
+                    {
+                      "type": "form",
+                      "label": "",
+                      "redirect": "/sys/dict/list",
+                      "name": "sys-dict-edit-form",
+                      "api": "put:/v2/sys/dict/update",
+                      "controls": [
+                        {
+                          "type": "static",
+                          "label": "上级标识",
+                          "name": "pkey",
+                          "value": "${pkey}"
+                        },
+                        {
+                          "type": "divider"
+                        },
+                        {
+                          "type": "static",
+                          "label": "ID",
+                          "name": "id",
+                          "value": "${id}",
+                          "required": true
+                        },
+                        {
+                          "type": "divider"
+                        },
+                        {
+                          "type": "text",
+                          "name": "key",
+                          "label": "唯一标识",
+                          "required": true,
+                          "validations": {
+                            "isAlphanumeric": true
+                          }
+                        },
+                        {
+                          "type": "divider"
+                        },
+                        {
+                          "type": "text",
+                          "name": "name",
+                          "label": "名称",
+                          "required": true
+                        },
+                        {
+                          "type": "divider"
+                        },
+                        {
+                          "type": "combo",
+                          "name": "content",
+                          "label": "值",
+                          "multiLine": true,
+                          "required": true,
+                          "items": [
+                            {
+                              "name": "type",
+                              "label": "类型",
+                              "type": "select",
+                              "selectFirst": true,
+                              "options": [
+                                {
+                                  "label": "文本",
+                                  "value": "string"
+                                },
+                                {
+                                  "label": "数字",
+                                  "value": "number"
+                                },
+                                {
+                                  "label": "布尔值",
+                                  "value": "boolean"
+                                },
+                                {
+                                  "label": "对象",
+                                  "value": "object"
+                                }
+                              ]
+                            },
+                            {
+                              "name": "value",
+                              "label": "默认值",
+                              "hiddenOn": "this.type!=='string'",
+                              "type": "input-text"
+                            },
+                            {
+                              "name": "value",
+                              "label": "默认值",
+                              "hiddenOn": "this.type!=='number'",
+                              "type": "input-number"
+                            },
+                            {
+                              "name": "value",
+                              "label": "默认值",
+                              "hiddenOn": "this.type!=='boolean'",
+                              "onText": "true",
+                              "offText": "false",
+                              "type": "switch"
+                            },
+                            {
+                              "name": "value",
+                              "label": "默认值",
+                              "hiddenOn": "this.type!=='object'",
+                              "type": "json-schema"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "divider"
+                        },
+                        {
+                          "type": "textarea",
+                          "name": "summary",
+                          "label": "描述",
+                          "showCounter": true
+                        },
+                        {
+                          "type": "divider"
+                        },
+                        {
+                          "type": "number",
+                          "name": "sort",
+                          "label": "排序",
+                          "value": 1
+                        }
+                      ],
+                      "onEvent": {
+                        "submitSucc": {
+                          "actions": [
+                            {
+                              "componentId": "sysDictCrud",
+                              "actionType": "reload",
+                              "args": {
+                                "condition": "${key == __super.pkey}"
+                              }
+                            },
+                            {
+                              "componentId": "sysDictCrud",
+                              "actionType": "setExpanded",
+                              "args": {
+                                "condition": "${key == __super.pkey}",
+                                "value": true
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "button",
+                "icon": "fa fa-times text-danger",
+                "actionType": "dialog",
+                "dialog": {
+                  "title": "提示",
+                  "body": [
+                    "确定要删除编号【${id}】？",
+                    {
+                      "type": "form",
+                      "api": {
+                        "url": "/v2/sys/dict/delete",
+                        "method": "delete",
+                        "data": {
+                          "id": "${id}"
+                        }
+                      },
+                      "body": [
+                        {
+                          "type": "hidden",
+                          "name": "key",
+                          "value": "${key}"
+                        }
+                      ],
+                      "onEvent": {
+                        "submitSucc": {
+                          "actions": [
+                            {
+                              "componentId": "sysDictCrud",
+                              "actionType": "reload",
+                              "args": {
+                                "condition": "${key == __super.pkey}"
+                              }
+                            },
+                            {
+                              "componentId": "sysDictCrud",
+                              "actionType": "setExpanded",
+                              "args": {
+                                "condition": "${key == __super.pkey}",
+                                "value": true
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "toggled": true,
+            "placeholder": "-"
+          }
+        ],
+        "affixHeader": true,
+        "columnsTogglable": "auto",
+        "placeholder": "暂无数据",
+        "tableClassName": "table-db table-striped",
+        "headerClassName": "crud-table-header",
+        "footerClassName": "crud-table-footer",
+        "toolbarClassName": "crud-table-toolbar",
+        "combineNum": 0,
+        "bodyClassName": "panel-default"
+      }
+    ]
+  }
+}

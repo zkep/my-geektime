@@ -6,6 +6,17 @@
       "type": "page",
       "title": "",
       "toolbar": [],
+      "data": {
+        "collectCategory": []
+      },
+      "initApi": {
+        "method": "get",
+        "url": "/v2/sys/dict/tree?key=collectCategory&option=value",
+        "responseData": {
+          "&": "$$",
+          "collectCategory": "${collectCategory}"
+        }
+      },
       "body": [
         {
           "type": "crud",
@@ -18,9 +29,6 @@
             ]
           },
           "syncLocation": false,
-          "headerToolbar": [
-            "filter-toggler"
-          ],
           "filter": {
             "title": "条件搜索",
             "body": [
@@ -556,7 +564,6 @@
                     "type": "select",
                     "label": "课程状态",
                     "name": "xstatus",
-                    "visibleOn": "${ ls:role_id === 1 }",
                     "value": 0,
                     "options": [
                       {
@@ -607,18 +614,98 @@
             "url": "/v2/task/list"
           },
           "defaultParams": {
-            "perPage": 20
+            "perPage": 6
           },
+          "tableLayout": "fixed",
+          "primaryField": "task_id",
+          "mode": "cards",
+          "columnsCount": 3,
+          "checkOnItemClick": true,
           "keepItemSelectionOnPageChange": true,
-          "bulkActions": [],
+          "maxKeepItemSelectionLength": 50,
+          "headerToolbar": [
+            "filter-toggler",
+            "bulkActions"
+          ],
           "footerToolbar": [
             "statistics",
+            "switch-per-page",
             "pagination"
           ],
-          "tableLayout": "fixed",
-          "mode": "cards",
-          "columnsCount": 4,
-          "checkOnItemClick": true,
+          "bulkActions": [
+            {
+              "label": "批量收藏",
+              "actionType": "dialog",
+              "dialog": {
+                "title": "批量收藏",
+                "actions": [
+                  {
+                    "type": "button",
+                    "actionType": "cancel",
+                    "label": "关闭"
+                  },
+                  {
+                    "type": "submit",
+                    "visibleOn": "data.category",
+                    "label": "保存",
+                    "level": "primary"
+                  }
+                ],
+                "body": {
+                  "type": "form",
+                  "name": "sample-edit-form",
+                  "api": {
+                    "url": "/v2/collect/create",
+                    "method":"post",
+                    "data": {
+                      "ids": "${ids|raw}",
+                      "collect_type": "task",
+                      "category": "${category}"
+                    }
+                  },
+                  "body": [
+                    {
+                      "type": "select",
+                      "name": "category",
+                      "label": "分类",
+                      "source": "${collectCategory}",
+                      "clearable": true,
+                      "required": true
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "button",
+              "visibleOn": "${ ls:role_id === 1 }",
+              "label": "批量下载音视频",
+              "actionType": "ajax",
+              "api": {
+                "url": "/v2/task/retry",
+                "method":"post",
+                "data": {
+                  "ids": "${ids|raw}",
+                  "retry": true
+                }
+              },
+              "confirmText": "确定要<b>批量下载</b>音视频到本地磁盘么？<br/> 🔔下载后重新生成【文档】会在文档中加入本地音视频"
+            },
+            {
+              "type": "button",
+              "visibleOn": "${ ls:role_id === 1 }",
+              "label": "批量删除",
+              "actionType": "ajax",
+              "api": {
+                "url": "/v2/task/delete",
+                "method": "delete",
+                "data": {
+                  "ids": "${ids|raw}"
+                }
+              },
+              "confirmText": "确定要批量删除课程吗？"
+            }
+          ],
           "card": {
             "header": {
               "className": "word-break",
@@ -628,7 +715,6 @@
               "avatar": "${cover | raw}",
               "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
             },
-            "bodyClassName": "padder",
             "body": [
               {
                 "type": "property",
@@ -802,10 +888,6 @@
                         ]
                       },
                       "syncLocation": false,
-                      "headerToolbar": [
-                        "filter-toggler",
-                        "bulkActions"
-                      ],
                       "data": {
                         "xstatus": 0,
                         "keywords": ""
@@ -830,7 +912,6 @@
                               {
                                 "type": "select",
                                 "name": "xstatus",
-                                "visibleOn": "${ ls:role_id === 1 }",
                                 "value": 0,
                                 "options": [
                                   {
@@ -875,9 +956,18 @@
                         "url": "/v2/task/list"
                       },
                       "defaultParams": {
-                        "perPage": 20
+                        "perPage": 6
                       },
                       "keepItemSelectionOnPageChange": true,
+                      "headerToolbar": [
+                        "filter-toggler",
+                        "bulkActions"
+                      ],
+                      "footerToolbar": [
+                        "statistics",
+                        "switch-per-page",
+                        "pagination"
+                      ],
                       "bulkActions": [
                         {
                           "label": "批量下载",
@@ -907,22 +997,24 @@
                           "confirmText": "确定要删除当课程吗？"
                         }
                       ],
-                      "footerToolbar": [
-                        "statistics",
-                        "switch-per-page",
-                        "pagination"
-                      ],
                       "primaryField": "task_id",
                       "mode": "cards",
-                      "columnsCount": 4,
+                      "columnsCount": 3,
                       "checkOnItemClick": true,
                       "card": {
                         "header": {
-                          "className": "word-break",
-                          "title": "",
-                          "subTitle": "",
-                          "description": "",
-                          "avatar": "${cover | raw}"
+                          "avatarText": "${task_name|substring:0:2|upperCase}",
+                          "avatarTextBackground": [
+                            "#FFB900",
+                            "#D83B01",
+                            "#B50E0E",
+                            "#E81123",
+                            "#B4009E",
+                            "#5C2D91",
+                            "#0078D7",
+                            "#00B4FF",
+                            "#008272"
+                          ]
                         },
                         "body":[
                           {
@@ -933,7 +1025,6 @@
                           {
                             "name": "status",
                             "type": "static-mapping",
-                            "visibleOn": "${ ls:role_id === 1 }",
                             "label": "状态",
                             "canAccessSuperData": false,
                             "classNameExpr": "${ status =='4' ? 'text-danger' : '' }",

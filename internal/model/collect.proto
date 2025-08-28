@@ -1,0 +1,26 @@
+syntax="proto3";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.populate_all) = true;
+option go_package = "model";
+
+// Collect
+message Collect {
+  // id
+  int64 id = 1 [(gogoproto.moretags) = "gorm:\"index:,priority:3,composite:idx_tasks_status_deleted_at_id;primaryKey;autoIncrement;comment:id\""];
+  // uid
+  string uid = 2 [(gogoproto.moretags) = "gorm:\"index:,unique,composite:user_collect;comment:uid\""];
+  // collect id
+  string collect_id = 3 [(gogoproto.moretags) = "gorm:\"index:,unique,composite:user_collect;comment:collect id\""];
+  // collect type
+  string collect_type = 4 [(gogoproto.moretags) = "gorm:\"index:,unique,composite:user_collect;comment:collect type\""];
+  // category
+  string category = 5 [(gogoproto.moretags) = "gorm:\"index;comment:category\""];
+  // created_at
+  int64 created_at = 25 [(gogoproto.moretags) = "gorm:\"index;comment:created at\""];
+  // updated_at
+  int64 updated_at = 26 [(gogoproto.moretags) = "gorm:\"index;comment:updated at\""];
+  // deleted_at
+  int64 deleted_at = 27 [(gogoproto.moretags) = "gorm:\"index:,comment:deleted at\""];
+}

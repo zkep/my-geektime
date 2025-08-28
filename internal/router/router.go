@@ -38,6 +38,8 @@ func NewRouter(assets embed.FS) (*gin.Engine, error) {
 
 	base(public, private)
 
+	dict(public, private)
+
 	product(public, private)
 
 	task(public, private)
@@ -47,6 +49,8 @@ func NewRouter(assets embed.FS) (*gin.Engine, error) {
 	file(public, private)
 
 	setting(public, private)
+
+	collect(public, private)
 
 	return e, nil
 }
