@@ -57,6 +57,7 @@ func (p *Product) ArticleInfo(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
+	resp.Data.Info.Cover.Default = service.URLProxyReplace(resp.Data.Info.Cover.Default)
 	resp.Data.Info.Author.Avatar = service.URLProxyReplace(resp.Data.Info.Author.Avatar)
 	resp.Data.Info.Video.Cover = service.URLProxyReplace(resp.Data.Info.Video.Cover)
 	if len(resp.Data.Info.Content) > 0 {

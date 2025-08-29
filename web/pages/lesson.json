@@ -562,13 +562,8 @@
               "separator": "：",
               "items": [
                 {
-                  "label": "标题",
+                  "label": "课程",
                   "content": "${title}",
-                  "span": 3
-                },
-                {
-                  "label": "副标题",
-                  "content": "${subtitle}",
                   "span": 3
                 },
                 {
