@@ -42,7 +42,7 @@ func (t *Collect) Create(c *gin.Context) {
 				Uid:         identity,
 				CollectId:   id,
 				CollectType: req.CollectType,
-				Category:    req.Category,
+				Category:    req.Category.String(),
 			}
 			err := tx.Model(item).
 				Where("uid = ?", identity).
@@ -79,7 +79,7 @@ func (t *Collect) List(c *gin.Context) {
 	}
 	var ls []*model.Collect
 	tx := global.DB.Model(&model.Collect{})
-	if len(req.Category) > 0 {
+	if req.Category > 0 {
 		tx = tx.Where("category = ?", req.Category)
 	}
 	tx = tx.Where("deleted_at = ?", 0)

@@ -4,21 +4,13 @@
   "msg": "",
   "data": {
     "type": "page",
-    "title": "我的收藏",
-    "remark": {
-      "title": "我的收藏",
-      "body": "温馨提示：从课程列表批量收藏后，会出现在我的收藏列表",
-      "icon": "question-mark",
-      "placement": "right",
-      "trigger": "click",
-      "rootClose": true
-    },
+    "title": "",
     "data": {
       "collectCategory": []
     },
     "initApi": {
       "method": "get",
-      "url": "/v2/sys/dict/tree?key=collectCategory&option=value",
+      "url": "/v2/sys/dict/tree?key=collectCategory&noChild=1",
       "responseData": {
         "&": "$$",
         "collectCategory": "${collectCategory}"
@@ -26,6 +18,17 @@
     },
     "toolbar": [],
     "body": [
+      {
+        "type": "alert",
+        "body": {
+          "type": "html",
+          "html": "温馨提示：从课程列表批量收藏后，会出现在我的收藏列表"
+        },
+        "level": "info",
+        "showCloseButton": true,
+        "showIcon": true,
+        "className": "mb-2"
+      },
       {
         "type": "crud",
         "name": "collect-list",
@@ -51,24 +54,16 @@
         "checkOnItemClick": true,
         "keepItemSelectionOnPageChange": true,
         "maxKeepItemSelectionLength": 50,
-        "data": {
-          "xstatus": 0,
-          "keywords": ""
-        },
         "filter": {
           "title": "条件搜索",
           "body": [
             {
-              "type": "group",
-              "body": [
-                {
-                  "type": "select",
-                  "name": "category",
-                  "label": "分类",
-                  "value": "",
-                  "source": "${collectCategory}"
-                }
-              ]
+              "type": "list-select",
+              "name": "category",
+              "label": "分类",
+              "clearable": true,
+              "value": 0,
+              "source": "${collectCategory}"
             }
           ]
         },

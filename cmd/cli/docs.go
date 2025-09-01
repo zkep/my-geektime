@@ -12,6 +12,7 @@ import (
 	"github.com/zkep/my-geektime/internal/model"
 	"github.com/zkep/my-geektime/internal/service"
 	"github.com/zkep/my-geektime/internal/types/geek"
+	"github.com/zkep/my-geektime/internal/types/sys_dict"
 	"github.com/zkep/my-geektime/internal/types/task"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
@@ -51,6 +52,7 @@ func (app *App) Docs(f *DocsFlags) error {
 		return err
 	}
 	global.CONF = &cfg
+	global.ASSETS = app.assets
 	if err := initialize.Gorm(app.ctx); err != nil {
 		return err
 	}
@@ -125,6 +127,7 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 		return err
 	}
 	global.CONF = &cfg
+	global.ASSETS = app.assets
 	if err := initialize.Gorm(app.ctx); err != nil {
 		return err
 	}
@@ -137,12 +140,16 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 	if err := initialize.GPool(app.ctx); err != nil {
 		return err
 	}
-	var tags []Tag
-	if err := json.Unmarshal([]byte(TagJSON), &tags); err != nil {
+	tagRaw, err := app.assets.ReadFile("web/pages/tags.json")
+	if err != nil {
 		return err
 	}
-	tagMap := make(map[int32]Option, len(tags))
-	for _, tag := range tags {
+	var tagData sys_dict.TagData
+	if err = json.Unmarshal(tagRaw, &tagData); err != nil {
+		return err
+	}
+	tagMap := make(map[int32]sys_dict.Option, len(tagData.Data))
+	for _, tag := range tagData.Data {
 		tagMap[tag.Value] = tag.Option
 	}
 	workerFn := func(tagValue int32) error {
@@ -158,7 +165,7 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 			tx = tx.Where("other_type = ?", 1)
 			tx = tx.Where("task_pid = ?", "")
 			tx = tx.Where("deleted_at = ?", 0)
-			if err := tx.Order("id ASC").
+			if err = tx.Order("id ASC").
 				Offset((page - 1) * psize).
 				Limit(psize + 1).
 				Find(&ls).Error; err != nil {
@@ -173,17 +180,17 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 			page++
 			for _, l := range ls {
 				var product geek.ProductBase
-				if err := json.Unmarshal(l.Raw, &product); err != nil {
+				if err = json.Unmarshal(l.Raw, &product); err != nil {
 					global.LOG.Error("Docs Unmarshal", zap.Error(err))
 					continue
 				}
 				group, ok := tagMap[l.OtherGroup]
 				if !ok {
-					group = Option{Label: "其它"}
+					group = sys_dict.Option{Label: "其它"}
 				}
 				group.Label = service.VerifyFileName(group.Label)
 				product.Title = service.VerifyFileName(product.Title)
-				err := service.MakeDocsiteLocal(app.ctx, l.TaskId, group.Label, product.Title, product.IntroHTML, 15)
+				err = service.MakeDocsiteLocal(app.ctx, l.TaskId, group.Label, product.Title, product.IntroHTML, 15)
 				if err != nil {
 					global.LOG.Error("Docs MakeDocsite", zap.Error(err))
 					continue
@@ -194,9 +201,8 @@ func (app *App) LocalDoc(f *DocsFlags) error {
 		}
 		return nil
 	}
-	for _, tag := range tags {
-		err := workerFn(tag.Value)
-		if err != nil {
+	for _, tag := range tagData.Data {
+		if err = workerFn(tag.Value); err != nil {
 			return err
 		}
 	}

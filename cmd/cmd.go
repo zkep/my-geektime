@@ -61,6 +61,7 @@ func (app *App) Run() {
 	subCLI.NewSubCommandFunction("data", "init geektime data", cliApp.Data)
 	subCLI.NewSubCommandFunction("docs", "make geektime docs", cliApp.Docs)
 	subCLI.NewSubCommandFunction("docs-local", "make geektime local docs", cliApp.LocalDoc)
+	subCLI.NewSubCommandFunction("label", "make geektime label", cliApp.Label)
 	if err := c.Run(); err != nil {
 		fmt.Println(color.Red(err.Error()))
 	}

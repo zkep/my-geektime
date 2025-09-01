@@ -2,6 +2,7 @@ package v2
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/zkep/my-geektime/internal/model"
 	"github.com/zkep/my-geektime/internal/service"
 	"github.com/zkep/my-geektime/internal/types/sys_dict"
+	"gorm.io/gorm"
 )
 
 type Dict struct {
@@ -36,16 +38,34 @@ func (s *Dict) Create(c *gin.Context) {
 		Content: r.Content,
 		Sort:    r.Sort,
 	}
+
 	info := model.SysDict{Base: &base}
-	if err := global.DB.WithContext(c).
-		Model(&model.SysDict{}).
-		Where(&model.SysDict{
-			Base: &model.SysDictBase{
-				Pkey: r.Pkey,
-				Key:  r.Key,
-			},
-		}).
-		FirstOrCreate(&info).Error; err != nil {
+	err := global.DB.WithContext(c).Transaction(func(tx *gorm.DB) error {
+		if r.Pkey == "" {
+			info.Base.Rkey = r.Key
+		} else {
+			var parent model.SysDict
+			if err := tx.Model(&model.SysDict{}).
+				Where("`key` = ?", r.Pkey).
+				First(&parent).Error; err != nil {
+				return err
+			}
+			info.Base.Rkey = parent.Base.Rkey
+		}
+		err := tx.Model(&model.SysDict{}).
+			Where(&model.SysDict{
+				Base: &model.SysDictBase{
+					Pkey: info.Base.Pkey,
+					Key:  info.Base.Key,
+				},
+			}).
+			FirstOrCreate(&info).Error
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
@@ -64,18 +84,16 @@ func (s *Dict) Update(c *gin.Context) {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	base := model.SysDictBase{
-		Key:     r.Key,
-		Pkey:    r.Pkey,
-		Name:    r.Name,
-		Summary: r.Summary,
-		Content: r.Content,
-		Sort:    r.Sort,
+	info := model.SysDict{Model: &model.Model{Id: r.Id}}
+	if err := global.DB.Model(&info).First(&info).Error; err != nil {
+		global.FAIL(c, "fail.msg", err.Error())
+		return
 	}
-	info := model.SysDict{Base: &base, Model: &model.Model{Id: r.Id}}
-	if err := global.DB.
-		Model(&info).
-		Updates(&info).Error; err != nil {
+	info.Base.Name = r.Name
+	info.Base.Summary = r.Summary
+	info.Base.Sort = r.Sort
+	info.Base.Content = r.Content
+	if err := global.DB.Model(&info).Updates(&info).Error; err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
@@ -128,7 +146,9 @@ func (s *Dict) List(c *gin.Context) {
 	if req.Name != "" {
 		tx = tx.Where("name LIKE ?", "%"+req.Name+"%")
 	}
-
+	if req.Name+req.Key+req.Pkey == "" {
+		tx = tx.Where("pkey = ?", req.Pkey)
+	}
 	tx = tx.Where("deleted = ?", 0)
 	tx = tx.Order("id ASC")
 	tx = tx.Order("sort DESC")
@@ -224,40 +244,80 @@ func (s *Dict) List(c *gin.Context) {
 }
 
 func (s *Dict) Tree(c *gin.Context) {
-	var r sys_dict.QueryWithKey
-	if err := c.ShouldBindQuery(&r); err != nil {
+	var r sys_dict.QueryTree
+	if err := c.ShouldBind(&r); err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	ls, err := s.dict.ALL(c)
+	keys := strings.Split(r.Key, ",")
+	if len(keys) == 0 {
+		r.FiledName = "options"
+	}
+	filedNames := make([]string, 0, len(keys))
+	if len(r.FiledName) > 0 {
+		filedNames = strings.Split(r.FiledName, ",")
+	}
+	if len(filedNames) == 0 {
+		filedNames = keys
+	}
+	if len(filedNames) != len(keys) {
+		global.FAIL(c, "fail")
+		return
+	}
+	noChilds := make([]bool, len(filedNames))
+	noChildArr := strings.Split(r.NoChild, ",")
+	if len(noChildArr) == len(filedNames) {
+		for i := 0; i < len(filedNames); i++ {
+			noChilds[i], _ = strconv.ParseBool(noChildArr[i])
+		}
+	}
+	scores := make([]func(db *gorm.DB) *gorm.DB, 0, len(keys))
+	if len(keys) > 0 {
+		scope := func(db *gorm.DB) *gorm.DB {
+			return db.Where("rkey IN (?)", keys)
+		}
+		scores = append(scores, scope)
+	}
+	ls, err := s.dict.ALL(c, scores...)
 	if err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
 	}
-	if len(ls) == 0 && r.Key == "collectCategory" {
-		if err = s.dict.CollectCategoryInitialize(c); err != nil {
-			global.FAIL(c, "fail.msg", err.Error())
+	if len(ls) == 0 {
+		raw, err1 := global.ASSETS.ReadFile("web/pages/tags.json")
+		if err1 != nil {
+			global.FAIL(c, "fail.msg", err1.Error())
 			return
 		}
-		ls, err = s.dict.ALL(c)
+		var tagData sys_dict.TagData
+		if err = json.Unmarshal(raw, &tagData); err != nil {
+			global.FAIL(c, "fail.msg", err1.Error())
+			return
+		}
+		for _, key := range keys {
+			switch key {
+			case sys_dict.CollectCategoryKey:
+				if err = service.CollectCategoryInitialize(c, tagData); err != nil {
+					global.FAIL(c, "fail.msg", err.Error())
+					return
+				}
+			case sys_dict.GeektimeCategoryKey:
+				if err = service.GeektimeCategory(c, tagData); err != nil {
+					global.FAIL(c, "fail.msg", err.Error())
+					return
+				}
+			}
+		}
+		ls, err = s.dict.ALL(c, scores...)
 		if err != nil {
 			global.FAIL(c, "fail.msg", err.Error())
 			return
 		}
 	}
-	defaultKey := "options"
-	ret := make(map[string][]*sys_dict.DictTree, len(ls))
-	keys := make([]string, 0, 1)
-	if len(r.Key) > 0 {
-		keys = strings.Split(r.Key, ",")
-	} else {
-		keys = append(keys, defaultKey)
-	}
-
 	tree := make([]*sys_dict.DictTree, 0, len(ls))
-	parentKeys := make(map[string]struct{}, len(keys))
 	for _, v := range ls {
 		item := sys_dict.DictTree{
+			Data:     v.Base.Content,
 			Pkey:     v.Base.Pkey,
 			Key:      v.Base.Key,
 			Label:    v.Base.Name,
@@ -265,26 +325,13 @@ func (s *Dict) Tree(c *gin.Context) {
 			ID:       v.Model.Id,
 			Children: nil,
 		}
-		switch r.Option {
-		case "value":
-			var m sys_dict.DictValue
-			_ = json.Unmarshal(v.Base.Content, &m)
-			item.Value = m.Value
-		}
-		for _, key := range keys {
-			if strings.Contains(key, v.Base.Key) {
-				parentKeys[key] = struct{}{}
-			}
-		}
 		tree = append(tree, &item)
 	}
-	for _, key := range keys {
-		var parentKey string
-		if _, ok := parentKeys[key]; ok {
-			parentKey = key
-		}
-		opts := s.dict.GetTreeRecursive(tree, parentKey)
-		ret[key] = opts
+
+	ret := make(map[string][]*sys_dict.DictTree, len(ls))
+	for k, v := range keys {
+		opts := s.dict.GetTreeRecursive(tree, v, noChilds[k])
+		ret[filedNames[k]] = opts
 	}
 	global.OK(c, ret)
 }

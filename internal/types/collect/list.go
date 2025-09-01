@@ -7,9 +7,9 @@ import (
 )
 
 type CollectListRequest struct {
-	Page     int    `json:"page" form:"page"`
-	PerPage  int    `json:"perPage"  form:"perPage"`
-	Category string `json:"category"  form:"category"`
+	Page     int `json:"page" form:"page"`
+	PerPage  int `json:"perPage"  form:"perPage"`
+	Category int `json:"category"  form:"category"`
 }
 
 type CollectListResponse struct {

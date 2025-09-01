@@ -59,6 +59,7 @@ func (app *App) Run(f *Flags) error {
 	}
 	global.CONF = &cfg
 	global.CONFPath = f.Config
+	global.ASSETS = app.assets
 	if err = initialize.Gorm(app.ctx); err != nil {
 		return err
 	}

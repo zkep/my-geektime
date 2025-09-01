@@ -1,7 +1,6 @@
 package cli
 
 import (
-	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -14,6 +13,7 @@ import (
 	"github.com/zkep/my-geektime/internal/model"
 	"github.com/zkep/my-geektime/internal/service"
 	"github.com/zkep/my-geektime/internal/types/geek"
+	"github.com/zkep/my-geektime/internal/types/sys_dict"
 	"github.com/zkep/my-geektime/internal/types/task"
 	"github.com/zkep/my-geektime/internal/types/user"
 	"github.com/zkep/my-geektime/libs/utils"
@@ -49,6 +49,7 @@ func (app *App) Data(f *DataFlags) error {
 	}
 	global.CONF = &cfg
 	global.CONF.Site.Download = f.Download
+	global.ASSETS = app.assets
 	if err = initialize.Gorm(app.ctx); err != nil {
 		return err
 	}
@@ -90,18 +91,22 @@ func (app *App) Data(f *DataFlags) error {
 	if err = service.Authority(accessToken, after); err != nil {
 		return err
 	}
-	var tags []Tag
-	if err = json.Unmarshal([]byte(TagJSON), &tags); err != nil {
+	tagRaw, err := app.assets.ReadFile("web/pages/tags.json")
+	if err != nil {
+		return err
+	}
+	var tagData sys_dict.TagData
+	if err = json.Unmarshal(tagRaw, &tagData); err != nil {
 		return err
 	}
 	for _, id := range f.Ids {
-		typ, ok := ProductTypes[id]
+		typ, ok := sys_dict.ProductTypes[id]
 		if !ok {
 			fmt.Printf("not found product id [%d]", id)
 			continue
 		}
-		for _, form := range ProductForms {
-			for _, tag := range tags {
+		for _, form := range sys_dict.ProductForms {
+			for _, tag := range tagData.Data {
 				for _, opt := range tag.Options {
 					if err = app.iterators(typ, form, opt, tag, id, accessToken); err != nil {
 						return err
@@ -113,7 +118,7 @@ func (app *App) Data(f *DataFlags) error {
 	return nil
 }
 
-func (app *App) iterators(typ, form, opt Option, tag Tag, id int32, accessToken string) error {
+func (app *App) iterators(typ, form, opt sys_dict.Option, tag sys_dict.Tag, id int32, accessToken string) error {
 	prev, psize, hasNext, total := 1, 20, true, 0
 	fmt.Printf(
 		"download start [%s/%s/%s/%s] \n",
@@ -229,33 +234,3 @@ func (app *App) iterators(typ, form, opt Option, tag Tag, id int32, accessToken 
 	}
 	return nil
 }
-
-type Tag struct {
-	Option
-	Options []Option `json:"options"`
-}
-
-type Option struct {
-	Label string `json:"label"`
-	Value int32  `json:"value"`
-}
-
-type TagMap struct {
-	Label   string           `json:"label"`
-	Options map[int32]string `json:"options"`
-}
-
-var (
-	ProductTypes = map[int32]Option{
-		1: {"体系课", 1},
-		4: {"公开课", 4},
-	}
-
-	ProductForms = []Option{
-		{"图文+音频", 1},
-		{"视频", 2},
-	}
-)
-
-//go:embed  tag.json
-var TagJSON string

@@ -282,6 +282,7 @@
                           "type": "text",
                           "name": "key",
                           "label": "唯一标识",
+                          "disabled": true,
                           "required": true,
                           "validations": {
                             "isAlphanumeric": true

@@ -1,0 +1,518 @@
+{
+    "status": 0,
+    "msg": "",
+    "data": [
+        {
+            "label": "后端-架构",
+            "value": 3,
+            "options": [
+                {
+                    "label": "Java",
+                    "value": 10
+                },
+                {
+                    "label": "Go",
+                    "value": 11
+                },
+                {
+                    "label": "Python",
+                    "value": 12
+                },
+                {
+                    "label": "数据库",
+                    "value": 13
+                },
+                {
+                    "label": "微服务",
+                    "value": 14
+                },
+                {
+                    "label": "中间件",
+                    "value": 17
+                },
+                {
+                    "label": "DDD",
+                    "value": 18
+                },
+                {
+                    "label": "中台",
+                    "value": 19
+                },
+                {
+                    "label": "分布式",
+                    "value": 20
+                },
+                {
+                    "label": "全栈",
+                    "value": 21
+                },
+                {
+                    "label": "区块链",
+                    "value": 23
+                },
+                {
+                    "label": "C++",
+                    "value": 61
+                },
+                {
+                    "label": ".NET",
+                    "value": 65
+                },
+                {
+                    "label": "Rust",
+                    "value": 98
+                },
+                {
+                    "label": "C 语言",
+                    "value": 118
+                },
+                {
+                    "label": "Spring",
+                    "value": 119
+                },
+                {
+                    "label": "Web 开发",
+                    "value": 120
+                },
+                {
+                    "label": "缓存",
+                    "value": 121
+                },
+                {
+                    "label": "容器",
+                    "value": 122
+                },
+                {
+                    "label": "云原生",
+                    "value": 176
+                }
+            ]
+        },
+        {
+            "label": "前端-移动",
+            "value": 5,
+            "options": [
+                {
+                    "label": "JavaScript",
+                    "value": 30
+                },
+                {
+                    "label": "TypeScript",
+                    "value": 31
+                },
+                {
+                    "label": "框架",
+                    "value": 32
+                },
+                {
+                    "label": "Android",
+                    "value": 33
+                },
+                {
+                    "label": "iOS",
+                    "value": 34
+                },
+                {
+                    "label": "Kotlin",
+                    "value": 35
+                },
+                {
+                    "label": "Swift",
+                    "value": 36
+                },
+                {
+                    "label": "浏览器",
+                    "value": 37
+                },
+                {
+                    "label": "音视频",
+                    "value": 38
+                },
+                {
+                    "label": "webpack",
+                    "value": 39
+                },
+                {
+                    "label": "网络",
+                    "value": 40
+                },
+                {
+                    "label": "Node.js",
+                    "value": 41
+                },
+                {
+                    "label": "可视化",
+                    "value": 70
+                },
+                {
+                    "label": "Vue",
+                    "value": 137
+                },
+                {
+                    "label": "Flutter",
+                    "value": 138
+                },
+                {
+                    "label": "React Native",
+                    "value": 139
+                },
+                {
+                    "label": "React 框架",
+                    "value": 140
+                },
+                {
+                    "label": "WebAssembly",
+                    "value": 141
+                },
+                {
+                    "label": "小程序",
+                    "value": 142
+                },
+                {
+                    "label": "低代码",
+                    "value": 143
+                }
+            ]
+        },
+        {
+            "label": "运维-测试",
+            "value": 6,
+            "options": [
+                {
+                    "label": "Kubernetes",
+                    "value": 42
+                },
+                {
+                    "label": "DevOps",
+                    "value": 43
+                },
+                {
+                    "label": "运维管理",
+                    "value": 44
+                },
+                {
+                    "label": "CI-CD",
+                    "value": 45
+                },
+                {
+                    "label": "测试",
+                    "value": 47
+                },
+                {
+                    "label": "Linux",
+                    "value": 48
+                },
+                {
+                    "label": "性能",
+                    "value": 49
+                },
+                {
+                    "label": "敏捷开发",
+                    "value": 50
+                },
+                {
+                    "label": "SRE",
+                    "value": 144
+                },
+                {
+                    "label": "AIOps",
+                    "value": 145
+                }
+            ]
+        },
+        {
+            "label": "计算机基础",
+            "value": 9,
+            "options": [
+                {
+                    "label": "算法",
+                    "value": 75
+                },
+                {
+                    "label": "网络",
+                    "value": 76
+                },
+                {
+                    "label": "工具",
+                    "value": 77
+                },
+                {
+                    "label": "数据库",
+                    "value": 78
+                },
+                {
+                    "label": "操作系统",
+                    "value": 79
+                },
+                {
+                    "label": "编译原理",
+                    "value": 80
+                },
+                {
+                    "label": "数学",
+                    "value": 82
+                },
+                {
+                    "label": "组成原理",
+                    "value": 83
+                },
+                {
+                    "label": "代码基础",
+                    "value": 136
+                }
+            ]
+        },
+        {
+            "label": "人工智能",
+            "value": 101,
+            "options": [
+                {
+                    "label": "多模态",
+                    "value": 103
+                },
+                {
+                    "label": "Agent",
+                    "value": 104
+                },
+                {
+                    "label": "RAG",
+                    "value": 105
+                },
+                {
+                    "label": "NLP",
+                    "value": 106
+                },
+                {
+                    "label": "机器学习",
+                    "value": 107
+                },
+                {
+                    "label": "深度学习",
+                    "value": 108
+                },
+                {
+                    "label": "AI 算法",
+                    "value": 109
+                },
+                {
+                    "label": "AIGC 应用",
+                    "value": 110
+                },
+                {
+                    "label": "提示词工程",
+                    "value": 111
+                },
+                {
+                    "label": "计算机视觉",
+                    "value": 112
+                },
+                {
+                    "label": "智能编码",
+                    "value": 113
+                },
+                {
+                    "label": "Spark",
+                    "value": 114
+                },
+                {
+                    "label": "Flink",
+                    "value": 115
+                },
+                {
+                    "label": "PyTorch",
+                    "value": 116
+                },
+                {
+                    "label": "LangChain",
+                    "value": 117
+                }
+            ]
+        },
+        {
+            "label": "大数据",
+            "value": 123,
+            "options": [
+                {
+                    "label": "数据采集",
+                    "value": 124
+                },
+                {
+                    "label": "数据存储",
+                    "value": 125
+                },
+                {
+                    "label": "数据处理",
+                    "value": 126
+                },
+                {
+                    "label": "数据分析",
+                    "value": 127
+                },
+                {
+                    "label": "数据集成",
+                    "value": 128
+                },
+                {
+                    "label": "推荐系统",
+                    "value": 129
+                },
+                {
+                    "label": "云计算",
+                    "value": 130
+                }
+            ]
+        },
+        {
+            "label": "安全",
+            "value": 131,
+            "options": [
+                {
+                    "label": "安全攻防",
+                    "value": 132
+                },
+                {
+                    "label": "网络安全",
+                    "value": 133
+                },
+                {
+                    "label": "漏洞挖掘",
+                    "value": 134
+                },
+                {
+                    "label": "数据安全",
+                    "value": 135
+                }
+            ]
+        },
+        {
+            "label": "技术领导力",
+            "value": 146,
+            "options": [
+                {
+                    "label": "面试求职",
+                    "value": 147
+                },
+                {
+                    "label": "升职加薪",
+                    "value": 148
+                },
+                {
+                    "label": "职业规划",
+                    "value": 149
+                },
+                {
+                    "label": "研发效能",
+                    "value": 150
+                },
+                {
+                    "label": "团队管理",
+                    "value": 151
+                },
+                {
+                    "label": "项目管理",
+                    "value": 152
+                },
+                {
+                    "label": "管理工具",
+                    "value": 153
+                },
+                {
+                    "label": "数字化转型",
+                    "value": 154
+                }
+            ]
+        },
+        {
+            "label": "产品-增长",
+            "value": 155,
+            "options": [
+                {
+                    "label": "产品经理",
+                    "value": 156
+                },
+                {
+                    "label": "商业思维",
+                    "value": 157
+                },
+                {
+                    "label": "产品创新",
+                    "value": 158
+                },
+                {
+                    "label": "增长",
+                    "value": 159
+                },
+                {
+                    "label": "运营",
+                    "value": 160
+                },
+                {
+                    "label": "市场",
+                    "value": 161
+                },
+                {
+                    "label": "体验设计",
+                    "value": 162
+                }
+            ]
+        },
+        {
+            "label": "多元成长",
+            "value": 163,
+            "options": [
+                {
+                    "label": "学习方法",
+                    "value": 164
+                },
+                {
+                    "label": "短视频",
+                    "value": 165
+                },
+                {
+                    "label": "英语",
+                    "value": 166
+                },
+                {
+                    "label": "写作",
+                    "value": 167
+                },
+                {
+                    "label": "摄影",
+                    "value": 168
+                },
+                {
+                    "label": "音乐",
+                    "value": 169
+                },
+                {
+                    "label": "跑步",
+                    "value": 170
+                },
+                {
+                    "label": "理财",
+                    "value": 171
+                },
+                {
+                    "label": "法律",
+                    "value": 172
+                },
+                {
+                    "label": "视觉笔记",
+                    "value": 173
+                },
+                {
+                    "label": "美术鉴赏",
+                    "value": 174
+                },
+                {
+                    "label": "恋爱",
+                    "value": 175
+                },
+                {
+                    "label": "创业",
+                    "value": 177
+                }
+            ]
+        }
+    ]
+}

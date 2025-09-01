@@ -58,11 +58,11 @@ func (t *Task) List(c *gin.Context) {
 	if req.ProductType > 0 {
 		tx = tx.Where("other_type = ?", req.ProductType)
 	}
-	if req.Tag > 0 {
-		tx = tx.Where("other_tag = ?", req.Tag)
-	}
 	if req.Direction > 0 {
 		tx = tx.Where("other_group = ?", req.Direction)
+	}
+	if req.Tag > 0 {
+		tx = tx.Where("other_tag = ?", req.Tag)
 	}
 	if req.Keywords != "" {
 		tx = tx.Where("task_name LIKE ?", "%"+req.Keywords+"%")

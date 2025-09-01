@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"sort"
 
 	"github.com/zkep/my-geektime/internal/global"
@@ -14,7 +16,7 @@ import (
 type Dict struct{}
 
 func (d *Dict) QueryWithKey(ctx context.Context, key string) (l *model.SysDict, err error) {
-	err = global.DB.WithContext(ctx).Model(&model.SysDict{}).Where("key = ?", key).Find(&l).Error
+	err = global.DB.WithContext(ctx).Model(&model.SysDict{}).Where("`key` = ?", key).Find(&l).Error
 	return
 }
 
@@ -48,10 +50,7 @@ func (d *Dict) Queries(ctx context.Context, ids ...int64) (map[int64]*model.SysD
 	return m, nil
 }
 
-func (d *Dict) ALL(
-	ctx context.Context,
-	scopes ...func(*gorm.DB) *gorm.DB,
-) ([]*model.SysDict, error) {
+func (d *Dict) ALL(ctx context.Context, scopes ...func(*gorm.DB) *gorm.DB) ([]*model.SysDict, error) {
 	var ls []*model.SysDict
 	tx := global.DB.WithContext(ctx).Model(&model.SysDict{})
 	if len(scopes) > 0 {
@@ -66,20 +65,31 @@ func (d *Dict) ALL(
 	return ls, nil
 }
 
+type DictData struct {
+	Value any `json:"value"`
+}
+
 func (d *Dict) GetTreeRecursive(
 	ls []*sys_dict.DictTree,
 	parentKey string,
+	noChild bool,
 ) []*sys_dict.DictTree {
 	res := make([]*sys_dict.DictTree, 0, len(ls))
 	for _, v := range ls {
 		if v.Pkey == parentKey {
-			v.Children = d.GetTreeRecursive(ls, v.Key)
+			if !noChild {
+				v.Children = d.GetTreeRecursive(ls, v.Key, noChild)
+			} else {
+				v.Children = nil
+			}
+			var data DictData
+			_ = json.Unmarshal(v.Data, &data)
+			v.Value = data.Value
 			res = append(res, v)
 		}
 	}
 	return res
 }
-
 func (d *Dict) GetBreadCrumb(ls []*model.SysDict, key string) []string {
 	res := make(map[int64]*model.SysDict, len(ls))
 	ids := make([]int64, 0, len(ls))
@@ -106,62 +116,31 @@ func (d *Dict) GetBreadCrumb(ls []*model.SysDict, key string) []string {
 	return labels
 }
 
-func (d *Dict) CollectCategoryInitialize(ctx context.Context) error {
+func CollectCategoryInitialize(ctx context.Context, tagData sys_dict.TagData) error {
 	collectCategories := []model.SysDictBase{
 		{
-			Key:     "collectCategory",
+			Key:     sys_dict.CollectCategoryKey,
 			Pkey:    "",
+			Rkey:    sys_dict.CollectCategoryKey,
 			Name:    "收藏分类",
 			Content: []byte("{}"),
 		},
 		{
 			Key:     utils.HalfUUID(),
-			Pkey:    "collectCategory",
+			Pkey:    sys_dict.CollectCategoryKey,
+			Rkey:    sys_dict.CollectCategoryKey,
 			Name:    "全部",
-			Content: []byte(`{"value":""}`),
+			Content: []byte(`{"value": 0}`),
 		},
-		{
+	}
+	for _, tag := range tagData.Data {
+		collectCategories = append(collectCategories, model.SysDictBase{
 			Key:     utils.HalfUUID(),
-			Pkey:    "collectCategory",
-			Name:    "后端/架构",
-			Content: []byte(`{"value":"3"}`),
-		},
-		{
-			Key:     utils.HalfUUID(),
-			Pkey:    "collectCategory",
-			Name:    "前端/移动",
-			Content: []byte(`{"value":"5"}`),
-		},
-		{
-			Key:     utils.HalfUUID(),
-			Pkey:    "collectCategory",
-			Name:    "计算机基础",
-			Content: []byte(`{"value":"9"}`),
-		},
-		{
-			Key:     utils.HalfUUID(),
-			Pkey:    "collectCategory",
-			Name:    "AI/大数据",
-			Content: []byte(`{"value":"8"}`),
-		},
-		{
-			Key:     utils.HalfUUID(),
-			Pkey:    "collectCategory",
-			Name:    "运维/测试",
-			Content: []byte(`{"value":"6"}`),
-		},
-		{
-			Key:     utils.HalfUUID(),
-			Pkey:    "collectCategory",
-			Name:    "产品/运营",
-			Content: []byte(`{"value":"7"}`),
-		},
-		{
-			Key:     utils.HalfUUID(),
-			Pkey:    "collectCategory",
-			Name:    "管理/成长",
-			Content: []byte(`{"value":"4"}`),
-		},
+			Pkey:    sys_dict.CollectCategoryKey,
+			Rkey:    sys_dict.CollectCategoryKey,
+			Name:    tag.Label,
+			Content: []byte(fmt.Sprintf(`{"value": %d}`, tag.Value)),
+		})
 	}
 	return global.DB.WithContext(ctx).
 		Transaction(func(tx *gorm.DB) error {
@@ -180,4 +159,74 @@ func (d *Dict) CollectCategoryInitialize(ctx context.Context) error {
 			}
 			return nil
 		})
+}
+
+func GeektimeCategory(ctx context.Context, tagData sys_dict.TagData) error {
+	categories := []model.SysDictBase{
+		{
+			Key:     sys_dict.GeektimeCategoryKey,
+			Pkey:    "",
+			Rkey:    sys_dict.GeektimeCategoryKey,
+			Name:    "课程分类",
+			Content: []byte(`{}`),
+		},
+	}
+	allKey := utils.HalfUUID()
+	categories = append(categories, model.SysDictBase{
+		Key:     allKey,
+		Pkey:    sys_dict.GeektimeCategoryKey,
+		Rkey:    sys_dict.GeektimeCategoryKey,
+		Name:    "全部",
+		Content: []byte(`{"value": 0}`),
+	})
+	for _, tag := range tagData.Data {
+		key := utils.HalfUUID()
+		category := model.SysDictBase{
+			Key:     key,
+			Pkey:    sys_dict.GeektimeCategoryKey,
+			Rkey:    sys_dict.GeektimeCategoryKey,
+			Name:    tag.Label,
+			Content: []byte(fmt.Sprintf(`{"value": %d}`, tag.Value)),
+		}
+		categories = append(categories, category)
+		for k, v := range tag.Options {
+			if k == 0 {
+				categories = append(categories, model.SysDictBase{
+					Key:     utils.HalfUUID(),
+					Pkey:    key,
+					Name:    "全部",
+					Rkey:    sys_dict.GeektimeCategoryKey,
+					Content: []byte(fmt.Sprintf(`{"value": %d}`, tag.Value)),
+				})
+			}
+			optCategory := model.SysDictBase{
+				Key:     utils.HalfUUID(),
+				Pkey:    key,
+				Rkey:    sys_dict.GeektimeCategoryKey,
+				Name:    v.Label,
+				Content: []byte(fmt.Sprintf(`{"value": %d}`, v.Value)),
+			}
+			categories = append(categories, optCategory)
+		}
+	}
+	err := global.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		for _, category := range categories {
+			info := model.SysDict{Base: &category}
+			if err := tx.Model(&model.SysDict{}).
+				Where(&model.SysDict{
+					Base: &model.SysDictBase{
+						Pkey: category.Pkey,
+						Key:  category.Key,
+					},
+				}).
+				FirstOrCreate(&info).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }

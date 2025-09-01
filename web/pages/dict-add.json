@@ -3,7 +3,7 @@
   "msg": "",
   "data": {
     "type": "page",
-    "title": "添加字典表",
+    "title": "添加字典",
     "toolbar": [
       {
         "type": "button",
@@ -25,7 +25,7 @@
             "type": "nested-select",
             "name": "pkey",
             "label": "分类",
-            "source": "get:/v2/sys/dict/tree"
+            "source": "/v2/sys/dict/tree"
           },
           {
             "type": "divider"

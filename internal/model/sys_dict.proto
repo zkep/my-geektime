@@ -12,13 +12,15 @@ message SysDictBase {
   // key
   string key = 2 [(gogoproto.moretags) = "gorm:\"index,unique;comment:key\""];
   // pkey
-  string pkey = 3 [(gogoproto.moretags) = "gorm:\"index;comment:pkey\""];
+  string pkey = 3 [(gogoproto.moretags) = "gorm:\"index;comment:parent key\""];
+  // rkey
+  string rkey = 4 [(gogoproto.moretags) = "gorm:\"index;comment:root key\""];
   // name
-  string name = 4 [(gogoproto.moretags) = "gorm:\"index;size:100;comment:name\""];
+  string name = 5 [(gogoproto.moretags) = "gorm:\"index;size:100;comment:name\""];
   // summary
-  string summary = 5 [(gogoproto.moretags) = "gorm:\"type:text;comment:summary\""];
+  string summary = 6 [(gogoproto.moretags) = "gorm:\"type:text;comment:summary\""];
   // content
-  bytes content = 6 [(gogoproto.moretags) = "gorm:\"type:text;comment:content\""];
+  bytes content = 7 [(gogoproto.moretags) = "gorm:\"type:text;comment:content\""];
   // sort
   int32 sort = 18 [(gogoproto.moretags) = "gorm:\"index;default:1;size:6;comment:sort\""];
 }
