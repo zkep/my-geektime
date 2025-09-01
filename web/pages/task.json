@@ -121,7 +121,7 @@
                     "name": "tag",
                     "label": "课程分类",
                     "clearable": true,
-                    "value": 0,
+                    "value": "${itemOutter.value}",
                     "source": "${itemOutter.children|filter:value:notIn:[itemOutter.value]}",
                     "visibleOn": "${direction == itemOutter.value}"
                   }
@@ -234,7 +234,7 @@
                       "type": "select",
                       "name": "category",
                       "label": "分类",
-                      "source": "${collectCategory}",
+                      "source": "${collectCategory|filter:value:notIn:[0]}",
                       "clearable": true,
                       "required": true
                     }

@@ -10,7 +10,7 @@
     },
     "initApi": {
       "method": "get",
-      "url": "/v2/sys/dict/tree?key=collectCategory&noChild=1",
+      "url": "/v2/sys/dict/tree?key=collectCategory",
       "responseData": {
         "&": "$$",
         "collectCategory": "${collectCategory}"

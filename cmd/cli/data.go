@@ -119,7 +119,7 @@ func (app *App) Data(f *DataFlags) error {
 }
 
 func (app *App) iterators(typ, form, opt sys_dict.Option, tag sys_dict.Tag, id int32, accessToken string) error {
-	prev, psize, hasNext, total := 1, 20, true, 0
+	prev, psize, hasNext, total := 0, 20, true, 0
 	fmt.Printf(
 		"download start [%s/%s/%s/%s] \n",
 		typ.Label, form.Label, tag.Label, opt.Label,
@@ -141,20 +141,19 @@ func (app *App) iterators(typ, form, opt sys_dict.Option, tag sys_dict.Tag, id i
 		total += len(resp.Data.Products)
 		if len(resp.Data.Products) < psize {
 			fmt.Printf(
-				"download end [%s/%s/%s/%s] total: %d \n",
-				typ.Label, form.Label, tag.Label, opt.Label, total,
+				"download end [%s/%s/%s/%s] total: %d , pageTotal: %d \n",
+				typ.Label, form.Label, tag.Label, opt.Label, total, resp.Data.Page.Total,
 			)
 			hasNext = false
 		}
 		prev++
 		for _, product := range resp.Data.Products {
-			articles, err1 := service.GetArticles(app.ctx, accessToken,
-				geek.ArticlesListRequest{
-					Cid:   fmt.Sprintf("%d", product.ID),
-					Order: "earliest",
-					Prev:  1,
-					Size:  1000,
-				})
+			articles, err1 := service.GetArticles(app.ctx, accessToken, geek.ArticlesListRequest{
+				Cid:   fmt.Sprintf("%d", product.ID),
+				Order: "earliest",
+				Prev:  0,
+				Size:  500,
+			})
 			if err1 != nil {
 				return err1
 			}
