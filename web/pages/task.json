@@ -275,8 +275,8 @@
           "card": {
             "header": {
               "className": "word-break",
-              "title": "",
-              "subTitle": "$task_name",
+              "title": "$task_name",
+              "subTitle": "",
               "description": "$subtitle",
               "avatar": "${cover | raw}",
               "avatarClassName": "pull-left thumb-md avatar b-3x m-r"

@@ -193,8 +193,8 @@
         "card": {
           "header": {
             "className": "word-break",
-            "title": "",
-            "subTitle": "${title | raw}",
+            "title": "${title | raw}",
+            "subTitle": "",
             "description": "${subtitle | raw}",
             "avatar": "${cover.square | raw}",
             "avatarClassName": "pull-left thumb-md avatar b-3x m-r"
