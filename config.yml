@@ -45,3 +45,4 @@ site:
     urls:
       - https://static001.geekbang.org/resource/image/*
       - https://static001.geekbang.org/account/avatar/*
+      - https://static001.geekbang.org/files/resource/*

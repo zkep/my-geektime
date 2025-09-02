@@ -100,17 +100,22 @@ func (app *App) Data(f *DataFlags) error {
 		return err
 	}
 	for _, id := range f.Ids {
-		typ, ok := sys_dict.ProductTypes[id]
+		otherType, ok := sys_dict.ProductTypes[id]
 		if !ok {
 			fmt.Printf("not found product id [%d]", id)
 			continue
 		}
-		for _, form := range sys_dict.ProductForms {
-			for _, tag := range tagData.Data {
-				for _, opt := range tag.Options {
-					if err = app.iterators(typ, form, opt, tag, id, accessToken); err != nil {
+		for _, otherForm := range sys_dict.ProductForms {
+			for _, otherGroup := range tagData.Data {
+				for _, otherTag := range otherGroup.Options {
+					if err = app.iterators(otherType, otherForm,
+						otherTag, otherGroup, id, accessToken); err != nil {
 						return err
 					}
+				}
+				if err = app.iterators(otherType, otherForm,
+					sys_dict.Option{}, otherGroup, id, accessToken); err != nil {
+					return err
 				}
 			}
 		}
@@ -118,36 +123,57 @@ func (app *App) Data(f *DataFlags) error {
 	return nil
 }
 
-func (app *App) iterators(typ, form, opt sys_dict.Option, tag sys_dict.Tag, id int32, accessToken string) error {
-	prev, psize, hasNext, total := 0, 20, true, 0
+func (app *App) iterators(
+	otherType, otherForm, otherTag sys_dict.Option,
+	otherGroup sys_dict.Tag, id int32, accessToken string) error {
+
+	prev, psize, hasNext, total := 1, 20, true, 0
 	fmt.Printf(
 		"download start [%s/%s/%s/%s] \n",
-		typ.Label, form.Label, tag.Label, opt.Label,
+		otherType.Label, otherForm.Label, otherGroup.Label, otherTag.Label,
 	)
+	tags := make([]int32, 0, 1)
+	if otherTag.Value > 0 {
+		tags = append(tags, otherTag.Value)
+	}
+	req := geek.PvipProductRequest{
+		TagIds:       tags,
+		ProductType:  id,
+		ProductForm:  otherType.Value,
+		Sort:         8,
+		Size:         psize,
+		Prev:         prev,
+		WithArticles: true,
+	}
+	productIdsMap := make(map[string]struct{}, psize)
 	for hasNext {
-		req := geek.PvipProductRequest{
-			TagIds:       []int32{opt.Value},
-			ProductType:  id,
-			ProductForm:  form.Value,
-			Sort:         8,
-			Size:         psize,
-			Prev:         prev,
-			WithArticles: true,
-		}
+		req.Prev = prev
 		resp, err := service.GetPvipProduct(app.ctx, accessToken, req)
 		if err != nil {
 			return err
 		}
 		total += len(resp.Data.Products)
-		if len(resp.Data.Products) < psize {
+		fmt.Printf(
+			"download [%s/%s/%s/%s] total: %d , pageTotal: %d, prev:%d \n",
+			otherType.Label, otherForm.Label, otherGroup.Label,
+			otherTag.Label, total, resp.Data.Page.Total, prev,
+		)
+		currLen := len(resp.Data.Products)
+		if total >= resp.Data.Page.Total || currLen <= 0 {
 			fmt.Printf(
-				"download end [%s/%s/%s/%s] total: %d , pageTotal: %d \n",
-				typ.Label, form.Label, tag.Label, opt.Label, total, resp.Data.Page.Total,
+				"download end [%s/%s/%s/%s] total: %d , pageTotal: %d, prev:%d, currLen:%d \n",
+				otherType.Label, otherForm.Label, otherGroup.Label,
+				otherTag.Label, total, resp.Data.Page.Total, prev, currLen,
 			)
 			hasNext = false
 		}
 		prev++
 		for _, product := range resp.Data.Products {
+			otherId := fmt.Sprintf("%d", product.ID)
+			if _, exists := productIdsMap[otherId]; exists {
+				continue
+			}
+			productIdsMap[otherId] = struct{}{}
 			articles, err1 := service.GetArticles(app.ctx, accessToken, geek.ArticlesListRequest{
 				Cid:   fmt.Sprintf("%d", product.ID),
 				Order: "earliest",
@@ -163,13 +189,13 @@ func (app *App) iterators(typ, form, opt sys_dict.Option, tag sys_dict.Tag, id i
 				TaskId:     jobId,
 				TaskName:   product.Title,
 				TaskType:   service.TASK_TYPE_PRODUCT,
-				OtherId:    fmt.Sprintf("%d", product.ID),
+				OtherId:    otherId,
 				Cover:      product.Cover.Square,
 				Raw:        itemRaw,
-				OtherType:  typ.Value,
-				OtherForm:  form.Value,
-				OtherGroup: tag.Value,
-				OtherTag:   opt.Value,
+				OtherType:  otherType.Value,
+				OtherForm:  otherForm.Value,
+				OtherGroup: otherGroup.Value,
+				OtherTag:   otherTag.Value,
 				Status:     service.TASK_STATUS_PENDING,
 			}
 			tasks := make([]*model.Task, 0, len(articles.Data.List))
@@ -184,21 +210,20 @@ func (app *App) iterators(typ, form, opt sys_dict.Option, tag sys_dict.Tag, id i
 					return err
 				}
 				raw := m.Data
-				otherId := fmt.Sprintf("%d", info.Data.Info.ID)
 				taskName := info.Data.Info.Title
 				cover := info.Data.Info.Cover.Default
 				item := model.Task{
 					TaskPid:    jobId,
 					TaskId:     utils.HalfUUID(),
-					OtherId:    otherId,
+					OtherId:    fmt.Sprintf("%d", info.Data.Info.ID),
 					TaskName:   taskName,
 					TaskType:   service.TASK_TYPE_ARTICLE,
 					Cover:      cover,
 					Raw:        raw,
-					OtherType:  typ.Value,
-					OtherForm:  form.Value,
-					OtherGroup: tag.Value,
-					OtherTag:   opt.Value,
+					OtherType:  otherType.Value,
+					OtherForm:  otherForm.Value,
+					OtherGroup: otherGroup.Value,
+					OtherTag:   otherTag.Value,
 					Status:     service.TASK_STATUS_PENDING,
 				}
 				tasks = append(tasks, &item)

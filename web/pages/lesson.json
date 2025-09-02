@@ -44,7 +44,17 @@
               "label": "课程方向",
               "value": 0,
               "clearable": true,
-              "source": "${geektimeDirection}"
+              "source": "${geektimeDirection}",
+              "onEvent": {
+                "change": {
+                  "actions": [
+                    {
+                      "actionType": "clear",
+                      "componentId": "pvip_tag"
+                    }
+                  ]
+                }
+              }
             },
             {
               "type": "divider"
@@ -57,7 +67,7 @@
               "items": [
                 {
                   "type": "list-select",
-                  "id": "pvip-tag",
+                  "id": "pvip_tag",
                   "name": "label_id",
                   "label": "课程分类",
                   "clearable": true,
