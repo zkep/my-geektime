@@ -99,6 +99,16 @@ func (app *App) Data(f *DataFlags) error {
 	if err = json.Unmarshal(tagRaw, &tagData); err != nil {
 		return err
 	}
+	var allTask []*model.Task
+	if err = global.DB.Model(&model.Task{}).
+		Select([]string{"id", "other_id"}).Where("task_pid=?", "").
+		Find(&allTask).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+	for _, x := range allTask {
+		productIdsMap[x.OtherId] = struct{}{}
+	}
+	fmt.Printf("database exists product [%d]\n\n", len(productIdsMap))
 	for _, id := range f.Ids {
 		otherType, ok := sys_dict.ProductTypes[id]
 		if !ok {
@@ -109,43 +119,57 @@ func (app *App) Data(f *DataFlags) error {
 			for _, otherGroup := range tagData.Data {
 				for _, otherTag := range otherGroup.Options {
 					if err = app.iterators(otherType, otherForm,
-						otherTag, otherGroup, id, accessToken); err != nil {
+						otherTag, otherGroup.Option, accessToken); err != nil {
 						return err
 					}
 				}
-				if err = app.iterators(otherType, otherForm,
-					sys_dict.Option{}, otherGroup, id, accessToken); err != nil {
+				if err = app.iterators(otherType, otherForm, emptyOption,
+					otherGroup.Option, accessToken, otherGroup.Value); err != nil {
 					return err
 				}
 			}
+			if err = app.iterators(otherType, otherForm, emptyOption, emptyOption, accessToken); err != nil {
+				return err
+			}
+		}
+	}
+
+	fmt.Printf("product len [%d]\n\n", len(productIdsMap))
+	for productId := range productIdsMap {
+		err = app.addArticlesWithProductID(accessToken, productId)
+		if err != nil {
+			fmt.Printf("add articles failed, productId:%s, err:%v\n", productId, err)
+			continue
 		}
 	}
 	return nil
 }
 
-func (app *App) iterators(
-	otherType, otherForm, otherTag sys_dict.Option,
-	otherGroup sys_dict.Tag, id int32, accessToken string) error {
+var (
+	emptyOption   = sys_dict.Option{}
+	productIdsMap = make(map[string]struct{}, 500)
+)
+
+func (app *App) iterators(otherType, otherForm, otherTag,
+	otherGroup sys_dict.Option, accessToken string, tags ...int32) error {
 
 	prev, psize, hasNext, total := 1, 20, true, 0
 	fmt.Printf(
 		"download start [%s/%s/%s/%s] \n",
 		otherType.Label, otherForm.Label, otherGroup.Label, otherTag.Label,
 	)
-	tags := make([]int32, 0, 1)
 	if otherTag.Value > 0 {
 		tags = append(tags, otherTag.Value)
 	}
 	req := geek.PvipProductRequest{
 		TagIds:       tags,
-		ProductType:  id,
-		ProductForm:  otherType.Value,
+		ProductType:  otherType.Value,
+		ProductForm:  otherForm.Value,
 		Sort:         8,
 		Size:         psize,
 		Prev:         prev,
 		WithArticles: true,
 	}
-	productIdsMap := make(map[string]struct{}, psize)
 	for hasNext {
 		req.Prev = prev
 		resp, err := service.GetPvipProduct(app.ctx, accessToken, req)
@@ -174,15 +198,6 @@ func (app *App) iterators(
 				continue
 			}
 			productIdsMap[otherId] = struct{}{}
-			articles, err1 := service.GetArticles(app.ctx, accessToken, geek.ArticlesListRequest{
-				Cid:   fmt.Sprintf("%d", product.ID),
-				Order: "earliest",
-				Prev:  0,
-				Size:  500,
-			})
-			if err1 != nil {
-				return err1
-			}
 			jobId := utils.HalfUUID()
 			itemRaw, _ := json.Marshal(product)
 			job := &model.Task{
@@ -198,63 +213,89 @@ func (app *App) iterators(
 				OtherTag:   otherTag.Value,
 				Status:     service.TASK_STATUS_PENDING,
 			}
-			tasks := make([]*model.Task, 0, len(articles.Data.List))
-			for _, article := range articles.Data.List {
-				info, er := service.GetArticleInfo(app.ctx,
-					accessToken, geek.ArticlesInfoRequest{Id: article.ID})
-				if er != nil {
-					return er
-				}
-				var m geek.ArticleInfoRaw
-				if err = json.Unmarshal(info.Raw, &m); err != nil {
-					return err
-				}
-				raw := m.Data
-				taskName := info.Data.Info.Title
-				cover := info.Data.Info.Cover.Default
-				item := model.Task{
-					TaskPid:    jobId,
-					TaskId:     utils.HalfUUID(),
-					OtherId:    fmt.Sprintf("%d", info.Data.Info.ID),
-					TaskName:   taskName,
-					TaskType:   service.TASK_TYPE_ARTICLE,
-					Cover:      cover,
-					Raw:        raw,
-					OtherType:  otherType.Value,
-					OtherForm:  otherForm.Value,
-					OtherGroup: otherGroup.Value,
-					OtherTag:   otherTag.Value,
-					Status:     service.TASK_STATUS_PENDING,
-				}
-				tasks = append(tasks, &item)
+			if err = global.DB.Model(&model.Task{}).
+				Where(&model.Task{OtherId: job.OtherId}).
+				Assign(job).FirstOrCreate(job).Error; err != nil {
+				fmt.Println(err)
+				continue
 			}
-			statistics := task.TaskStatistics{
-				Count: len(tasks),
-				Items: map[int]int{
-					service.TASK_STATUS_PENDING:  len(tasks),
-					service.TASK_STATUS_RUNNING:  0,
-					service.TASK_STATUS_FINISHED: 0,
-					service.TASK_STATUS_ERROR:    0,
-				},
-			}
-			job.Statistics, _ = json.Marshal(statistics)
-			err = global.DB.Transaction(func(tx *gorm.DB) error {
-				if err = tx.Where(&model.Task{OtherId: job.OtherId}).
-					Assign(job).FirstOrCreate(job).Error; err != nil {
-					return err
-				}
-				for _, x := range tasks {
-					if err = tx.Where(&model.Task{OtherId: x.OtherId}).
-						Assign(x).FirstOrCreate(x).Error; err != nil {
-						return err
-					}
-				}
-				return nil
-			})
-			if err != nil {
+		}
+	}
+	return nil
+}
+
+func (app *App) addArticlesWithProductID(accessToken, productID string) error {
+	var info model.Task
+	if err := global.DB.Where(&model.Task{OtherId: productID}).First(&info).Error; err != nil {
+		fmt.Println(err)
+		return err
+	}
+	req := geek.ArticlesListRequest{
+		Cid:   productID,
+		Order: "earliest",
+		Prev:  0,
+		Size:  500,
+	}
+	articles, err1 := service.GetArticles(app.ctx, accessToken, req)
+	if err1 != nil {
+		fmt.Println(err1)
+		return err1
+	}
+	tasks := make([]*model.Task, 0, len(articles.Data.List))
+	for _, data := range articles.Data.List {
+		article, err := service.GetArticleInfo(app.ctx, accessToken, geek.ArticlesInfoRequest{Id: data.ID})
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		var m geek.ArticleInfoRaw
+		if err = json.Unmarshal(article.Raw, &m); err != nil {
+			fmt.Println(err)
+			continue
+		}
+		raw := m.Data
+		taskName := article.Data.Info.Title
+		cover := article.Data.Info.Cover.Default
+		item := model.Task{
+			TaskPid:    info.TaskId,
+			TaskId:     utils.HalfUUID(),
+			OtherId:    fmt.Sprintf("%d", article.Data.Info.ID),
+			TaskName:   taskName,
+			TaskType:   service.TASK_TYPE_ARTICLE,
+			Cover:      cover,
+			Raw:        raw,
+			OtherType:  info.OtherType,
+			OtherForm:  info.OtherForm,
+			OtherGroup: info.OtherGroup,
+			OtherTag:   info.OtherTag,
+			Status:     service.TASK_STATUS_PENDING,
+		}
+		tasks = append(tasks, &item)
+	}
+	statistics := task.TaskStatistics{
+		Count: len(tasks),
+		Items: map[int]int{
+			service.TASK_STATUS_PENDING:  len(tasks),
+			service.TASK_STATUS_RUNNING:  0,
+			service.TASK_STATUS_FINISHED: 0,
+			service.TASK_STATUS_ERROR:    0,
+		},
+	}
+	info.Statistics, _ = json.Marshal(statistics)
+	err := global.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where(&model.Task{OtherId: info.OtherId}).Updates(info).Error; err != nil {
+			return err
+		}
+		for _, x := range tasks {
+			if err := tx.Where(&model.Task{OtherId: x.OtherId}).
+				Assign(x).FirstOrCreate(x).Error; err != nil {
 				return err
 			}
 		}
+		return nil
+	})
+	if err != nil {
+		return err
 	}
 	return nil
 }
