@@ -15,7 +15,7 @@ services:
     volumes:
       - ./mysql/data:/var/libs/mysql
       - ./mysql/init/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./mysql/init/tasks.sql:/docker-entrypoint-initdb.d/sys_dicts.sql
+      - ./mysql/init/sys_dicts.sql:/docker-entrypoint-initdb.d/sys_dicts.sql
       - /etc/localtime:/etc/localtime:ro
     ports:
       - "33060:3306"

@@ -47,6 +47,7 @@ var Replaces = map[string]string{
 	"&":  "+",
 	"\t": "",
 	"\b": "",
+	" ":  "",
 }
 
 func VerifyFileName(name string) string {
