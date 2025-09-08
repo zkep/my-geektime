@@ -13,7 +13,7 @@ services:
       - MYSQL_ROOT_PASSWORD=123456
       - MYSQL_DATABASE=mygeektime
     volumes:
-      - ./mysql/data:/var/libs/mysql
+      - ./mysql/data:/var/lib/mysql
       - ./mysql/init/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./mysql/init/sys_dicts.sql:/docker-entrypoint-initdb.d/sys_dicts.sql
       - /etc/localtime:/etc/localtime:ro
