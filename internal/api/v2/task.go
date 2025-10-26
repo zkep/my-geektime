@@ -3,12 +3,15 @@ package v2
 import (
 	"bufio"
 	"bytes"
+	"crypto/md5"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -21,6 +24,7 @@ import (
 	"github.com/zkep/my-geektime/internal/service"
 	"github.com/zkep/my-geektime/internal/types/geek"
 	"github.com/zkep/my-geektime/internal/types/task"
+	"github.com/zkep/my-geektime/libs/storage"
 	"github.com/zkep/my-geektime/libs/zhttp"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -517,6 +521,28 @@ func (t *Task) PlayPart(c *gin.Context) {
 	if err := c.ShouldBind(&req); err != nil {
 		global.FAIL(c, "fail.msg", err.Error())
 		return
+	}
+
+	hash := md5.New()
+	hash.Write([]byte(req.P))
+	hashStr := hex.EncodeToString(hash.Sum(nil))
+	cacheKey := filepath.Join(global.CONF.Site.Proxy.CachePrefix, hashStr)
+	if global.CONF.Site.Proxy.Cache {
+		global.LOG.Info("task.PlayPart.Get",
+			zap.String("cacheKey", cacheKey),
+			zap.String("url", req.P),
+			zap.String("contentType", storage.TypeByExtension(req.P)),
+		)
+		if fi, stat, err := global.Storage.Get(cacheKey); err != nil {
+			if !strings.Contains(err.Error(), "no such file or directory") {
+				global.LOG.Error("task.PlayPart.Get", zap.Error(err), zap.String("cacheKey", cacheKey))
+				c.DataFromReader(404, 0, "", nil, nil)
+				return
+			}
+		} else {
+			c.DataFromReader(200, stat.Size(), storage.TypeByExtension(req.P), fi, nil)
+			return
+		}
 	}
 
 	if err := zhttp.NewRequest().
