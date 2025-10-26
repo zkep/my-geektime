@@ -721,7 +721,7 @@
                               "url": "/v2/product/download",
                               "method":"post",
                               "data": {
-                                "pid": "${cid}",
+                                "pid": "${cid | toInt}",
                                 "ids": "${id | trim}"
                               },
                               "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
@@ -814,7 +814,7 @@
                             "url": "/v2/product/download",
                             "method":"post",
                             "data": {
-                              "pid": "${cid}",
+                              "pid": "${cid | toInt}",
                               "ids": "${ids|raw}"
                             },
                             "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
@@ -930,7 +930,7 @@
                   "url": "/v2/product/download",
                   "method":"post",
                   "data": {
-                    "pid": "${id}"
+                    "pid": "${id | toInt}"
                   },
                   "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
                 }

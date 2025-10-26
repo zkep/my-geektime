@@ -528,7 +528,7 @@
                 "url": "/v2/product/download",
                 "method":"post",
                 "data": {
-                  "pid": "${id | trim}",
+                  "pid": "${id | trim | toInt}",
                   "ids": "${article.id | trim}"
                 },
                 "adaptor": "if(payload.status === 10002){\nlocalStorage.removeItem(\"geek_auth\");\nsetTimeout(\"location.href='/';\", 3000);\n}\nreturn payload;"
