@@ -23,7 +23,7 @@ run: build
     --help
 
 website:
-	pip install mkdocs-material
+	pip3 install mkdocs-material
 	mkdocs gh-deploy --force --no-history
 
 image:

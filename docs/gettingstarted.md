@@ -45,7 +45,7 @@ docker-compose -f docker-compose.yml up -d
 <picture>
   <img
     alt="sponsor"
-    src="../../images/sponsor.jpg"
+    src="../images/sponsor.jpg"
     width="356px"
   />
 </picture>
