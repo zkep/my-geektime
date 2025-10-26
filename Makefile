@@ -26,5 +26,6 @@ website:
 	pip install mkdocs-material
 	mkdocs gh-deploy --force --no-history
 
-
+image:
+	docker buildx build --platform linux/amd64,linux/arm64 -t zkep/mygeektime:latest --push .
 

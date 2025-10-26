@@ -5,32 +5,50 @@
 * 如果，你的本地已经有redis，mysql等服务了，也可以考虑docker方式和二进制发行包方式
 
 #### docker compose 方式，推荐指数 🌟🌟🌟🌟🌟
-Linux OR Windows OR MacOS（非M系列）
+
+### 安装
+
+1. 下载项目
+
 ```shell
 git clone https://github.com/zkep/my-geektime.git
-
-cd my-geektime/docker
-
-# 更新到最新的镜像
-docker pull zkep/mygeektime:latest
-
-docker-compose -f docker-compose.yml up -d 
-
 ```
-
-MacOS M 系列
+2. 获取镜像 （任选其一）
+- 拉取仓库镜像
 ```shell
-
-git clone https://github.com/zkep/my-geektime.git
-
-cd my-geektime/docker
-
 # 拉取linux/amd64架构的镜像
 docker pull --platform=linux/amd64  zkep/mygeektime:latest
 
-docker-compose up -d 
+# 拉取linux/arm64架构的镜像
+# docker pull --platform=linux/arm64  zkep/mygeektime:latest
 ```
+- 本地构建镜像
+```shell
+docker build --platform linux/amd64  -t zkep/mygeektime:latest .
+```
+
+3. 启动服务
+```shell
+cd my-geektime/docker
+
+docker-compose -f docker-compose.yml up -d
+```
+
 浏览器访问:  http://127.0.0.1:8090
+
+#### 微信赞赏
+
+如若有用，不吝赞赏👏
+
+赞赏并留言 <b>邮箱账号</b>，回赠<b> [数据库](https://zkep.github.io/my-geektime/guide/data_default/) </b>
+
+<picture>
+  <img
+    alt="sponsor"
+    src="../../images/sponsor.jpg"
+    width="356px"
+  />
+</picture>
 
 
 #### docker 方式，推荐指数 🌟🌟🌟
