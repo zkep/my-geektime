@@ -6,14 +6,84 @@
     "type": "page",
     "title": "",
     "data": {
-      "collectCategory": []
+      "productType": [
+        {
+          "label": "全部类型",
+          "value": 0
+        },
+        {
+          "label": "体系课",
+          "value": 1
+        },
+        {
+          "label": "公开课",
+          "value": 4
+        },
+        {
+          "label": "线下大会",
+          "value": 5
+        },
+        {
+          "label": "社区课",
+          "value": 6
+        },
+        {
+          "label": "每日一课",
+          "value": 19
+        },
+        {
+          "label": "大厂案例",
+          "value": 20
+        }
+      ],
+      "productForm": [
+        {
+          "label": "全部形式",
+          "value": 0
+        },
+        {
+          "label": "图文+音频",
+          "value": 1
+        },
+        {
+          "label": "视频",
+          "value": 2
+        }
+      ],
+      "productStatus": [
+        {
+          "label": "全部状态",
+          "value": 0
+        },
+        {
+          "label": "排队中",
+          "value": 1
+        },
+        {
+          "label": "处理中",
+          "value": 2
+        },
+        {
+          "label": "已缓存",
+          "value": 3
+        },
+        {
+          "label": "异常",
+          "value": 4
+        }
+      ],
+      "collectCategory": [],
+      "geektimeCategory": [],
+      "geektimeDirection": []
     },
     "initApi": {
       "method": "get",
-      "url": "/v2/sys/dict/tree?key=collectCategory",
+      "url": "/v2/sys/dict/tree?key=collectCategory,geektimeCategory",
       "responseData": {
         "&": "$$",
-        "collectCategory": "${collectCategory}"
+        "collectCategory": "${collectCategory}",
+        "geektimeCategory": "${geektimeCategory}",
+        "geektimeDirection": "${geektimeCategory|pick:key,label,value}"
       }
     },
     "toolbar": [],
@@ -104,67 +174,58 @@
           "body": [
             {
               "name": "category",
+              "label": "收藏分类",
               "type": "static-mapping",
-              "style": {
-                "marginLeft": "4px",
-                "color": "#28a745",
-                "fontWeight": "bold",
-                "fontSize": "14px"
-              },
               "source": "${collectCategory}"
             },
             {
-              "type": "property",
-              "title": "",
-              "mode": "simple",
-              "separator": "：",
-              "items": [
-                {
-                  "label": "作者",
-                  "content": "${item.author.name}",
-                  "span": 2
-                },
-                {
-                  "label": "作者简介",
-                  "content": "${item.author.intro}",
-                  "span": 3
-                },
-                {
-                  "label": "类型",
-                  "content": "${ item.is_audio === true ? '音频': '视频'}",
-                  "visibleOn": "${ item.is_audio !== undefined }"
-                },
-                {
-                  "label": "类型",
-                  "content": "${ item.is_video === true ? '视频': '音频'}",
-                  "visibleOn": "${ item.is_video !== undefined }"
-                },
-                {
-                  "label": "完结",
-                  "content": "${ item.is_finish === true ? '是': '否'}"
-                },
-                {
-                  "label": "价格",
-                  "content": "免费",
-                  "visibleOn": "${ item.sale_type === 6 ||  item.sale_type === 7 }"
-                },
-                {
-                  "label": "价格",
-                  "content": "¥${ROUND(item.sale/100,2)}",
-                  "visibleOn": "${ item.sale_type !== 6 &&  item.sale_type !== 7 }"
-                },
-                {
-                  "label": "课程数",
-                  "content": "${item.article.count} 讲",
-                  "span": 2
-                },
-                {
-                  "type": "tpl",
-                  "label": "缓存数",
-                  "content": "<span>${item.statistics.items.1>0?'排队中('+ item.statistics.items.1 + ')<br/>':''} ${item.statistics.items.2>0?'处理中('+ item.statistics.items.2 +')<br/>':''} ${item.statistics.items.3 >0 ?'已缓存('+ item.statistics.items.3 +')<br/>':''} ${item.statistics.items.4 >0 ?'异常('+ item.statistics.items.4 +')<br/>':''}<span>",
-                  "span": 3
-                }
-              ]
+              "type": "static-mapping",
+              "label": "类型",
+              "name": "item.other_type",
+              "source": "${productType}"
+            },
+            {
+              "type": "static-mapping",
+              "label": "方向",
+              "name": "item.other_group",
+              "source": "${geektimeDirection}"
+            },
+            {
+              "label": "作者",
+              "name": "${item.author.name}"
+            },
+            {
+              "label": "类型",
+              "value": "${ item.is_audio === true ? '音频': '视频'}",
+              "visibleOn": "${ item.is_audio !== undefined }"
+            },
+            {
+              "label": "类型",
+              "value": "${ item.is_video === true ? '视频': '音频'}",
+              "visibleOn": "${ item.is_video !== undefined }"
+            },
+            {
+              "label": "完结",
+              "value": "${ item.is_finish === true ? '是': '否'}"
+            },
+            {
+              "label": "价格",
+              "value": "免费",
+              "visibleOn": "${ item.sale_type === 6 ||  item.sale_type === 7 }"
+            },
+            {
+              "label": "价格",
+              "value": "¥${ROUND(item.sale/100,2)}",
+              "visibleOn": "${ item.sale_type !== 6 &&  item.sale_type !== 7 }"
+            },
+            {
+              "label": "课程数",
+              "value": "${item.article.count} 讲"
+            },
+            {
+              "type": "html",
+              "label": "缓存数",
+              "html": "<span>${item.statistics.items.1>0?'排队中('+ item.statistics.items.1 + ')<br/>':''} ${item.statistics.items.2>0?'处理中('+ item.statistics.items.2 +')<br/>':''} ${item.statistics.items.3 >0 ?'已缓存('+ item.statistics.items.3 +')<br/>':''} ${item.statistics.items.4 >0 ?'异常('+ item.statistics.items.4 +')<br/>':''}<span>"
             }
           ],
           "actions": [
@@ -468,7 +529,7 @@
                                       {
                                         "type": "html",
                                         "className": "word-break",
-                                        "html":  "${task_name}<br/><br/>${article.summary === undefined ? '' : '概要：'+article.summary}<br/><br/>${message.text === undefined ? '' : '下载信息：'+message.text}"
+                                        "html":  "${task_name}<br/><br/>${article.summary === undefined ? '' : '概要：'+article.summary}<br/>"
                                       },
                                       {
                                         "type": "video",

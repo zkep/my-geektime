@@ -80,15 +80,22 @@ func (p *Product) Download(c *gin.Context) {
 			return
 		}
 		for _, v := range resp.Data.List {
+			if v.ID <= 0 || v.ArticleTitle == "" {
+				continue
+			}
 			ids = append(ids, v.ID)
 			itemRaw, _ := json.Marshal(v)
-			articlesMap[v.ID] = &model.Article{
+			info := &model.Article{
 				Aid:   fmt.Sprintf("%d", v.ID),
 				Pid:   fmt.Sprintf("%d", req.Pid),
 				Title: v.ArticleTitle,
 				Cover: v.ArticleCover,
 				Raw:   itemRaw,
 			}
+			if v.VideoCover != "" && info.Cover == "" {
+				info.Cover = v.VideoCover
+			}
+			articlesMap[v.ID] = info
 		}
 	}
 	var product model.Product
@@ -242,10 +249,13 @@ func (p *Product) ProductList(c *gin.Context) {
 			IsFinish:      v.IsFinish,
 			IsVideo:       v.IsVideo,
 			IsAudio:       v.IsAudio,
+			IsColumn:      v.IsColumn,
+			IsCore:        v.IsCore,
 			IsDailylesson: v.IsDailylesson,
 			IsUniversity:  v.IsUniversity,
 			IsOpencourse:  v.IsOpencourse,
 			IsQconp:       v.IsQconp,
+			IsMentor:      v.IsMentor,
 			IsSale:        v.IsSale,
 			Sale:          v.Price.Sale,
 			SaleType:      v.Price.SaleType,
@@ -260,6 +270,22 @@ func (p *Product) ProductList(c *gin.Context) {
 			if introHTML, err1 := service.HtmlURLProxyReplace(row.IntroHTML); err1 == nil {
 				row.IntroHTML = introHTML
 			}
+		}
+		row.Redirect = fmt.Sprintf("https://time.geekbang.org/course/intro/%d", row.ID)
+		if row.IsColumn && row.IsCore {
+			row.Redirect = fmt.Sprintf("https://time.geekbang.org/column/intro/%d", row.ID)
+		}
+		if row.IsOpencourse {
+			row.Redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/intro/%d", row.ID)
+			if row.IsVideo {
+				row.Redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/videointro/%d", row.ID)
+			}
+		}
+		if row.IsDailylesson {
+			row.Redirect = fmt.Sprintf("https://time.geekbang.org/dailylesson/detail/%d", row.ID)
+		}
+		if row.IsQconp {
+			row.Redirect = fmt.Sprintf("https://time.geekbang.org/qconplus/detail/%d", row.ID)
 		}
 		ret.Rows = append(ret.Rows, row)
 	}
@@ -344,10 +370,13 @@ func (p *Product) PvipProductList(c *gin.Context) {
 			IsFinish:      v.IsFinish,
 			IsVideo:       v.IsVideo,
 			IsAudio:       v.IsAudio,
+			IsColumn:      v.IsColumn,
+			IsCore:        v.IsCore,
 			IsDailylesson: v.IsDailylesson,
 			IsUniversity:  v.IsUniversity,
 			IsOpencourse:  v.IsOpencourse,
 			IsQconp:       v.IsQconp,
+			IsMentor:      v.IsMentor,
 			IsSale:        v.IsSale,
 			Sale:          v.Price.Sale,
 			SaleType:      v.Price.SaleType,
@@ -362,6 +391,22 @@ func (p *Product) PvipProductList(c *gin.Context) {
 			if introHTML, err1 := service.HtmlURLProxyReplace(row.IntroHTML); err1 == nil {
 				row.IntroHTML = introHTML
 			}
+		}
+		row.Redirect = fmt.Sprintf("https://time.geekbang.org/course/intro/%d", row.ID)
+		if row.IsColumn && row.IsCore {
+			row.Redirect = fmt.Sprintf("https://time.geekbang.org/column/intro/%d", row.ID)
+		}
+		if row.IsOpencourse {
+			row.Redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/intro/%d", row.ID)
+			if row.IsVideo {
+				row.Redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/videointro/%d", row.ID)
+			}
+		}
+		if row.IsDailylesson {
+			row.Redirect = fmt.Sprintf("https://time.geekbang.org/dailylesson/detail/%d", row.ID)
+		}
+		if row.IsQconp {
+			row.Redirect = fmt.Sprintf("https://time.geekbang.org/qconplus/detail/%d", row.ID)
 		}
 		ret.Rows = append(ret.Rows, row)
 	}

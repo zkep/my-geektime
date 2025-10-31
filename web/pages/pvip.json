@@ -23,6 +23,10 @@
         {
           "label": "线下大会",
           "value": 5
+        },
+        {
+          "label": "社区课",
+          "value": 6
         }
       ],
       "productForm": [
@@ -265,6 +269,14 @@
             }
           ],
           "actions": [
+              {
+                "type": "action",
+                "actionType": "url",
+                "url": "${redirect}",
+                "level": "light",
+                "label": "源站",
+                "visibleOn": "${ redirect !== undefined }"
+              },
               {
                 "type": "button",
                 "icon": "fa fa-eye",

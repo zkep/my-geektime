@@ -24,12 +24,16 @@
             "value": 5
           },
           {
-            "label": "每日一课",
+            "label": "社区课",
             "value": 6
           },
           {
+            "label": "每日一课",
+            "value": 19
+          },
+          {
             "label": "大厂案例",
-            "value": 7
+            "value": 20
           }
         ],
         "productForm": [
@@ -293,57 +297,53 @@
             },
             "body": [
               {
-                "type": "property",
-                "title": "",
-                "mode": "simple",
-                "separator": "：",
-                "items": [
-                  {
-                    "label": "作者",
-                    "content": "${author.name}",
-                    "span": 3
-                  },
-                  {
-                    "label": "作者简介",
-                    "content": "${author.intro}",
-                    "span": 3
-                  },
-                  {
-                    "label": "类型",
-                    "content": "${ is_audio === true ? '音频': '视频'}",
-                    "visibleOn": "${ is_audio !== undefined }"
-                  },
-                  {
-                    "label": "类型",
-                    "content": "${ is_video === true ? '视频': '音频'}",
-                    "visibleOn": "${ is_video !== undefined }"
-                  },
-                  {
-                    "label": "完结",
-                    "content": "${ is_finish === true ? '是': '否'}"
-                  },
-                  {
-                    "label": "价格",
-                    "content": "免费",
-                    "visibleOn": "${ sale_type === 6 ||  sale_type === 7 }"
-                  },
-                  {
-                    "label": "价格",
-                    "content": "¥${ROUND(sale/100,2)}",
-                    "visibleOn": "${ sale_type !== 6 &&  sale_type !== 7 }"
-                  },
-                  {
-                    "label": "课程数",
-                    "content": "${article.count} 讲",
-                    "span": 2
-                  },
-                  {
-                    "type": "tpl",
-                    "label": "缓存数",
-                    "content": "<span>${statistics.items.1>0?'排队中('+ statistics.items.1 + ')<br/>':''} ${statistics.items.2>0?'处理中('+ statistics.items.2 +')<br/>':''} ${statistics.items.3 >0 ?'已缓存('+ statistics.items.3 +')<br/>':''} ${statistics.items.4 >0 ?'异常('+ statistics.items.4 +')<br/>':''}<span>",
-                    "span": 3
-                  }
-                ]
+                "type": "static-mapping",
+                "label": "类型",
+                "name": "other_type",
+                "source": "${productType}"
+              },
+              {
+                "type": "static-mapping",
+                "label": "方向",
+                "name": "other_group",
+                "source": "${geektimeDirection}"
+              },
+              {
+                "label": "作者",
+                "name": "${author.name}"
+              },
+              {
+                "label": "类型",
+                "value": "${ is_audio === true ? '音频': '视频'}",
+                "visibleOn": "${ is_audio !== undefined }"
+              },
+              {
+                "label": "类型",
+                "value": "${ is_video === true ? '视频': '音频'}",
+                "visibleOn": "${ is_video !== undefined }"
+              },
+              {
+                "label": "完结",
+                "value": "${ is_finish === true ? '是': '否'}"
+              },
+              {
+                "label": "价格",
+                "value": "免费",
+                "visibleOn": "${ sale_type === 6 ||  sale_type === 7 }"
+              },
+              {
+                "label": "价格",
+                "value": "¥${ROUND(sale/100,2)}",
+                "visibleOn": "${ sale_type !== 6 &&  sale_type !== 7 }"
+              },
+              {
+                "label": "课程数",
+                "value": "${article.count} 讲"
+              },
+              {
+                "type": "html",
+                "label": "缓存数",
+                "html": "<span>${statistics.items.1>0?'排队中('+ statistics.items.1 + ')<br/>':''} ${statistics.items.2>0?'处理中('+ statistics.items.2 +')<br/>':''} ${statistics.items.3 >0 ?'已缓存('+ statistics.items.3 +')<br/>':''} ${statistics.items.4 >0 ?'异常('+ statistics.items.4 +')<br/>':''}<span>"
               }
             ],
             "actions": [
@@ -374,7 +374,6 @@
                   {
                     "type": "button",
                     "icon": "fa-solid fa-download",
-                    "visibleOn": "${ ls:role_id === 1 }",
                     "label": "重新下载音视频",
                     "actionType": "ajax",
                     "api": {
@@ -390,7 +389,6 @@
                   {
                     "type": "button",
                     "icon": "fa-solid fa-trash",
-                    "visibleOn": "${ ls:role_id === 1 }",
                     "label": "删除",
                     "actionType": "ajax",
                     "api": {
@@ -489,28 +487,7 @@
                                 "type": "select",
                                 "name": "xstatus",
                                 "value": 0,
-                                "options": [
-                                  {
-                                    "label": "全部状态",
-                                    "value": 0
-                                  },
-                                  {
-                                    "label": "排队中",
-                                    "value": 1
-                                  },
-                                  {
-                                    "label": "处理中",
-                                    "value": 2
-                                  },
-                                  {
-                                    "label": "已缓存",
-                                    "value": 3
-                                  },
-                                  {
-                                    "label": "异常",
-                                    "value": 4
-                                  }
-                                ]
+                                "source": "${productStatus}"
                               }
                             ]
                           }
@@ -524,6 +501,14 @@
                             "type": "submit",
                             "level": "primary",
                             "label": "搜索"
+                          },
+                          {
+                            "type": "action",
+                            "actionType": "url",
+                            "url": "${redirect}",
+                            "level": "primary",
+                            "label": "源站",
+                            "visibleOn": "${ redirect !== undefined }"
                           }
                         ]
                       },
@@ -691,7 +676,7 @@
                                         {
                                           "type": "html",
                                           "className": "word-break",
-                                          "html":  "${task_name}<br/><br/>${article.summary === undefined ? '' : '概要：'+article.summary}<br/><br/>${message.text === undefined ? '' : '下载信息：'+message.text}"
+                                          "html":  "${task_name}<br/><br/>${article.summary === undefined ? '' : '概要：'+article.summary}<br/>"
                                         },
                                         {
                                           "type": "video",
@@ -755,6 +740,19 @@
                                       "type": "flex",
                                       "justify": "center",
                                       "items": [
+                                        {
+                                          "type": "action",
+                                          "size": "sm",
+                                          "level": "info",
+                                          "actionType": "url",
+                                          "url": "${task.redirect}",
+                                          "label": "查看源站",
+                                          "style": {
+                                            "width": 100,
+                                            "margin": 10
+                                          },
+                                          "visibleOn": "${ task.redirect !== undefined }"
+                                        },
                                         {
                                           "label": "导出Markdown",
                                           "type": "action",

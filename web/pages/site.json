@@ -39,9 +39,14 @@
                 "schemaApi": "get:/pages/pvip.json"
               },
               {
-                "label": "每日一课/大厂案例",
+                "label": "每日一课",
                 "url": "/product/lesson",
                 "schemaApi": "get:/pages/lesson.json"
+              },
+              {
+                "label": "大厂案例",
+                "url": "/product/case",
+                "schemaApi": "get:/pages/case.json"
               }
             ]
           },

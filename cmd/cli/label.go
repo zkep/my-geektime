@@ -146,7 +146,7 @@ func (app *App) Label(f *LabelFlags) error {
 		After(func(r *http.Response) error {
 			raw, err1 := io.ReadAll(r.Body)
 			if err1 != nil {
-				return err
+				return err1
 			}
 			var resp LableResponse
 			if err = json.Unmarshal(raw, &resp); err != nil {

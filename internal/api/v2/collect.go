@@ -115,13 +115,15 @@ func (t *Collect) List(c *gin.Context) {
 				TaskId:     x.TaskId,
 				TaskPid:    x.TaskPid,
 				OtherId:    x.OtherId,
+				OtherType:  x.OtherType,
+				OtherForm:  x.OtherForm,
+				OtherGroup: x.OtherGroup,
+				OtherTag:   x.OtherTag,
 				TaskName:   x.TaskName,
 				Status:     x.Status,
 				Statistics: statistics,
 				TaskType:   x.TaskType,
 				Cover:      x.Cover,
-				CreatedAt:  l.CreatedAt,
-				UpdatedAt:  l.UpdatedAt,
 			}
 			switch x.TaskType {
 			case service.TASK_TYPE_PRODUCT:

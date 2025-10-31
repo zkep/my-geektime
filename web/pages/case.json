@@ -4,21 +4,9 @@
   "data": {
     "type": "page",
     "title": " ",
-    "name": "lesson",
+    "name": "case",
     "toolbar": [],
-    "data": {
-      "geektimeCategory": [],
-      "geektimeDirection": []
-    },
-    "initApi": {
-      "method": "get",
-      "url": "/v2/sys/dict/tree?key=geektimeCategory",
-      "responseData": {
-        "&": "$$",
-        "geektimeCategory": "${geektimeCategory}",
-        "geektimeDirection": "${geektimeCategory|pick:key,label,value}"
-      }
-    },
+    "data": {},
     "body": [
       {
         "type": "crud",
@@ -38,48 +26,6 @@
         "filter": {
           "title": "条件搜索",
           "body": [
-            {
-              "type": "list-select",
-              "name": "direction",
-              "label": "课程方向",
-              "value": 0,
-              "clearable": true,
-              "source": "${geektimeDirection}",
-              "onEvent": {
-                "change": {
-                  "actions": [
-                    {
-                      "actionType": "clear",
-                      "componentId": "pvip_tag"
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "type": "divider"
-            },
-            {
-              "type": "each",
-              "source": "${geektimeCategory}",
-              "itemKeyName": "itemOutter",
-              "indexKeyName": "indexOutter",
-              "items": [
-                {
-                  "type": "list-select",
-                  "id": "pvip_tag",
-                  "name": "label_id",
-                  "label": "课程分类",
-                  "clearable": true,
-                  "value": "${itemOutter.value}",
-                  "source": "${itemOutter.children}",
-                  "visibleOn": "${direction == itemOutter.value}"
-                }
-              ]
-            },
-            {
-              "type": "divider"
-            },
             {
               "type": "group",
               "body": [
@@ -104,11 +50,11 @@
                   "type": "select",
                   "label": "课程类型",
                   "name": "type",
-                  "value": "d",
+                  "value": "q",
                   "options": [
                     {
-                      "label": "每日一课",
-                      "value": "d"
+                      "label": "大厂案例",
+                      "value": "q"
                     }
                   ]
                 }

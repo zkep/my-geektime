@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"path"
 	"strconv"
 	"sync"
@@ -225,6 +226,11 @@ func doArticle(ctx context.Context, x *model.Task) error {
 			if err1 != nil {
 				global.LOG.Error("worker GetArticleInfo", zap.Error(err1), zap.String("taskId", x.TaskId))
 				return err1
+			}
+			if article.Data.Info.ID <= 0 {
+				global.LOG.Error("worker GetArticleInfo empty",
+					zap.String("taskId", x.TaskId), zap.Int64("articleID", aid))
+				return fmt.Errorf("not found article taskId: %s, articleID: %v", x.TaskId, aid)
 			}
 			if err = service.ArticleAllComment(ctx, u.Uid, u.AccessToken, aid); err != nil {
 				global.LOG.Error("worker ArticleAllComment", zap.Error(err), zap.String("taskId", x.TaskId))

@@ -30,6 +30,14 @@ type Task struct {
 	TaskName string `json:"task_name,omitempty"`
 	// task type
 	TaskType string `json:"task_type,omitempty"`
+	// other type
+	OtherType int32 `json:"other_type,omitempty"`
+	// other tag
+	OtherTag int32 `json:"other_tag,omitempty"`
+	// other form
+	OtherForm int32 `json:"other_form,omitempty"`
+	// other group
+	OtherGroup int32 `json:"other_group,omitempty"`
 	// cover
 	Cover string `json:"cover,omitempty"`
 	// status
@@ -60,12 +68,8 @@ type Task struct {
 	Author geek.ArticleAuthor `json:"author,omitempty"`
 	// Article
 	Article geek.ProductArticle `json:"article,omitempty"`
-	// created_at
-	CreatedAt int64 `json:"created_at,omitempty"`
-	// updated_at
-	UpdatedAt int64 `json:"updated_at,omitempty"`
-	// deleted_at
-	DeletedAt int64 `json:"deleted_at,omitempty"`
+	// redirect
+	Redirect string `json:"redirect,omitempty"`
 }
 
 type TaskStatistics struct {

@@ -10,6 +10,7 @@ import (
 	"github.com/zkep/my-geektime/internal/global"
 	"github.com/zkep/my-geektime/internal/model"
 	"github.com/zkep/my-geektime/internal/types/geek"
+	"github.com/zkep/my-geektime/internal/types/sys_dict"
 	"go.uber.org/zap"
 )
 
@@ -162,8 +163,8 @@ func GetProduct(ctx context.Context, accessToken string,
 	req geek.DailyProductRequest) (*geek.DailyProductResponse, error) {
 	raw, _ := json.Marshal(req)
 	var resp geek.DailyProductResponse
-	after := func(raw []byte) error {
-		if err := json.Unmarshal(raw, &resp); err != nil {
+	after := func(respRaw []byte) error {
+		if err := json.Unmarshal(respRaw, &resp); err != nil {
 			global.LOG.Error("GetProduct", zap.Error(err))
 			return err
 		}
@@ -184,11 +185,9 @@ func GetProduct(ctx context.Context, accessToken string,
 					OtherGroup: req.Direction,
 					OtherTag:   req.LabelID,
 				}
-				switch req.Type {
-				case "d":
-					info.OtherType = 6
-				case "q":
-					info.OtherType = 7
+				otherType, ok := sys_dict.ProductTypes[req.Type]
+				if ok {
+					info.OtherType = otherType.Value
 				}
 				if err := global.DB.
 					Model(&model.Product{}).

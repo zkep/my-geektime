@@ -23,6 +23,9 @@ func (p *Product) Articles(c *gin.Context) {
 	ret := geek.ArticlesListResponse{Rows: make([]geek.ArticlesListRow, 0)}
 	ret.Count = resp.Data.Page.Count
 	for _, v := range resp.Data.List {
+		if v.ID <= 0 || v.ArticleTitle == "" {
+			continue
+		}
 		row := geek.ArticlesListRow{
 			ID:               v.ID,
 			ArticleTitle:     v.ArticleTitle,

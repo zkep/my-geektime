@@ -96,7 +96,7 @@ func Download(ctx context.Context, x *model.Task, data geek.ArticleData) error {
 			data.Info.Video.HlsMedias = data.Info.VideoPreview.Medias
 		}
 		if len(data.Info.Video.HlsMedias) == 0 && len(data.Info.VideoPreview.Medias) == 0 {
-			return fmt.Errorf("article info not found %s", x.OtherId)
+			return fmt.Errorf("article info not found or no VIP product %s", x.OtherId)
 		}
 		sort.Slice(data.Info.Video.HlsMedias, func(i, j int) bool {
 			return data.Info.Video.HlsMedias[i].Size > data.Info.Video.HlsMedias[j].Size
