@@ -12,6 +12,7 @@ import (
 	"github.com/zkep/my-geektime/internal/model"
 	"github.com/zkep/my-geektime/internal/service"
 	"github.com/zkep/my-geektime/internal/types/geek"
+	"github.com/zkep/my-geektime/internal/types/sys_dict"
 	"github.com/zkep/my-geektime/internal/types/task"
 	"github.com/zkep/my-geektime/libs/utils"
 	"gorm.io/gorm"
@@ -271,22 +272,7 @@ func (p *Product) ProductList(c *gin.Context) {
 				row.IntroHTML = introHTML
 			}
 		}
-		row.Redirect = fmt.Sprintf("https://time.geekbang.org/course/intro/%d", row.ID)
-		if row.IsColumn && row.IsCore {
-			row.Redirect = fmt.Sprintf("https://time.geekbang.org/column/intro/%d", row.ID)
-		}
-		if row.IsOpencourse {
-			row.Redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/intro/%d", row.ID)
-			if row.IsVideo {
-				row.Redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/videointro/%d", row.ID)
-			}
-		}
-		if row.IsDailylesson {
-			row.Redirect = fmt.Sprintf("https://time.geekbang.org/dailylesson/detail/%d", row.ID)
-		}
-		if row.IsQconp {
-			row.Redirect = fmt.Sprintf("https://time.geekbang.org/qconplus/detail/%d", row.ID)
-		}
+		row.Redirect = sys_dict.ProductURLWithType(v.Type, v.ID)
 		ret.Rows = append(ret.Rows, row)
 	}
 	global.OK(c, ret)
@@ -392,22 +378,7 @@ func (p *Product) PvipProductList(c *gin.Context) {
 				row.IntroHTML = introHTML
 			}
 		}
-		row.Redirect = fmt.Sprintf("https://time.geekbang.org/course/intro/%d", row.ID)
-		if row.IsColumn && row.IsCore {
-			row.Redirect = fmt.Sprintf("https://time.geekbang.org/column/intro/%d", row.ID)
-		}
-		if row.IsOpencourse {
-			row.Redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/intro/%d", row.ID)
-			if row.IsVideo {
-				row.Redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/videointro/%d", row.ID)
-			}
-		}
-		if row.IsDailylesson {
-			row.Redirect = fmt.Sprintf("https://time.geekbang.org/dailylesson/detail/%d", row.ID)
-		}
-		if row.IsQconp {
-			row.Redirect = fmt.Sprintf("https://time.geekbang.org/qconplus/detail/%d", row.ID)
-		}
+		row.Redirect = sys_dict.ProductURLWithType(v.Type, v.ID)
 		ret.Rows = append(ret.Rows, row)
 	}
 	global.OK(c, ret)

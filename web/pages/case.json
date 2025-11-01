@@ -241,7 +241,13 @@
                     },
                     "body": [
                       {
-                        "type": "divider"
+                        "type": "action",
+                        "size": "sm",
+                        "level": "info",
+                        "actionType": "url",
+                        "url": "${redirect}",
+                        "label": "查看源站",
+                        "visibleOn": "${ redirect !== undefined }"
                       },
                       {
                         "type": "html",

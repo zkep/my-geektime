@@ -133,21 +133,7 @@ func (t *Task) List(c *gin.Context) {
 					row.Doc = global.Storage.GetUrl(taskMessage.Doc)
 				}
 			}
-			switch l.OtherType {
-			case sys_dict.IsOpencourse:
-				row.Redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/intro/%d", product.ID)
-				if row.IsVideo {
-					row.Redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/videointro/%d", product.ID)
-				}
-			case sys_dict.IsMentor:
-				row.Redirect = fmt.Sprintf("https://time.geekbang.org/column/intro/%d", product.ID)
-			case sys_dict.IsDailylesson:
-				row.Redirect = fmt.Sprintf("https://time.geekbang.org/dailylesson/detail/%d", product.ID)
-			case sys_dict.IsQconp:
-				row.Redirect = fmt.Sprintf("https://time.geekbang.org/qconplus/detail/%d", product.ID)
-			default:
-				row.Redirect = fmt.Sprintf("https://time.geekbang.org/course/intro/%d", product.ID)
-			}
+			row.Redirect = sys_dict.ProductURLWithType(product.Type, product.ID)
 		case service.TASK_TYPE_ARTICLE:
 			var articelInfo geek.ArticleData
 			if len(l.Raw) > 0 {
@@ -243,17 +229,7 @@ func (t *Task) Info(c *gin.Context) {
 	if len(l.Ciphertext) > 0 || len(l.RewriteHls) > 0 {
 		resp.PalyURL = fmt.Sprintf("%s/v2/task/play.m3u8?id=%s", global.CONF.Storage.Host, l.TaskId)
 	}
-	switch l.OtherType {
-	case sys_dict.IsMentor:
-		resp.Task.Redirect = fmt.Sprintf("https://time.geekbang.org/column/article/%d", articleData.Info.ID)
-	case sys_dict.IsDailylesson:
-		resp.Task.Redirect = fmt.Sprintf("https://time.geekbang.org/dailylesson/detail/%d", articleData.Info.Pid)
-	case sys_dict.IsQconp:
-		resp.Task.Redirect = fmt.Sprintf("https://time.geekbang.org/qconplus/detail/%d", articleData.Info.Pid)
-	default:
-		resp.Task.Redirect = fmt.Sprintf("https://time.geekbang.org/course/detail/%d-%d",
-			articleData.Info.Pid, articleData.Info.ID)
-	}
+	resp.Task.Redirect = sys_dict.ProductDetailURLWithType(articleData.Product.Type, articleData.Info.Pid, articleData.Info.ID)
 	global.OK(c, resp)
 }
 

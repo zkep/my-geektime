@@ -24,7 +24,7 @@ import (
 
 type DataFlags struct {
 	Config     string   `name:"config" description:"Path to config file"`
-	Types      []string `name:"types" description:"1: 体系课，4:公开课，5:线下大会，6:社区课程，d:每日一课，q:大厂案例"`
+	Types      []string `name:"types" description:"1: 体系课，4:公开课，5:线下大会，6:社区课，d:每日一课，q:大厂案例"`
 	Cookies    string   `name:"cookies" description:"geektime cookies string"`
 	Download   bool     `name:"download" description:"download geektime source" default:"false"`
 	Preview    bool     `name:"preview" description:"preview geektime source" default:"false"`
@@ -188,7 +188,6 @@ func (app *App) Data(f *DataFlags) error {
 				}
 			}
 		}
-
 	}
 
 	fmt.Printf("product len [%d]\n\n", len(dataTasksMap))

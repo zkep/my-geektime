@@ -1,5 +1,7 @@
 package sys_dict
 
+import "fmt"
+
 type Tag struct {
 	Option
 	Options []Option `json:"options"`
@@ -49,3 +51,35 @@ var (
 		{Label: "视频", Value: 2},
 	}
 )
+
+func ProductURLWithType(productType string, productID int) string {
+	redirect := ""
+	switch productType {
+	case "c1", "x49", "x50":
+		redirect = fmt.Sprintf("https://time.geekbang.org/column/intro/%d", productID)
+	case "c3", "c6":
+		redirect = fmt.Sprintf("https://time.geekbang.org/course/intro/%d", productID)
+	case "p29":
+		redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/intro/%d", productID)
+	case "p30", "p35":
+		redirect = fmt.Sprintf("https://time.geekbang.org/opencourse/videointro/%d", productID)
+	case "d":
+		redirect = fmt.Sprintf("https://time.geekbang.org/dailylesson/detail/%d", productID)
+	case "q":
+		redirect = fmt.Sprintf("https://time.geekbang.org/qconplus/detail/%d", productID)
+	default:
+	}
+	return redirect
+}
+
+func ProductDetailURLWithType(productType string, productID, articleID int) string {
+	redirect := fmt.Sprintf("https://time.geekbang.org/course/detail/%d-%d", productID, articleID)
+	switch productType {
+	case "d":
+		redirect = fmt.Sprintf("https://time.geekbang.org/dailylesson/detail/%d", productID)
+	case "q":
+		redirect = fmt.Sprintf("https://time.geekbang.org/qconplus/detail/%d", productID)
+	default:
+	}
+	return redirect
+}

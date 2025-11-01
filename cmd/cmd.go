@@ -62,6 +62,7 @@ func (app *App) Run() {
 	subCLI.NewSubCommandFunction("docs", "make geektime docs", cliApp.Docs)
 	subCLI.NewSubCommandFunction("docs-local", "make geektime local docs", cliApp.LocalDoc)
 	subCLI.NewSubCommandFunction("label", "make geektime label", cliApp.Label)
+	subCLI.NewSubCommandFunction("redirect", "check geektime redirect url", cliApp.Redirect)
 	if err := c.Run(); err != nil {
 		fmt.Println(color.Red(err.Error()))
 	}

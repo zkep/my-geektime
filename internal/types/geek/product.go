@@ -875,6 +875,7 @@ type ArticleData struct {
 	Product    Product     `json:"product,omitempty"`
 	FreeGet    bool        `json:"free_get,omitempty"`
 	IsFullText bool        `json:"is_full_text,omitempty"`
+	Redirect   string      `json:"redirect,omitempty"`
 }
 
 type ArticleInfo struct {
@@ -1130,4 +1131,9 @@ type Column struct {
 	InPvip        int    `json:"in_pvip,omitempty"`
 	ColumnBadge   string `json:"column_badge,omitempty"`
 	HideCopyright bool   `json:"hide_copyright,omitempty"`
+}
+
+type ArticleDetail struct {
+	ArticleInfo
+	Redirect string `json:"redirect,omitempty"`
 }

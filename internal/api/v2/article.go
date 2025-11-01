@@ -5,6 +5,7 @@ import (
 	"github.com/zkep/my-geektime/internal/global"
 	"github.com/zkep/my-geektime/internal/service"
 	"github.com/zkep/my-geektime/internal/types/geek"
+	"github.com/zkep/my-geektime/internal/types/sys_dict"
 )
 
 func (p *Product) Articles(c *gin.Context) {
@@ -68,5 +69,9 @@ func (p *Product) ArticleInfo(c *gin.Context) {
 			resp.Data.Info.Content = contextHTML
 		}
 	}
-	global.OK(c, resp.Data.Info)
+	ret := geek.ArticleDetail{
+		ArticleInfo: resp.Data.Info,
+	}
+	ret.Redirect = sys_dict.ProductDetailURLWithType(resp.Data.Product.Type, resp.Data.Info.Pid, resp.Data.Info.ID)
+	global.OK(c, ret)
 }
