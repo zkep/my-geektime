@@ -272,6 +272,7 @@
               {
                 "type": "action",
                 "actionType": "url",
+                "icon": "fa-brands fa-internet-explorer",
                 "url": "${redirect}",
                 "level": "light",
                 "label": "源站",

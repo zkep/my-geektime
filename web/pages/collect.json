@@ -237,6 +237,15 @@
               "tooltip": "更多操作",
               "buttons": [
                 {
+                  "type": "action",
+                  "size": "sm",
+                  "icon": "fa-brands fa-internet-explorer",
+                  "actionType": "url",
+                  "url": "${item.redirect}",
+                  "label": "查看源站",
+                  "visibleOn": "${ item.redirect !== undefined }"
+                },
+                {
                   "label": "导出Markdown",
                   "icon": "fa-solid fa-columns",
                   "type": "action",
@@ -391,6 +400,14 @@
                           "type": "submit",
                           "level": "primary",
                           "label": "搜索"
+                        },
+                        {
+                          "type": "action",
+                          "actionType": "url",
+                          "url": "${item.redirect}",
+                          "level": "primary",
+                          "label": "源站",
+                          "visibleOn": "${ item.redirect !== undefined }"
                         }
                       ]
                     },
@@ -502,6 +519,15 @@
                           ]
                         },
                         {
+                          "type": "action",
+                          "actionType": "url",
+                          "icon": "fa-brands fa-internet-explorer",
+                          "url": "${redirect}",
+                          "level": "light",
+                          "label": "源站",
+                          "visibleOn": "${ redirect !== undefined }"
+                        },
+                        {
                           "type": "button",
                           "icon": "fa fa-eye",
                           "label": "播放",
@@ -593,6 +619,19 @@
                                     "type": "flex",
                                     "justify": "center",
                                     "items": [
+                                      {
+                                        "type": "action",
+                                        "size": "sm",
+                                        "level": "info",
+                                        "actionType": "url",
+                                        "url": "${redirect}",
+                                        "label": "查看源站",
+                                        "style": {
+                                          "width": 100,
+                                          "margin": 10
+                                        },
+                                        "visibleOn": "${ redirect !== undefined }"
+                                      },
                                       {
                                         "label": "导出Markdown",
                                         "type": "action",

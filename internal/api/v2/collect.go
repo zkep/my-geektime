@@ -12,6 +12,7 @@ import (
 	"github.com/zkep/my-geektime/internal/service"
 	"github.com/zkep/my-geektime/internal/types/collect"
 	"github.com/zkep/my-geektime/internal/types/geek"
+	"github.com/zkep/my-geektime/internal/types/sys_dict"
 	"github.com/zkep/my-geektime/internal/types/task"
 	"gorm.io/gorm"
 )
@@ -152,15 +153,16 @@ func (t *Collect) List(c *gin.Context) {
 						taskRow.Doc = global.Storage.GetUrl(taskMessage.Doc)
 					}
 				}
+				taskRow.Redirect = sys_dict.ProductURLWithType(product.Type, product.ID)
 			case service.TASK_TYPE_ARTICLE:
-				var articelInfo geek.ArticleData
+				var articleData geek.ArticleData
 				if len(x.Raw) > 0 {
-					_ = json.Unmarshal(x.Raw, &articelInfo)
+					_ = json.Unmarshal(x.Raw, &articleData)
 				}
-				taskRow.Author = articelInfo.Info.Author
-				taskRow.Subtitle = articelInfo.Info.Subtitle
-				taskRow.IntroHTML = articelInfo.Info.Summary
-				taskRow.IsVideo = articelInfo.Info.IsVideo
+				taskRow.Author = articleData.Info.Author
+				taskRow.Subtitle = articleData.Info.Subtitle
+				taskRow.IntroHTML = articleData.Info.Summary
+				taskRow.IsVideo = articleData.Info.IsVideo
 				var taskMessage task.TaskMessage
 				if len(x.Message) > 0 {
 					_ = json.Unmarshal(x.Message, &taskMessage)
@@ -168,6 +170,8 @@ func (t *Collect) List(c *gin.Context) {
 						taskRow.Object = global.Storage.GetUrl(taskMessage.Object)
 					}
 				}
+				taskRow.Redirect = sys_dict.ProductDetailURLWithType(
+					articleData.Product.Type, articleData.Info.Pid, articleData.Info.ID)
 			}
 
 			taskRow.Cover = service.URLProxyReplace(taskRow.Cover)

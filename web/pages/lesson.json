@@ -194,6 +194,7 @@
           "actions": [
             {
               "type": "action",
+              "icon": "fa-brands fa-internet-explorer",
               "actionType": "url",
               "url": "${redirect}",
               "level": "light",

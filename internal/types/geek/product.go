@@ -875,7 +875,6 @@ type ArticleData struct {
 	Product    Product     `json:"product,omitempty"`
 	FreeGet    bool        `json:"free_get,omitempty"`
 	IsFullText bool        `json:"is_full_text,omitempty"`
-	Redirect   string      `json:"redirect,omitempty"`
 }
 
 type ArticleInfo struct {

@@ -355,6 +355,15 @@
                 "tooltip": "更多操作",
                 "buttons": [
                   {
+                    "type": "action",
+                    "size": "sm",
+                    "icon": "fa-brands fa-internet-explorer",
+                    "actionType": "url",
+                    "url": "${redirect}",
+                    "label": "查看源站",
+                    "visibleOn": "${ redirect !== undefined }"
+                  },
+                  {
                     "label": "导出Markdown",
                     "icon": "fa-solid fa-columns",
                     "type": "action",
@@ -647,6 +656,16 @@
                                 "confirmText": "确定要删除 [${task_name}] 课程吗？"
                               }
                             ]
+                          },
+                          {
+                            "type": "action",
+                            "size": "sm",
+                            "icon": "fa-brands fa-internet-explorer",
+                            "actionType": "url",
+                            "level": "light",
+                            "url": "${redirect}",
+                            "label": "查看源站",
+                            "visibleOn": "${ redirect !== undefined }"
                           },
                           {
                             "type": "button",

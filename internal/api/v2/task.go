@@ -135,14 +135,14 @@ func (t *Task) List(c *gin.Context) {
 			}
 			row.Redirect = sys_dict.ProductURLWithType(product.Type, product.ID)
 		case service.TASK_TYPE_ARTICLE:
-			var articelInfo geek.ArticleData
+			var articleData geek.ArticleData
 			if len(l.Raw) > 0 {
-				_ = json.Unmarshal(l.Raw, &articelInfo)
+				_ = json.Unmarshal(l.Raw, &articleData)
 			}
-			row.Author = articelInfo.Info.Author
-			row.Subtitle = articelInfo.Info.Subtitle
-			row.IntroHTML = articelInfo.Info.Summary
-			row.IsVideo = articelInfo.Info.IsVideo
+			row.Author = articleData.Info.Author
+			row.Subtitle = articleData.Info.Subtitle
+			row.IntroHTML = articleData.Info.Summary
+			row.IsVideo = articleData.Info.IsVideo
 			var taskMessage task.TaskMessage
 			if len(l.Message) > 0 {
 				_ = json.Unmarshal(l.Message, &taskMessage)
@@ -150,6 +150,8 @@ func (t *Task) List(c *gin.Context) {
 					row.Object = global.Storage.GetUrl(taskMessage.Object)
 				}
 			}
+			row.Redirect = sys_dict.ProductDetailURLWithType(
+				articleData.Product.Type, articleData.Info.Pid, articleData.Info.ID)
 		}
 		row.Cover = service.URLProxyReplace(row.Cover)
 		row.Author.Avatar = service.URLProxyReplace(row.Author.Avatar)
@@ -229,7 +231,8 @@ func (t *Task) Info(c *gin.Context) {
 	if len(l.Ciphertext) > 0 || len(l.RewriteHls) > 0 {
 		resp.PalyURL = fmt.Sprintf("%s/v2/task/play.m3u8?id=%s", global.CONF.Storage.Host, l.TaskId)
 	}
-	resp.Task.Redirect = sys_dict.ProductDetailURLWithType(articleData.Product.Type, articleData.Info.Pid, articleData.Info.ID)
+	resp.Task.Redirect = sys_dict.ProductDetailURLWithType(
+		articleData.Product.Type, articleData.Info.Pid, articleData.Info.ID)
 	global.OK(c, resp)
 }
 
