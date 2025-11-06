@@ -241,10 +241,6 @@ func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, er
 		"ALL",
 		"-protocol_whitelist",
 		"concat,file,http,https,tcp,tls,crypto",
-		"-c",
-		"copy",
-		"-movflags",
-		"frag_keyframe+empty_moov",
 		"-i",
 		path.Join(destDir, "index.m3u8"),
 	}
