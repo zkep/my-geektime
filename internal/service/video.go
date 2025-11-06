@@ -128,7 +128,7 @@ func RewritePlay(ctx context.Context, req PlayMetaRequest) (*PlayMeta, error) {
 			}
 			destName := path.Join(req.Dir, req.Filename, "key.key")
 			meta.KeyPath = global.Storage.GetKey(destName, true)
-			l = fmt.Sprintf(`%s"file:///%s"`, sps[0], meta.KeyPath)
+			l = fmt.Sprintf(`%s"file://%s"`, sps[0], meta.KeyPath)
 			rl = fmt.Sprintf(`%s"{host}/v2/task/kms?Ciphertext=%s"`, sps[0], token)
 			if len(req.Ciphertext) == 0 {
 				if err := playCiphertext(retryCtx, &req, sps[1]); err != nil {
