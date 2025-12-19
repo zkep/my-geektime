@@ -5,9 +5,9 @@ CREATE TABLE `sys_dicts` (
   `updated` bigint DEFAULT NULL COMMENT 'updated',
   `deleted` bigint DEFAULT NULL COMMENT 'deleted',
   `key` longtext COLLATE utf8mb4_general_ci COMMENT 'key',
-  `pkey` varchar(191) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'parent key',
-  `rkey` varchar(191) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'root key',
-  `name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'name',
+  `pkey` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'parent key',
+  `rkey` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'root key',
+  `name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'name',
   `summary` text COLLATE utf8mb4_general_ci COMMENT 'summary',
   `content` text COLLATE utf8mb4_general_ci COMMENT 'content',
   `sort` tinyint DEFAULT '1' COMMENT 'sort',
@@ -16,7 +16,7 @@ CREATE TABLE `sys_dicts` (
   KEY `idx_sys_dicts_rkey` (`rkey`),
   KEY `idx_sys_dicts_name` (`name`),
   KEY `idx_sys_dicts_sort` (`sort`)
-) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 LOCK TABLES `sys_dicts` WRITE;

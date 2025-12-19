@@ -512,6 +512,15 @@ func (t *Task) Play(c *gin.Context) {
 		} else if strings.HasSuffix(ln, ".ts") {
 			for _, proxyURL := range global.CONF.Site.Play.ProxyUrl {
 				if strings.HasPrefix(ln, proxyURL) {
+					up, err := url.Parse(ln)
+					if err != nil {
+						global.FAIL(c, "fail.msg", err.Error())
+						return
+					}
+					if strings.HasPrefix(up.Path, "//") {
+						up.Path = strings.TrimPrefix(up.Path, "/")
+						ln = up.String()
+					}
 					ln = "/v2/task/play/part?p=" + ln
 					break
 				}

@@ -139,8 +139,8 @@ func RewritePlay(ctx context.Context, req PlayMetaRequest) (*PlayMeta, error) {
 			playHost := req.DowloadURL[:strings.LastIndex(req.DowloadURL, "/")+1]
 			if !strings.HasPrefix(l, "https://") {
 				destName := path.Join(req.Dir, req.Filename, l)
-				meta.Parts = append(meta.Parts, Part{playHost + l, destName, false})
 				rl = playHost + l
+				meta.Parts = append(meta.Parts, Part{rl, destName, false})
 			} else {
 				tsPath := strings.TrimPrefix(l, playHost)
 				if strings.HasPrefix(tsPath, playHost) {

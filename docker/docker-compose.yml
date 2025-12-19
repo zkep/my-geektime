@@ -17,8 +17,6 @@ services:
       - ./mysql/init/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./mysql/init/sys_dicts.sql:/docker-entrypoint-initdb.d/sys_dicts.sql
       - /etc/localtime:/etc/localtime:ro
-    ports:
-      - "33060:3306"
   server:
     hostname: mygeektime
     # build: ../         # build  from local dockerfile
