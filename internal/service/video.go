@@ -14,9 +14,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/JohannesKaufmann/dom"
 	"github.com/JohannesKaufmann/html-to-markdown/v2/converter"
-	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/base"
-	"github.com/JohannesKaufmann/html-to-markdown/v2/plugin/commonmark"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/zkep/my-geektime/internal/global"
 	"github.com/zkep/my-geektime/libs/zhttp"
@@ -259,23 +258,31 @@ func Video(ctx context.Context, dir, fileName string, req *PlayMeta) (string, er
 }
 
 var (
-	conv = converter.NewConverter(
-		converter.WithPlugins(
-			base.NewBasePlugin(),
-			commonmark.NewCommonmarkPlugin(),
-		),
-	)
+	conv = converter.NewConverter()
 )
 
 func init() {
-	conv.Register.RendererFor("video", converter.TagTypeInline, renderVideo, converter.PriorityStandard)
+	conv.Register.Renderer(renderer, converter.PriorityStandard)
 }
 
-func renderVideo(_ converter.Context, w converter.Writer, node *html.Node) converter.RenderStatus {
-	var buf bytes.Buffer
-	_ = html.Render(&buf, node)
-	_, _ = w.WriteString(buf.String())
-	return converter.RenderSuccess
+func renderer(_ converter.Context, w converter.Writer, n *html.Node) converter.RenderStatus {
+	name := dom.NodeName(n)
+	switch name {
+	case "video":
+		var buf bytes.Buffer
+		_ = html.Render(&buf, n)
+		_, _ = w.WriteString(buf.String())
+		return converter.RenderSuccess
+	case "img":
+		if _, exists := dom.GetAttribute(n, "referrerpolicy"); !exists {
+			n.Attr = append(n.Attr, html.Attribute{Key: "referrerpolicy", Val: "no-referrer"})
+		}
+		var buf bytes.Buffer
+		_ = html.Render(&buf, n)
+		_, _ = w.WriteString(buf.String())
+		return converter.RenderSuccess
+	}
+	return converter.RenderTryNext
 }
 
 func HTMLConvertMarkdown(rawHtml string) (string, error) {

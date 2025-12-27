@@ -117,6 +117,12 @@ func OutputHTML(n *html.Node) string {
 			if _, err := b.WriteString(n.Data); err != nil {
 				return
 			}
+			for _, x := range n.Attr {
+				if x.Key == "href" || x.Key == "src" || x.Key == "poster" {
+					n.Attr = append(n.Attr, html.Attribute{Key: "referrerpolicy", Val: "no-referrer"})
+					break
+				}
+			}
 			for _, a := range n.Attr {
 				if err := b.WriteByte(' '); err != nil {
 					return

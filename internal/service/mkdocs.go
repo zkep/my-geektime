@@ -37,7 +37,7 @@ type Nav struct {
 }
 
 var (
-	commentHtmlFormat       = `<li><img src="%s" width="30px"><span>%s</span> 👍（%d） 💬（%d）<p>%s</p>%s</li><br/>`
+	commentHtmlFormat       = `<li><img src="%s" width="30px" referrerpolicy="no-referrer"><span>%s</span> 👍（%d） 💬（%d）<p>%s</p>%s</li><br/>`
 	commentSimpleHtmlFormat = `<li><span>%s</span> 👍（%d） 💬（%d）<p>%s</p>%s</li><br/>`
 )
 
