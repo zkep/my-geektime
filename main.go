@@ -10,6 +10,7 @@ import (
 //go:embed web/index.html
 //go:embed web/public/*
 //go:embed web/pages/*
+//go:embed web/assets/*
 //go:embed config.yml
 var Assets embed.FS
 

@@ -229,7 +229,7 @@ func (t *Task) Info(c *gin.Context) {
 		resp.Article.Content = introHTML
 	}
 	if len(l.Ciphertext) > 0 || len(l.RewriteHls) > 0 {
-		resp.PalyURL = fmt.Sprintf("%s/v2/task/play.m3u8?id=%s", global.CONF.Storage.Host, l.TaskId)
+		resp.PalyURL = fmt.Sprintf("%s/v2/task/play.m3u8?id=%s", strings.TrimPrefix(global.CONF.Storage.Host, "/"), l.TaskId)
 	}
 	resp.Task.Redirect = sys_dict.ProductDetailURLWithType(
 		articleData.Product.Type, articleData.Info.Pid, articleData.Info.ID)
@@ -508,7 +508,7 @@ func (t *Task) Play(c *gin.Context) {
 				global.FAIL(c, "fail.msg", er.Error())
 				return
 			}
-			ln = fmt.Sprintf(`%s"%s/v2/task/kms?Ciphertext=%s"`, sps[0], global.CONF.Storage.Host, token)
+			ln = fmt.Sprintf(`%s"%s/v2/task/kms?Ciphertext=%s"`, sps[0], strings.TrimPrefix(global.CONF.Storage.Host, "/"), token)
 		} else if strings.HasSuffix(ln, ".ts") {
 			for _, proxyURL := range global.CONF.Site.Play.ProxyUrl {
 				if strings.HasPrefix(ln, proxyURL) {
