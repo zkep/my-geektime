@@ -250,7 +250,8 @@ func (s *Dict) Tree(c *gin.Context) {
 		return
 	}
 	keys := strings.Split(r.Key, ",")
-	if len(keys) == 0 {
+	if len(r.Key) == 0 {
+		keys = []string{""}
 		r.FiledName = "options"
 	}
 	filedNames := make([]string, 0, len(keys))
@@ -272,7 +273,7 @@ func (s *Dict) Tree(c *gin.Context) {
 		}
 	}
 	scores := make([]func(db *gorm.DB) *gorm.DB, 0, len(keys))
-	if len(keys) > 0 {
+	if len(r.Key) > 0 {
 		scope := func(db *gorm.DB) *gorm.DB {
 			return db.Where("rkey IN (?)", keys)
 		}
