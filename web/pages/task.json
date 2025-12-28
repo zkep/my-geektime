@@ -384,6 +384,7 @@
                     "type": "button",
                     "icon": "fa-solid fa-download",
                     "label": "重新下载音视频",
+                    "visibleOn": "${ ls:role_id === 1 }",
                     "actionType": "ajax",
                     "api": {
                       "url": "/v2/task/retry",
@@ -400,6 +401,7 @@
                     "icon": "fa-solid fa-trash",
                     "label": "删除",
                     "actionType": "ajax",
+                    "visibleOn": "${ ls:role_id === 1 }",
                     "api": {
                       "url": "/v2/task/delete",
                       "method": "delete",
