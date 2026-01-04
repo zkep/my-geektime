@@ -138,7 +138,6 @@ func (app *App) Label(f *LabelFlags) error {
 		r.Header.Set("Cookie", accessToken)
 		r.Header.Set("Sec-Ch-Ua", `"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"`)
 		r.Header.Set("User-Agent", zhttp.RandomUserAgent())
-		r.Header.Set("Accept", "application/json, text/plain, */*")
 		r.Header.Set("Content-Type", "application/json")
 		r.Header.Set("Origin", "https://time.geekbang.com")
 	}

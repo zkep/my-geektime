@@ -564,7 +564,7 @@
                                           "height": "20%",
                                           "margin": 5
                                         },
-                                        "muted": true,
+                                        "muted": false,
                                         "autoPlay": false,
                                         "rates": [1.0, 1.2, 1.5, 2.0],
                                         "src": "${article.video.hls_medias|last|pick:url}",
@@ -578,7 +578,7 @@
                                           "height": "20%",
                                           "margin": 5
                                         },
-                                        "muted": true,
+                                        "muted": false,
                                         "autoPlay": false,
                                         "rates": [1.0, 1.2, 1.5, 2.0],
                                         "src": "${article.video_preview.medias|last|pick:url}",
@@ -592,7 +592,7 @@
                                           "height": "20%",
                                           "margin": 5
                                         },
-                                        "muted": true,
+                                        "muted": false,
                                         "autoPlay": false,
                                         "rates": [1.0, 1.2, 1.5, 2.0],
                                         "src": "${play_url}",
@@ -606,7 +606,7 @@
                                           "height": "20%",
                                           "margin": 5
                                         },
-                                        "muted": true,
+                                        "muted": false,
                                         "autoPlay": false,
                                         "rates": [1.0, 1.2, 1.5, 2.0],
                                         "src": "${article.audio.url}",
