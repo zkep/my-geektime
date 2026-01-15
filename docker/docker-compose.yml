@@ -16,12 +16,13 @@ services:
       - ./mysql/data:/var/lib/mysql
       - ./mysql/init/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./mysql/init/sys_dicts.sql:/docker-entrypoint-initdb.d/sys_dicts.sql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
       - /etc/localtime:/etc/localtime:ro
   server:
     hostname: mygeektime
     # build: ../         # build  from local dockerfile
     image: zkep/mygeektime:latest
-    platform: linux/amd64  # linux/arm64 指定架构平台
+    # platform: linux/amd64  # linux/arm64 指定架构平台
     privileged: true
     restart: always
     networks:
