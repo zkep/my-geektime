@@ -1,3 +1,6 @@
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
 DROP TABLE IF EXISTS `sys_dicts`;
 
 CREATE TABLE `sys_dicts` (
