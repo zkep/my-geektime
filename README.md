@@ -55,7 +55,7 @@ docker-compose -f docker-compose.yml up -d
 
 如若有用，不吝赞赏👏
 
-赞赏会帮大家定期捐给 北京嫣然天使儿童医院，用于兔唇儿童公益治疗，感谢大家的赞赏, [赞赏公示](https://github.com/zkep/my-geektime/issues/98)
+赞赏会帮大家定期捐给 [北京嫣然天使儿童医院](https://baike.baidu.com/item/%E5%8C%97%E4%BA%AC%E5%B8%82%E6%9C%9D%E9%98%B3%E5%8C%BA%E5%AB%A3%E7%84%B6%E5%A4%A9%E4%BD%BF%E5%84%BF%E7%AB%A5%E5%8C%BB%E9%99%A2)，用于兔唇儿童公益治疗，感谢大家的赞赏, [赞赏公示](https://github.com/zkep/my-geektime/issues/98)
 
 赞赏并留言 <b>邮箱账号</b>，回赠<b> [数据库](https://zkep.github.io/my-geektime/guide/data_default/) </b>
 
