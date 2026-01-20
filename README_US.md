@@ -34,13 +34,6 @@ browser web url:  http://127.0.0.1:8090
     width="356px"
   />
 </picture>
-<br/>
-<picture>
-  <img
-    src="docs/images/1.png"
-    width="356px"
-  />
-</picture>
 
 
 

@@ -66,13 +66,5 @@ docker-compose -f docker-compose.yml up -d
     width="356px"
   />
 </picture>
-<br/>
-<picture>
-  <img
-    src="docs/images/1.png"
-    width="356px"
-  />
-</picture>
-
 
 
