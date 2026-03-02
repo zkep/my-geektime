@@ -1,6 +1,6 @@
 module github.com/zkep/my-geektime
 
-go 1.24.2
+go 1.25.0
 
 require (
 	github.com/JohannesKaufmann/dom v0.2.0
@@ -15,7 +15,7 @@ require (
 	github.com/uaxe/cliz v0.0.1
 	go.uber.org/zap v1.27.1
 	golang.org/x/crypto v0.48.0
-	golang.org/x/net v0.50.0
+	golang.org/x/net v0.51.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/driver/postgres v1.6.0
