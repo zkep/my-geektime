@@ -13,6 +13,7 @@ import (
 	"path"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/yuin/goldmark"
@@ -111,6 +112,9 @@ func (g *GoldmarkDocGenerator) MakeDocsite(ctx context.Context, taskId, title, i
 	// 准备文章列表
 	articles := make([]ArticleInfo, 0, len(tasks))
 	articleHTMLs := make(map[string]string) // 保存每篇文章的 HTML 内容
+	// articleHTMLs 的写入发生在 GPool 的并发 goroutine 中，必须加锁，
+	// 否则 Go 运行时会因 concurrent map writes 直接终止进程（fatal error，无法 recover）。
+	var articleHTMLsMu sync.Mutex
 	batch := global.GPool.NewBatch()
 
 	for i := range tasks {
@@ -231,7 +235,9 @@ func (g *GoldmarkDocGenerator) MakeDocsite(ctx context.Context, taskId, title, i
 				zap.String("title", articleData.Info.Title))
 
 			// 保存 HTML 内容到内存
+			articleHTMLsMu.Lock()
 			articleHTMLs[fileName] = htmlBuf.String()
+			articleHTMLsMu.Unlock()
 
 			return &ArticleInfo{
 				Index:    k + 1,
@@ -403,6 +409,8 @@ func (g *GoldmarkDocGenerator) MakeDocsiteLocal(ctx context.Context, taskId, gro
 	docDir := path.Join(group, VerifyFileName(title))
 	var articles []ArticleInfo
 	articleHTMLs := make(map[string]string) // 内存中保存 HTML 内容
+	// 同 MakeDocsite：map 的写入发生在 GPool 并发 goroutine 中，必须加锁。
+	var articleHTMLsMu sync.Mutex
 
 	// 第一步：生成所有文章的 HTML（带评论）
 	batch := global.GPool.NewBatch()
@@ -489,7 +497,9 @@ func (g *GoldmarkDocGenerator) MakeDocsiteLocal(ctx context.Context, taskId, gro
 
 			// 临时渲染（不包含导航，后续会重新渲染）
 			// 保存 HTML 内容到内存
+			articleHTMLsMu.Lock()
 			articleHTMLs[fileName] = htmlBuf.String()
+			articleHTMLsMu.Unlock()
 
 			global.LOG.Info("generated article html with comments",
 				zap.String("file", fileName),
